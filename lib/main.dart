@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -18,11 +19,22 @@ import 'package:tracking_app/features/auth/core/presentation/view_model/auth_sta
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await EasyLocalization.ensureInitialized();
   await dotenv.load(fileName: '.env', isOptional: true);
   await ApiEndpoints.loadBaseUrl();
   await configureDependencies();
   final initialLocation = await getIt<SessionRestorer>().restore();
-  runApp(MyApp(initialLocation: initialLocation));
+  runApp(_localizedApp(initialLocation));
+}
+
+Widget _localizedApp(String initialLocation) {
+  return EasyLocalization(
+    supportedLocales: const [Locale('en'), Locale('ar')],
+    path: 'assets/translations',
+    fallbackLocale: const Locale('en'),
+    startLocale: const Locale('en'),
+    child: MyApp(initialLocation: initialLocation),
+  );
 }
 
 class MyApp extends StatefulWidget {
@@ -71,6 +83,9 @@ class _MyAppState extends State<MyApp> {
       theme: AppTheme(lightThemeColors).themeData,
       debugShowCheckedModeBanner: false,
       title: 'Flowery rider app',
+      localizationsDelegates: context.localizationDelegates,
+      supportedLocales: context.supportedLocales,
+      locale: context.locale,
     );
   }
 
