@@ -35,7 +35,8 @@ class AppButton extends StatelessWidget {
 
   Widget _buildPrimaryButton(AppColors colors) {
     return ElevatedButton(
-      onPressed: isLoading ? null : onPressed,      child: _buildChild(colors),
+      onPressed: isLoading ? null : onPressed,
+      child: _buildChild(colors),
     );
   }
 
@@ -45,11 +46,11 @@ class AppButton extends StatelessWidget {
       style: OutlinedButton.styleFrom(
         padding: EdgeInsets.symmetric(vertical: 13.h),
         backgroundColor: colors.white,
-        foregroundColor: colors.grey.shade900,
+        foregroundColor: colors.grey.shade800,
         disabledBackgroundColor: colors.white,
         disabledForegroundColor: colors.grey.shade700,
         side: BorderSide(
-          color: _isDisabled ? colors.grey.shade500 : colors.black,
+          color: _isDisabled ? colors.grey.shade500 : colors.grey.shade700,
           width: 1.w,
         ),
         shape: RoundedRectangleBorder(
@@ -64,10 +65,7 @@ class AppButton extends StatelessWidget {
     if (!isLoading) {
       return Text(
         text,
-        style: TextStyle(
-          fontSize: 16.sp,
-          fontWeight: FontWeight.w500,
-        ),
+        style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
       );
     }
 
@@ -81,10 +79,7 @@ class AppButton extends StatelessWidget {
       children: [
         Text(
           text,
-          style: TextStyle(
-            fontSize: 16.sp,
-            fontWeight: FontWeight.w500,
-          ),
+          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
         ),
         SizedBox(width: 12.w),
         SizedBox(
