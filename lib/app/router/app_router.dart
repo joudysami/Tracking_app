@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
+import 'package:tracking_app/features/auth/presentation/apply/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
@@ -47,8 +48,8 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.apply,
       builder: (context, state) {
-        //return ApplyPage();
-        throw UnimplementedError('Apply page is not implemented');
+        return ApplyPage();
+       
       },
     );
   }

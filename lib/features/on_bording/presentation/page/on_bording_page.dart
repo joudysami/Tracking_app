@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
 
@@ -41,7 +43,7 @@ class OnBordingPage extends StatelessWidget {
                 text: AppConstants.login,
               
                 onPressed: () {
-                  // TODO: navigate to login
+                 context.pushReplacement(AppRoutes.login);
                 },
               ),
               SizedBox(height: 16.h),
@@ -49,7 +51,7 @@ class OnBordingPage extends StatelessWidget {
                 text: AppConstants.applyNow,
                 variant: AppButtonVariant.outlined,
                 onPressed: () {
-                  // TODO: navigate to apply
+                  context.pushReplacement(AppRoutes.apply);
                 },
               ),
               const Spacer(flex: 2),
