@@ -104,6 +104,7 @@ abstract class LocaleKeys {
       'validation.national_id_length';
 
   // Onboarding
+  static const String onboardingWelcome = 'onboarding.welcome';
   static const String onboardingStep1Title = 'onboarding.step1_title';
   static const String onboardingStep1Desc = 'onboarding.step1_desc';
   static const String onboardingStep2Title = 'onboarding.step2_title';
