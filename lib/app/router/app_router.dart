@@ -39,7 +39,7 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.onBoarding,
       builder: (context, state) {
-        return OnBordingPage();
+        return const OnBordingPage();
       },
     );
   }

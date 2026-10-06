@@ -1,9 +1,11 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
-import 'package:tracking_app/core/constant/app_constants.dart';
+import 'package:tracking_app/core/constant/app_assets.dart';
+import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
 
 class OnBordingPage extends StatelessWidget {
@@ -11,7 +13,6 @@ class OnBordingPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -20,7 +21,7 @@ class OnBordingPage extends StatelessWidget {
             children: [
               const Spacer(flex: 2),
               Lottie.asset(
-                'assets/animations/tracking_delivery.json',
+                AppAssets.trackingDelivery,
                 width: double.infinity,
                 height: 280.h,
                 fit: BoxFit.contain,
@@ -30,7 +31,7 @@ class OnBordingPage extends StatelessWidget {
               Align(
                 alignment: AlignmentDirectional.centerStart,
                 child: Text(
-                  AppConstants.welcometoFloweryRiderApp,
+                  LocaleKeys.onboardingWelcome.tr(),
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
                     fontSize: 20.sp,
                     fontWeight: FontWeight.w400,
@@ -40,22 +41,20 @@ class OnBordingPage extends StatelessWidget {
               ),
               SizedBox(height: 24.h),
               AppButton(
-                text: AppConstants.login,
-              
+                text: LocaleKeys.authLogin.tr(),
                 onPressed: () {
-                 context.pushReplacement(AppRoutes.login);
+                  context.pushReplacement(AppRoutes.login);
                 },
               ),
               SizedBox(height: 16.h),
               AppButton(
-                text: AppConstants.applyNow,
+                text: LocaleKeys.commonApply.tr(),
                 variant: AppButtonVariant.outlined,
                 onPressed: () {
                   context.pushReplacement(AppRoutes.apply);
                 },
               ),
               const Spacer(flex: 2),
-              
             ],
           ),
         ),
