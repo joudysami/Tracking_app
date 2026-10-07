@@ -60,7 +60,13 @@
         "or_continue_with": "Or continue with",
         "dont_have_account": "Don't have an account? Sign Up",
         "already_have_account": "Already have an account? Sign In",
-        "agree_terms": "By continuing, you agree to our Terms of Service and Privacy Policy."
+        "agree_terms": "By continuing, you agree to our Terms of Service and Privacy Policy.",
+        "login_heading": "Login",
+        "email_label": "Email",
+        "email_hint": "Enter your email",
+        "password_hint": "Enter your password",
+        "remember_me": "Remember me",
+        "forget_password_link": "Forget password?"
     },
     "validation": {
         "required": "This field is required",

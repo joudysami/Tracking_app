@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
+import 'package:tracking_app/core/constant/api_endpoints.dart';
 
 /// Pair of tokens returned by a successful refresh (or login) operation.
 class AuthTokens {
@@ -15,62 +16,46 @@ class AuthTokens {
 abstract interface class TokenRefresher {
   /// Exchanges [refreshToken] for a new [AuthTokens] pair.
   ///
-  /// Returns `null` when refresh cannot be performed (not configured, or
-  /// backend reported failure without a transport-level error).
-  /// Throws [DioException] (or other) on transport/HTTP failure so the
-  /// interceptor can distinguish network errors from auth expiration.
+  /// Returns `null` when the body reports failure without an HTTP error.
+  /// Throws [DioException] on transport or HTTP failure.
   Future<AuthTokens?> refresh(String refreshToken);
 }
 
-/// Real implementation calling `POST /api/v1/identity/auth/refresh`.
-///
-/// Uses its own [Dio] instance (no [AuthInterceptors] attached) so the
-/// refresh call can never trigger another refresh or get stuck in a loop.
+/// Calls `POST /api/identity/auth/refresh-token` on its own [Dio].
 @LazySingleton(as: TokenRefresher)
 class ApiTokenRefresher implements TokenRefresher {
-  ApiTokenRefresher()
-      : _dio = Dio(
-    BaseOptions(
-      connectTimeout: const Duration(seconds: 30),
-      sendTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: const {'Content-Type': 'application/json'},
-    ),
-  );
+  ApiTokenRefresher() : _dio = Dio(_options());
 
   final Dio _dio;
 
-  static const _refreshPath = '/identity/auth/refresh';
-
   @override
   Future<AuthTokens?> refresh(String refreshToken) async {
-    // Let DioException propagate as-is (network/400/401/etc.) so
-    // AuthInterceptors can tell an expired refresh token apart from a
-    // transient network/server error.
     final response = await _dio.post<Map<String, dynamic>>(
-      _refreshPath,
+      ApiEndpoints.refreshToken,
       data: {'refreshToken': refreshToken},
     );
-
-    final body = response.data;
-    if (body == null || body['isSuccess'] != true) {
-      return null;
-    }
-
-    final data = body['data'];
-    if (data is! Map<String, dynamic>) {
-      return null;
-    }
-
-    final accessToken = data['accessToken'];
-    if (accessToken is! String || accessToken.isEmpty) {
-      return null;
-    }
-
-    final newRefreshToken = data['refreshToken'];
-    return AuthTokens(
-      accessToken: accessToken,
-      refreshToken: newRefreshToken is String ? newRefreshToken : null,
-    );
+    return tokensFromRefreshBody(response.data);
   }
+}
+
+BaseOptions _options() {
+  return BaseOptions(
+    baseUrl: ApiEndpoints.resolvedBaseUrl,
+    connectTimeout: const Duration(seconds: 30),
+    sendTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
+    headers: const {'Content-Type': 'application/json'},
+  );
+}
+
+AuthTokens? tokensFromRefreshBody(Map<String, dynamic>? body) {
+  if (body == null || body['status'] != true) return null;
+  final data = body['data'];
+  if (data is! Map) return null;
+  final map = Map<String, dynamic>.from(data);
+  final access = map['token'];
+  if (access is! String || access.isEmpty) return null;
+  final refresh = map['refreshToken'];
+  final nextRefresh = refresh is String && refresh.isNotEmpty ? refresh : null;
+  return AuthTokens(accessToken: access, refreshToken: nextRefresh);
 }
