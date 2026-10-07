@@ -26,6 +26,7 @@
         "item": "1 item"
     },
     "onboarding": {
+        "welcome": "Welcome to\nFlowery rider app",
         "step1_title": "Fresh Flowers Everyday",
         "step1_desc": "Handpicked fresh flowers arranged with love and delivered directly to your doorstep.",
         "step2_title": "Custom Gift Arrangements",

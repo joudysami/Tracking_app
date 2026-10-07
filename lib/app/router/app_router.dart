@@ -8,6 +8,7 @@ import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_pa
 import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view_model/login_view_model.dart';
+import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class AppRouter {
   AppRouter._();
@@ -17,9 +18,10 @@ class AppRouter {
     LoginViewModel? loginViewModel,
   }) {
     return GoRouter(
-      initialLocation: initialLocation ?? AppRoutes.login,
+      initialLocation: initialLocation ?? AppRoutes.onBoarding,
       errorBuilder: _errorBuilder,
       routes: [
+        _onBordingRoute(),
         _loginRoute(loginViewModel),
         _homeRoute(),
         _applyRoute(),
@@ -30,6 +32,13 @@ class AppRouter {
 
   static Widget _errorBuilder(BuildContext context, GoRouterState state) {
     return const Scaffold(body: Center(child: Text(AppConstants.pageNotFound)));
+  }
+
+  static GoRoute _onBordingRoute() {
+    return GoRoute(
+      path: AppRoutes.onBoarding,
+      builder: (context, state) => const OnBordingPage(),
+    );
   }
 
   static GoRoute _loginRoute(LoginViewModel? loginViewModel) {

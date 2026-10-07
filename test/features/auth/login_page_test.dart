@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/app/router/app_router.dart';
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
@@ -153,7 +154,10 @@ Widget _app(BuildContext context, LoginViewModel model) {
     locale: context.locale,
     supportedLocales: context.supportedLocales,
     localizationsDelegates: context.localizationDelegates,
-    routerConfig: AppRouter.createRouter(loginViewModel: model),
+    routerConfig: AppRouter.createRouter(
+      initialLocation: AppRoutes.login,
+      loginViewModel: model,
+    ),
   );
 }
 
