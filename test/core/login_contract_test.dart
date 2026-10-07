@@ -35,32 +35,33 @@ void main() {
   });
 
   test('identity error list is a credential message, not a crash', () {
-    final error = errorParser(
-      DioException(
-        requestOptions: RequestOptions(path: ApiEndpoints.login),
-        type: DioExceptionType.badResponse,
-        response: Response(
-          requestOptions: RequestOptions(path: ApiEndpoints.login),
-          statusCode: 400,
-          data: {
-            'status': false,
-            'message': 'Validation failed',
-            'errors': [
-              {
-                'message': 'Invalid email or password',
-                'field': 'Request.Email',
-              },
-              {
-                'message': 'Invalid email or password',
-                'field': 'Request.Password',
-              },
-            ],
-          },
-        ),
-      ),
-    );
+    final error = errorParser(_credentialFailure());
 
     expect(error, isA<BadResponseError>());
     expect(error.message, 'Invalid email or password');
   });
+}
+
+DioException _credentialFailure() {
+  return DioException(
+    requestOptions: RequestOptions(path: ApiEndpoints.login),
+    type: DioExceptionType.badResponse,
+    response: Response(
+      requestOptions: RequestOptions(path: ApiEndpoints.login),
+      statusCode: 400,
+      data: _credentialBody(),
+    ),
+  );
+}
+
+Map<String, dynamic> _credentialBody() {
+  return {
+    'status': false,
+    'message': 'Validation failed',
+    'errors': [_fieldError('Request.Email'), _fieldError('Request.Password')],
+  };
+}
+
+Map<String, String> _fieldError(String field) {
+  return {'message': 'Invalid email or password', 'field': field};
 }

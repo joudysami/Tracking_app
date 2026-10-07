@@ -51,19 +51,7 @@ void main() {
       tester.widget<ElevatedButton>(find.byType(ElevatedButton)).onPressed,
       isNull,
     );
-
-    await tester.enterText(find.byType(TextFormField).at(0), 'not-an-email');
-    await tester.pump();
-    expect(find.text('This Email is not valid'), findsOneWidget);
-
-    await tester.enterText(find.byType(TextFormField).at(0), '');
-    await tester.pump();
-    expect(find.text('Please enter your email'), findsOneWidget);
-
-    await tester.enterText(find.byType(TextFormField).at(1), 'x');
-    await tester.enterText(find.byType(TextFormField).at(1), '');
-    await tester.pump();
-    expect(find.text('Password is required'), findsOneWidget);
+    await _expectValidationMessages(tester);
   });
 
   testWidgets('shows a loading button then opens home', (tester) async {
@@ -83,26 +71,48 @@ void main() {
   testWidgets('separates credential errors from the server banner', (
     tester,
   ) async {
-    final credential = _Repo(
-      ErrorResponse(appError: BadResponseError('Invalid email or password')),
-    );
-    await _pump(tester, LoginViewModel(LoginUseCase(credential)), english);
-    await _fill(tester);
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
+    await _continue(tester, _badCredentials(), english);
     expect(find.byKey(const Key('credential-error')), findsOneWidget);
     expect(find.byKey(const Key('server-error-banner')), findsNothing);
 
-    final server = _Repo(
-      ErrorResponse(appError: TimeOutError(Exception('slow'))),
-    );
-    await _pump(tester, LoginViewModel(LoginUseCase(server)), english);
-    await _fill(tester);
-    await tester.tap(find.text('Continue'));
-    await tester.pumpAndSettle();
+    await _continue(tester, _slowServer(), english);
     expect(find.byKey(const Key('server-error-banner')), findsOneWidget);
     expect(find.byKey(const Key('credential-error')), findsNothing);
   });
+}
+
+Future<void> _expectValidationMessages(WidgetTester tester) async {
+  await tester.enterText(find.byType(TextFormField).at(0), 'not-an-email');
+  await tester.pump();
+  expect(find.text('This Email is not valid'), findsOneWidget);
+  await tester.enterText(find.byType(TextFormField).at(0), '');
+  await tester.pump();
+  expect(find.text('Please enter your email'), findsOneWidget);
+  await tester.enterText(find.byType(TextFormField).at(1), 'x');
+  await tester.enterText(find.byType(TextFormField).at(1), '');
+  await tester.pump();
+  expect(find.text('Password is required'), findsOneWidget);
+}
+
+_Repo _badCredentials() {
+  return _Repo(
+    ErrorResponse(appError: BadResponseError('Invalid email or password')),
+  );
+}
+
+_Repo _slowServer() {
+  return _Repo(ErrorResponse(appError: TimeOutError(Exception('slow'))));
+}
+
+Future<void> _continue(
+  WidgetTester tester,
+  AuthRepo repo,
+  Map<String, dynamic> english,
+) async {
+  await _pump(tester, LoginViewModel(LoginUseCase(repo)), english);
+  await _fill(tester);
+  await tester.tap(find.text('Continue'));
+  await tester.pumpAndSettle();
 }
 
 Future<void> _fill(WidgetTester tester) async {

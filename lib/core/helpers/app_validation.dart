@@ -34,41 +34,24 @@ class AppValidators {
     return null;
   }
 
-  static String? usernameValidator(
-    String? value, {
-    String? field,
-  }) {
+  static String? usernameValidator(String? value, {String? field}) {
     final fieldName = field ?? LocaleKeys.name.tr();
-
     if (value == null || value.trim().isEmpty) {
-      return LocaleKeys.validationFieldIsRequired.tr(
-        namedArgs: {
-          'field': fieldName,
-        },
-      );
+      return requiredField(value, field: fieldName);
     }
-
     if (value.trim().length < 4) {
       return LocaleKeys.validationFieldMinLength.tr(
-        namedArgs: {
-          'field': fieldName,
-          'length': '4',
-        },
+        namedArgs: {'field': fieldName, 'length': '4'},
       );
     }
-
     if (value.contains(' ')) {
       return LocaleKeys.validationFieldNoSpaces.tr(
-        namedArgs: {
-          'field': fieldName,
-        },
+        namedArgs: {'field': fieldName},
       );
     }
-
     if (!_usernamePattern.hasMatch(value)) {
       return LocaleKeys.validationOnlyLettersNumbersUnderscore.tr();
     }
-
     return null;
   }
 

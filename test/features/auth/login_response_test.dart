@@ -48,21 +48,25 @@ Map<String, dynamic> _envelope() {
     'code': 200,
     'message': 'Logged in',
     'data': {
-      'user': {
-        'id': 'user-1',
-        'email': 'rider@example.com',
-        'phone': '01000000000',
-        'name': 'Rider',
-        'roles': ['CUSTOMER'],
-        'createdAt': '2026-10-06T11:35:29.3063426',
-        'updatedAt': '2026-10-06T11:35:29.3063426',
-        'gender': 'MALE',
-        'notificationStatus': 'ON',
-      },
+      'user': _loginUser(),
       'token': 'access-token',
       'refreshToken': 'refresh-token',
     },
     'pagination': null,
     'errors': null,
+  };
+}
+
+Map<String, dynamic> _loginUser() {
+  return {
+    'id': 'user-1',
+    'email': 'rider@example.com',
+    'phone': '01000000000',
+    'name': 'Rider',
+    'roles': ['CUSTOMER'],
+    'createdAt': '2026-10-06T11:35:29.3063426',
+    'updatedAt': '2026-10-06T11:35:29.3063426',
+    'gender': 'MALE',
+    'notificationStatus': 'ON',
   };
 }

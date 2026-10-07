@@ -28,17 +28,7 @@ void main() {
   });
 
   test('stores tokens and role from a successful login', () async {
-    remote.response = LoginResponse.fromJson({
-      'status': true,
-      'message': 'Logged in',
-      'data': {
-        'token': testJwt(role: 'CUSTOMER', exp: _future),
-        'refreshToken': 'refresh-token',
-        'user': {
-          'roles': ['CUSTOMER'],
-        },
-      },
-    });
+    remote.response = _customerLogin();
 
     final response = await repo.signIn(
       const LoginRequest(email: 'rider@example.com', password: 'secret'),
@@ -103,6 +93,20 @@ DioException _dio(int status, String message) {
 }
 
 const _future = 4102444800;
+
+LoginResponse _customerLogin() {
+  return LoginResponse.fromJson({
+    'status': true,
+    'message': 'Logged in',
+    'data': {
+      'token': testJwt(role: 'CUSTOMER', exp: _future),
+      'refreshToken': 'refresh-token',
+      'user': {
+        'roles': ['CUSTOMER'],
+      },
+    },
+  });
+}
 
 class _Remote implements AuthRemoteDataSource {
   LoginResponse? response;
