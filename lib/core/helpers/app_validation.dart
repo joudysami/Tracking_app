@@ -84,6 +84,13 @@ class AppValidators {
     return null;
   }
 
+  static String? loginPasswordValidator(String? value) {
+    if (value == null || value.isEmpty) {
+      return LocaleKeys.validationPasswordIsRequired.tr();
+    }
+    return null;
+  }
+
   static String? passwordValidator(String? value) {
     if (value == null || value.isEmpty) {
       return LocaleKeys.validationPasswordIsRequired.tr();

@@ -39,7 +39,7 @@ AppError _connectionError(DioException exception) {
       detail.contains('Network is unreachable') ||
       detail.contains('Connection reset')) {
     return BadResponseError(
-      'Cannot reach the server. Start the backend with ./setup.sh and retry.',
+      'Cannot reach the server. Check your connection and try again.',
     );
   }
   return NoInternetError(exception);
@@ -47,19 +47,42 @@ AppError _connectionError(DioException exception) {
 
 AppError _parseBadResponse(DioException exception) {
   final data = exception.response?.data;
-  if (data is Map<String, dynamic>) {
-    final fieldErrors = fieldErrorsMessage(data['errors']) ??
-        fieldErrorsMessage(_validationFieldErrors(data['data']));
-    if (fieldErrors != null) return BadResponseError(fieldErrors);
-    if (data['message'] != null) {
-      return BadResponseError(data['message'].toString());
-    }
-    if (data['error'] != null) {
-      return BadResponseError(data['error'].toString());
-    }
+  if (data is Map) {
+    final message = _bodyMessage(Map<String, dynamic>.from(data));
+    if (message != null) return BadResponseError(message);
   }
   if (exception.response?.statusCode == 401) return UnauthorizedError();
   return BadResponseError(statusCodeToMessage(exception.response?.statusCode));
+}
+
+String? _bodyMessage(Map<String, dynamic> data) {
+  return errorsMessage(data['errors']) ??
+      fieldErrorsMessage(_validationFieldErrors(data['data'])) ??
+      _text(data['message']) ??
+      _text(data['error']);
+}
+
+String? errorsMessage(dynamic errors) {
+  if (errors is Map) {
+    return fieldErrorsMessage(Map<String, dynamic>.from(errors));
+  }
+  if (errors is! List) return null;
+  final messages = errors.map(_errorItem).whereType<String>().toSet();
+  if (messages.isEmpty) return null;
+  return messages.join('\n');
+}
+
+String? _errorItem(dynamic item) {
+  if (item is String && item.isNotEmpty) return item;
+  if (item is Map && item['message'] != null) return item['message'].toString();
+  return null;
+}
+
+String? _text(dynamic value) {
+  if (value == null) return null;
+  final text = value.toString().trim();
+  if (text.isEmpty) return null;
+  return text;
 }
 
 /// Docker identity validation failures put field errors in `data`

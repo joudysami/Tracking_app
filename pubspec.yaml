@@ -39,6 +39,7 @@ dependencies:
   injectable:
   dio: ^5.11.1
   pretty_dio_logger: ^1.4.0
+  flutter_dotenv: ^6.0.1
   flutter_secure_storage: ^11.1.1
   flutter_screenutil: ^5.9.3
   pinput: ^6.0.2
@@ -82,8 +83,9 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets\translations\en.json
-   - assets\translations\ar.json
+    - .env
+    - assets/translations/en.json
+    - assets/translations/ar.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
