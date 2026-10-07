@@ -11,7 +11,7 @@ class AppRouter {
 
   static GoRouter createRouter({String? initialLocation}) {
     return GoRouter(
-      initialLocation: initialLocation ?? AppRoutes.login,
+      initialLocation: initialLocation ?? AppRoutes.forgetPassword,
       errorBuilder: _errorBuilder,
       routes: [
         _loginRoute(),
@@ -45,7 +45,7 @@ class AppRouter {
 
   static GoRoute _forgetPasswordRoute() {
     return GoRoute(
-      path: AppRoutes.login,
+      path: AppRoutes.forgetPassword,
       builder: (context, state) {
         return ForgetPasswordPage();
       },

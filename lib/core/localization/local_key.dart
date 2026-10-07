@@ -113,6 +113,10 @@ abstract class LocaleKeys {
   static const String onboardingGetStarted = 'onboarding.get_started';
 
   // Authentication
+  static const String authEnterEmail = 'auth.enter_email';
+  static const String authEnterPassword = 'auth.enter_password';
+  static const String authDidntReceiveCode = 'auth.didnt_receive_code';
+  static const String authCodeResent = 'auth.code_resent';
   static const String authLoginTitle = 'auth.login_title';
   static const String authLoginSubtitle = 'auth.login_subtitle';
   static const String authRegisterTitle = 'auth.register_title';

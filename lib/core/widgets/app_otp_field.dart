@@ -6,13 +6,14 @@ import 'package:tracking_app/core/theme/app_color.dart';
 class AppOtpField extends StatelessWidget {
   const AppOtpField({
     super.key,
-    this.length = 4,
+    this.length = 6,
     this.onChanged,
     this.onCompleted,
     this.errorText,
     this.validator,
     this.enabled = true,
     this.autoFocus = false,
+    this.pinWidth,
   });
 
   final int length;
@@ -22,6 +23,7 @@ class AppOtpField extends StatelessWidget {
   final FormFieldValidator<String>? validator;
   final bool enabled;
   final bool autoFocus;
+  final double? pinWidth;
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +37,7 @@ class AppOtpField extends StatelessWidget {
       length: length,
       enabled: enabled,
       autofocus: autoFocus,
-      keyboardType: TextInputType.number,
+      keyboardType: TextInputType.visiblePassword,
       onChanged: onChanged,
       onCompleted: onCompleted,
       validator: validator,
@@ -50,6 +52,7 @@ class AppOtpField extends StatelessWidget {
       separatorBuilder: _separatorBuilder,
       cursor: _buildCursor(colors),
       errorTextStyle: _buildErrorTextStyle(colors),
+
     );
   }
 
@@ -74,7 +77,7 @@ class AppOtpField extends StatelessWidget {
 
   PinTheme _buildDefaultPinTheme(AppColors colors) {
     return PinTheme(
-      width: 74.w,
+      width: pinWidth ?? 53.w,
       height: 68.w,
       textStyle: TextStyle(
         color: colors.black,
@@ -126,6 +129,6 @@ class AppOtpField extends StatelessWidget {
   }
 
   Widget _separatorBuilder(int index) {
-    return SizedBox(width: 12.w);
+    return SizedBox(width: 4.w);
   }
 }
