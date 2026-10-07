@@ -1,18 +1,15 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mockito/mockito.dart';
 import 'package:pinput/pinput.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/base/base_response.dart';
-import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
-import 'package:tracking_app/core/theme/app_color.dart';
-import 'package:tracking_app/core/theme/app_theme.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
@@ -50,17 +47,7 @@ void main() {
     forgetPasswordUseCase = MockForgetPasswordUseCase();
     verifyOtpUseCase = MockVerifyOtpUseCase();
     resetPasswordUseCase = MockResetPasswordUseCase();
-
-    getIt.registerFactory<ForgetPasswordViewModel>(
-      () => ForgetPasswordViewModel(
-        forgetPasswordUseCase,
-        verifyOtpUseCase,
-        resetPasswordUseCase,
-      ),
-    );
   });
-
-  tearDown(() => getIt.reset());
 
   ErrorResponse<T> failure<T>(String message) =>
       ErrorResponse<T>(appError: BadResponseError(message));
@@ -91,7 +78,14 @@ void main() {
       routes: [
         GoRoute(
           path: AppRoutes.forgetPassword,
-          builder: (_, _) => const ForgetPasswordPage(),
+          builder: (_, _) => BlocProvider(
+            create: (_) => ForgetPasswordViewModel(
+              forgetPasswordUseCase,
+              verifyOtpUseCase,
+              resetPasswordUseCase,
+            ),
+            child: const ForgetPasswordPage(),
+          ),
         ),
         GoRoute(
           path: AppRoutes.login,
@@ -103,13 +97,8 @@ void main() {
     addTearDown(router.dispose);
 
     await tester.pumpWidget(
-      ScreenUtilInit(
-        designSize: const Size(375, 812),
-        minTextAdapt: true,
-        builder: (_, _) => MaterialApp.router(
-          theme: AppTheme(LightThemeColor()).themeData,
-          routerConfig: router,
-        ),
+      withScreenUtil(
+        (theme) => MaterialApp.router(theme: theme, routerConfig: router),
       ),
     );
     await tester.pump();
@@ -250,6 +239,20 @@ void main() {
     await submitOtp(tester);
 
     expect(snackBarWithText('Invalid OTP'), findsOneWidget);
+    expect(find.byType(OtpStepView), findsOneWidget);
+    expect(find.byType(ResetPasswordStepView), findsNothing);
+  });
+
+  testWidgets('shows a generic error and stays on otp when no token returns',
+      (tester) async {
+    stubSendEmail(const SuccessResponse<void>(null));
+    stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(null));
+    await pumpPage(tester);
+    await submitEmail(tester);
+
+    await submitOtp(tester);
+
+    expect(snackBarWithText(LocaleKeys.commonError), findsOneWidget);
     expect(find.byType(OtpStepView), findsOneWidget);
     expect(find.byType(ResetPasswordStepView), findsNothing);
   });

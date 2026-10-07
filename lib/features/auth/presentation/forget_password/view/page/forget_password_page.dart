@@ -5,7 +5,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
-import '../../../../../../core/di/di.dart';
 import '../../view_model/forget_password_event.dart';
 import '../../view_model/forget_password_state.dart';
 import '../../view_model/forget_password_ui_event.dart';
@@ -28,7 +27,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   @override
   void initState() {
     super.initState();
-    _viewModel = getIt<ForgetPasswordViewModel>();
+    _viewModel = context.read<ForgetPasswordViewModel>();
     _uiSub = _viewModel.uiEvents.listen(_handleUiEvent);
   }
 
@@ -52,15 +51,12 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   @override
   void dispose() {
     _uiSub.cancel();
-    _viewModel.close();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocProvider.value(
-      value: _viewModel,
-      child: BlocBuilder<ForgetPasswordViewModel, ForgetPasswordState>(
+    return BlocBuilder<ForgetPasswordViewModel, ForgetPasswordState>(
         buildWhen: (p, c) => p.step != c.step,
         builder: (context, state) {
           final isFirstStep = state.step == ForgetPasswordStep.email;
@@ -99,7 +95,6 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
             ),
           );
         },
-      ),
     );
   }
 }

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
+import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import '../../features/auth/presentation/forget_password/view/page/forget_password_page.dart';
+import '../../features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import '../../features/auth/presentation/login/view/page/login_page.dart';
 
 class AppRouter {
@@ -11,7 +14,7 @@ class AppRouter {
 
   static GoRouter createRouter({String? initialLocation}) {
     return GoRouter(
-      initialLocation: initialLocation ?? AppRoutes.forgetPassword,
+      initialLocation: initialLocation ?? AppRoutes.login,
       errorBuilder: _errorBuilder,
       routes: [
         _loginRoute(),
@@ -47,7 +50,10 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.forgetPassword,
       builder: (context, state) {
-        return ForgetPasswordPage();
+        return BlocProvider(
+          create: (_) => getIt<ForgetPasswordViewModel>(),
+          child: const ForgetPasswordPage(),
+        );
       },
     );
   }

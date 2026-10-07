@@ -56,14 +56,19 @@ void usePhoneScreen(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Widget wrapWithApp({required Widget Function() builder}) {
+/// [app] receives the app theme, which can only be built after
+/// ScreenUtil is initialised.
+Widget withScreenUtil(Widget Function(ThemeData theme) app) {
   return ScreenUtilInit(
     designSize: const Size(375, 812),
     minTextAdapt: true,
-    builder: (_, _) => MaterialApp(
-      theme: AppTheme(LightThemeColor()).themeData,
-      home: Scaffold(body: builder()),
-    ),
+    builder: (_, _) => app(AppTheme(LightThemeColor()).themeData),
+  );
+}
+
+Widget wrapWithApp({required Widget Function() builder}) {
+  return withScreenUtil(
+    (theme) => MaterialApp(theme: theme, home: Scaffold(body: builder())),
   );
 }
 

@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
@@ -75,10 +77,16 @@ class ForgetPasswordViewModel extends Cubit<ForgetPasswordState> {
 
     switch (result) {
       case SuccessResponse(:final data):
+        final otpToken = data?.otpToken;
+        if (otpToken == null || otpToken.isEmpty) {
+          emit(state.copyWith(isLoading: false));
+          _uiEventController.add(ShowErrorUiEvent(LocaleKeys.commonError.tr()));
+          return;
+        }
         emit(state.copyWith(
           isLoading: false,
           step: ForgetPasswordStep.resetPassword,
-          otpToken: data?.otpToken ?? '',
+          otpToken: otpToken,
         ));
       case ErrorResponse(:final errorMessage):
         emit(state.copyWith(isLoading: false));
