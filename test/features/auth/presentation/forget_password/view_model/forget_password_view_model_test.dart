@@ -4,6 +4,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
+import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
@@ -146,6 +147,30 @@ void main() {
         )).called(1);
 
       },
+    );
+
+    blocTest<ForgetPasswordViewModel, ForgetPasswordState>(
+      'stays on the otp step when the success response has no data',
+      build: () {
+        stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(null));
+        return buildCubit();
+      },
+      seed: () => otpStep,
+      act: (c) => c.onEvent(const VerifyOtpEvent('123456')),
+      expect: () => [otpStep.copyWith(isLoading: true), otpStep],
+    );
+
+    blocTest<ForgetPasswordViewModel, ForgetPasswordState>(
+      'stays on the otp step when the otpToken is empty',
+      build: () {
+        stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(
+          VerifyOtpResponse(otpToken: '', expiresInMinutes: 30),
+        ));
+        return buildCubit();
+      },
+      seed: () => otpStep,
+      act: (c) => c.onEvent(const VerifyOtpEvent('123456')),
+      expect: () => [otpStep.copyWith(isLoading: true), otpStep],
     );
 
     blocTest<ForgetPasswordViewModel, ForgetPasswordState>(
@@ -296,6 +321,20 @@ void main() {
         events.single,
         isA<ShowErrorUiEvent>()
             .having((e) => e.message, 'message', 'Invalid OTP'),
+      );
+    });
+
+    test('ShowErrorUiEvent is emitted when verify succeeds without a token',
+        () async {
+      stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(null));
+
+      cubit.onEvent(const VerifyOtpEvent('123456'));
+      await pump();
+
+      expect(
+        events.single,
+        isA<ShowErrorUiEvent>()
+            .having((e) => e.message, 'message', LocaleKeys.commonError),
       );
     });
 
