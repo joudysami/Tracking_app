@@ -2,6 +2,10 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tracking_app/app/router/app_router.dart';
+import 'package:tracking_app/core/theme/app_color.dart';
+import 'package:tracking_app/core/theme/app_theme.dart';
+
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/di/di.dart';
 import 'core/theme/app_color.dart';
