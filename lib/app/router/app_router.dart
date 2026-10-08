@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
-import 'package:tracking_app/features/auth/presentation/apply/apply_page.dart';
+import 'package:tracking_app/core/di/di.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
+import '../../features/auth/presentation/forget_password/view/page/forget_password_page.dart';
+import '../../features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
+import '../../features/auth/presentation/login/view/page/login_page.dart';
+
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class AppRouter {
@@ -18,6 +24,8 @@ class AppRouter {
         _loginRoute(),
         _applyRoute(),
         _forgetPasswordRoute(),
+        _applyRoute(),
+        _forgetPasswordRoute(),
       ],
     );
   }
@@ -30,7 +38,8 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.login,
       builder: (context, state) {
-        return LoginPage();
+        return const LoginPage();
+        ;
       },
     );
     
@@ -48,7 +57,7 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.apply,
       builder: (context, state) {
-        return ApplyPage();
+        return const ApplyPage();
        
       },
     );
@@ -58,8 +67,10 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.forgetPassword,
       builder: (context, state) {
-        //return ForgetPasswordPage();
-        throw UnimplementedError('Forget password page is not implemented');
+        return BlocProvider(
+          create: (_) => getIt<ForgetPasswordViewModel>(),
+          child: const ForgetPasswordPage(),
+        );
       },
     );
   }
