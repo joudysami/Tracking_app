@@ -34,11 +34,9 @@ abstract class LocaleKeys {
   // Validation
   static const String validationRequired = 'validation.required';
 
-  static const String validationInvalidEmail =
-      'validation.invalid_email';
+  static const String validationInvalidEmail = 'validation.invalid_email';
 
-  static const String validationInvalidPhone =
-      'validation.invalid_phone';
+  static const String validationInvalidPhone = 'validation.invalid_phone';
 
   static const String validationPasswordTooShort =
       'validation.password_too_short';
@@ -82,17 +80,13 @@ abstract class LocaleKeys {
   static const String validationFieldIsRequired =
       'validation.field_is_required';
 
-  static const String validationFieldMinLength =
-      'validation.field_min_length';
+  static const String validationFieldMinLength = 'validation.field_min_length';
 
-  static const String validationFieldNoSpaces =
-      'validation.field_no_spaces';
+  static const String validationFieldNoSpaces = 'validation.field_no_spaces';
 
-  static const String validationOtpRequired =
-      'validation.otp_required';
+  static const String validationOtpRequired = 'validation.otp_required';
 
-  static const String validationInvalidOtp =
-      'validation.invalid_otp';
+  static const String validationInvalidOtp = 'validation.invalid_otp';
 
   static const String validationValidVehicleNumber =
       'validation.valid_vehicle_number';
@@ -137,8 +131,7 @@ abstract class LocaleKeys {
   static const String authRegister = 'auth.register';
   static const String authOrContinueWith = 'auth.or_continue_with';
   static const String authDontHaveAccount = 'auth.dont_have_account';
-  static const String authAlreadyHaveAccount =
-      'auth.already_have_account';
+  static const String authAlreadyHaveAccount = 'auth.already_have_account';
   static const String authAgreeTerms = 'auth.agree_terms';
 
   // Navigation
@@ -167,56 +160,41 @@ abstract class LocaleKeys {
   static const String categoriesOrchids = 'categories.orchids';
   static const String categoriesSunflowers = 'categories.sunflowers';
   static const String categoriesLilies = 'categories.lilies';
-  static const String categoriesMixedBouquets =
-      'categories.mixed_bouquets';
+  static const String categoriesMixedBouquets = 'categories.mixed_bouquets';
   static const String categoriesPlants = 'categories.plants';
-  static const String categoriesDriedFlowers =
-      'categories.dried_flowers';
+  static const String categoriesDriedFlowers = 'categories.dried_flowers';
   static const String categoriesBirthday = 'categories.birthday';
-  static const String categoriesAnniversary =
-      'categories.anniversary';
+  static const String categoriesAnniversary = 'categories.anniversary';
   static const String categoriesWedding = 'categories.wedding';
   static const String categoriesGetWell = 'categories.get_well';
-  static const String categoriesCongratulations =
-      'categories.congratulations';
+  static const String categoriesCongratulations = 'categories.congratulations';
 
   // Catalog
   static const String catalogFilterTitle = 'catalog.filter_title';
   static const String catalogSortBy = 'catalog.sort_by';
   static const String catalogSortPopular = 'catalog.sort_popular';
-  static const String catalogSortPriceLow =
-      'catalog.sort_price_low';
-  static const String catalogSortPriceHigh =
-      'catalog.sort_price_high';
+  static const String catalogSortPriceLow = 'catalog.sort_price_low';
+  static const String catalogSortPriceHigh = 'catalog.sort_price_high';
   static const String catalogSortNewest = 'catalog.sort_newest';
   static const String catalogSortRating = 'catalog.sort_rating';
   static const String catalogPriceRange = 'catalog.price_range';
   static const String catalogFlowerColor = 'catalog.flower_color';
-  static const String catalogResultsFound =
-      'catalog.results_found';
+  static const String catalogResultsFound = 'catalog.results_found';
   static const String catalogNoResults = 'catalog.no_results';
-  static const String catalogNoResultsDesc =
-      'catalog.no_results_desc';
+  static const String catalogNoResultsDesc = 'catalog.no_results_desc';
 
   // Product Details
-  static const String productDetailsDescription =
-      'product_details.description';
-  static const String productDetailsFlowerCare =
-      'product_details.flower_care';
+  static const String productDetailsDescription = 'product_details.description';
+  static const String productDetailsFlowerCare = 'product_details.flower_care';
   static const String productDetailsIncludedFlowers =
       'product_details.included_flowers';
-  static const String productDetailsDimensions =
-      'product_details.dimensions';
-  static const String productDetailsReviews =
-      'product_details.reviews';
-  static const String productDetailsQuantity =
-      'product_details.quantity';
+  static const String productDetailsDimensions = 'product_details.dimensions';
+  static const String productDetailsReviews = 'product_details.reviews';
+  static const String productDetailsQuantity = 'product_details.quantity';
   static const String productDetailsCardMessage =
       'product_details.card_message';
-  static const String productDetailsAddToCart =
-      'product_details.add_to_cart';
-  static const String productDetailsBuyNow =
-      'product_details.buy_now';
+  static const String productDetailsAddToCart = 'product_details.add_to_cart';
+  static const String productDetailsBuyNow = 'product_details.buy_now';
   static const String productDetailsAddedSuccess =
       'product_details.added_success';
   static const String productDetailsFreshnessGuarantee =
@@ -244,152 +222,122 @@ abstract class LocaleKeys {
 
   // Checkout
   static const String checkoutTitle = 'checkout.title';
-  static const String checkoutDeliveryInfo =
-      'checkout.delivery_info';
-  static const String checkoutRecipientName =
-      'checkout.recipient_name';
-  static const String checkoutRecipientPhone =
-      'checkout.recipient_phone';
-  static const String checkoutDeliveryAddress =
-      'checkout.delivery_address';
-  static const String checkoutChangeAddress =
-      'checkout.change_address';
-  static const String checkoutAddNewAddress =
-      'checkout.add_new_address';
-  static const String checkoutDeliveryTime =
-      'checkout.delivery_time';
-  static const String checkoutSelectDate =
-      'checkout.select_date';
-  static const String checkoutSelectTimeSlot =
-      'checkout.select_time_slot';
-  static const String checkoutMorningSlot =
-      'checkout.morning_slot';
-  static const String checkoutAfternoonSlot =
-      'checkout.afternoon_slot';
-  static const String checkoutEveningSlot =
-      'checkout.evening_slot';
-  static const String checkoutGreetingCard =
-      'checkout.greeting_card';
-  static const String checkoutCardPlaceholder =
-      'checkout.card_placeholder';
+  static const String checkoutDeliveryInfo = 'checkout.delivery_info';
+  static const String checkoutRecipientName = 'checkout.recipient_name';
+  static const String checkoutRecipientPhone = 'checkout.recipient_phone';
+  static const String checkoutDeliveryAddress = 'checkout.delivery_address';
+  static const String checkoutChangeAddress = 'checkout.change_address';
+  static const String checkoutAddNewAddress = 'checkout.add_new_address';
+  static const String checkoutDeliveryTime = 'checkout.delivery_time';
+  static const String checkoutSelectDate = 'checkout.select_date';
+  static const String checkoutSelectTimeSlot = 'checkout.select_time_slot';
+  static const String checkoutMorningSlot = 'checkout.morning_slot';
+  static const String checkoutAfternoonSlot = 'checkout.afternoon_slot';
+  static const String checkoutEveningSlot = 'checkout.evening_slot';
+  static const String checkoutGreetingCard = 'checkout.greeting_card';
+  static const String checkoutCardPlaceholder = 'checkout.card_placeholder';
   static const String checkoutLeaveSenderAnonymous =
       'checkout.leave_sender_anonymous';
-  static const String checkoutPaymentMethod =
-      'checkout.payment_method';
-  static const String checkoutCreditCard =
-      'checkout.credit_card';
-  static const String checkoutApplePay =
-      'checkout.apple_pay';
-  static const String checkoutCashOnDelivery =
-      'checkout.cash_on_delivery';
-  static const String checkoutPlaceOrder =
-      'checkout.place_order';
+  static const String checkoutPaymentMethod = 'checkout.payment_method';
+  static const String checkoutCreditCard = 'checkout.credit_card';
+  static const String checkoutApplePay = 'checkout.apple_pay';
+  static const String checkoutCashOnDelivery = 'checkout.cash_on_delivery';
+  static const String checkoutPlaceOrder = 'checkout.place_order';
 
   // Tracking
   static const String trackingTitle = 'tracking.title';
   static const String trackingOrderId = 'tracking.order_id';
-  static const String trackingOrderPlacedOn =
-      'tracking.order_placed_on';
-  static const String trackingEstimatedDelivery =
-      'tracking.estimated_delivery';
-  static const String trackingArrivingIn =
-      'tracking.arriving_in';
-  static const String trackingDeliverySlot =
-      'tracking.delivery_slot';
-  static const String trackingCourierInfo =
-      'tracking.courier_info';
-  static const String trackingCourierName =
-      'tracking.courier_name';
-  static const String trackingCourierVehicle =
-      'tracking.courier_vehicle';
-  static const String trackingCourierRating =
-      'tracking.courier_rating';
+  static const String trackingOrderPlacedOn = 'tracking.order_placed_on';
+  static const String trackingEstimatedDelivery = 'tracking.estimated_delivery';
+  static const String trackingArrivingIn = 'tracking.arriving_in';
+  static const String trackingDeliverySlot = 'tracking.delivery_slot';
+  static const String trackingCourierInfo = 'tracking.courier_info';
+  static const String trackingCourierName = 'tracking.courier_name';
+  static const String trackingCourierVehicle = 'tracking.courier_vehicle';
+  static const String trackingCourierRating = 'tracking.courier_rating';
   static const String trackingCall = 'tracking.call';
   static const String trackingMessage = 'tracking.message';
-  static const String trackingStatusTimeline =
-      'tracking.status_timeline';
-  static const String trackingStepPlaced =
-      'tracking.steps.placed';
-  static const String trackingStepPlacedDesc =
-      'tracking.steps.placed_desc';
-  static const String trackingStepCrafting =
-      'tracking.steps.crafting';
-  static const String trackingStepCraftingDesc =
-      'tracking.steps.crafting_desc';
-  static const String trackingStepPickedUp =
-      'tracking.steps.picked_up';
+  static const String trackingStatusTimeline = 'tracking.status_timeline';
+  static const String trackingStepPlaced = 'tracking.steps.placed';
+  static const String trackingStepPlacedDesc = 'tracking.steps.placed_desc';
+  static const String trackingStepCrafting = 'tracking.steps.crafting';
+  static const String trackingStepCraftingDesc = 'tracking.steps.crafting_desc';
+  static const String trackingStepPickedUp = 'tracking.steps.picked_up';
   static const String trackingStepPickedUpDesc =
       'tracking.steps.picked_up_desc';
-  static const String trackingStepOnTheWay =
-      'tracking.steps.on_the_way';
+  static const String trackingStepOnTheWay = 'tracking.steps.on_the_way';
   static const String trackingStepOnTheWayDesc =
       'tracking.steps.on_the_way_desc';
-  static const String trackingStepDelivered =
-      'tracking.steps.delivered';
+  static const String trackingStepDelivered = 'tracking.steps.delivered';
   static const String trackingStepDeliveredDesc =
       'tracking.steps.delivered_desc';
-  static const String trackingDeliveryAddress =
-      'tracking.delivery_address';
-  static const String trackingRecipient =
-      'tracking.recipient';
-  static const String trackingAddressText =
-      'tracking.address_text';
-  static const String trackingItemsSummary =
-      'tracking.items_summary';
-  static const String trackingCardNote =
-      'tracking.card_note';
-  static const String trackingPaymentDetails =
-      'tracking.payment_details';
-  static const String trackingSubtotal =
-      'tracking.subtotal';
-  static const String trackingDeliveryFee =
-      'tracking.delivery_fee';
+  static const String trackingDeliveryAddress = 'tracking.delivery_address';
+  static const String trackingRecipient = 'tracking.recipient';
+  static const String trackingAddressText = 'tracking.address_text';
+  static const String trackingItemsSummary = 'tracking.items_summary';
+  static const String trackingCardNote = 'tracking.card_note';
+  static const String trackingPaymentDetails = 'tracking.payment_details';
+  static const String trackingSubtotal = 'tracking.subtotal';
+  static const String trackingDeliveryFee = 'tracking.delivery_fee';
   static const String trackingFree = 'tracking.free';
   static const String trackingTotal = 'tracking.total';
 
   // Orders
   static const String ordersTitle = 'orders.title';
   static const String ordersActiveTab = 'orders.active_tab';
-  static const String ordersCompletedTab =
-      'orders.completed_tab';
-  static const String ordersCancelledTab =
-      'orders.cancelled_tab';
-  static const String ordersTrackOrderBtn =
-      'orders.track_order_btn';
-  static const String ordersReorderBtn =
-      'orders.reorder_btn';
-  static const String ordersViewReceipt =
-      'orders.view_receipt';
-  static const String ordersCancelOrder =
-      'orders.cancel_order';
+  static const String ordersCompletedTab = 'orders.completed_tab';
+  static const String ordersCancelledTab = 'orders.cancelled_tab';
+  static const String ordersTrackOrderBtn = 'orders.track_order_btn';
+  static const String ordersReorderBtn = 'orders.reorder_btn';
+  static const String ordersViewReceipt = 'orders.view_receipt';
+  static const String ordersCancelOrder = 'orders.cancel_order';
   static const String ordersNoOrders = 'orders.no_orders';
-  static const String ordersNoOrdersDesc =
-      'orders.no_orders_desc';
+  static const String ordersNoOrdersDesc = 'orders.no_orders_desc';
 
   // Profile & Settings
   static const String profileTitle = 'profile.title';
   static const String profileMyOrders = 'profile.my_orders';
-  static const String profileSavedAddresses =
-      'profile.saved_addresses';
-  static const String profilePaymentMethods =
-      'profile.payment_methods';
-  static const String profileFavorites =
-      'profile.favorites';
+  static const String profileSavedAddresses = 'profile.saved_addresses';
+  static const String profilePaymentMethods = 'profile.payment_methods';
+  static const String profileFavorites = 'profile.favorites';
   static const String profileLanguage = 'profile.language';
-  static const String profileLanguageValue =
-      'profile.language_value';
-  static const String profileNotifications =
-      'profile.notifications';
+  static const String profileLanguageValue = 'profile.language_value';
+  static const String profileNotifications = 'profile.notifications';
   static const String profileDarkMode = 'profile.dark_mode';
-  static const String profileHelpCenter =
-      'profile.help_center';
-  static const String profilePrivacyPolicy =
-      'profile.privacy_policy';
-  static const String profileTermsConditions =
-      'profile.terms_conditions';
+  static const String profileHelpCenter = 'profile.help_center';
+  static const String profilePrivacyPolicy = 'profile.privacy_policy';
+  static const String profileTermsConditions = 'profile.terms_conditions';
   static const String profileLogout = 'profile.logout';
-  static const String profileLogoutConfirm =
-      'profile.logout_confirm';
-  static const String profileDeleteAccount =
-      'profile.delete_account';
+  static const String profileLogoutConfirm = 'profile.logout_confirm';
+  static const String profileDeleteAccount = 'profile.delete_account';
+  // Apply
+  static const String applyTitle = 'apply.title';
+  static const String applyWelcome = 'apply.welcome';
+  static const String applySubtitle = 'apply.subtitle';
+  static const String applyFirstLegalName = 'apply.first_legal_name';
+  static const String applyFirstLegalNameHint = 'apply.first_legal_name_hint';
+  static const String applySecondLegalName = 'apply.second_legal_name';
+  static const String applySecondLegalNameHint = 'apply.second_legal_name_hint';
+  static const String applyVehicleType = 'apply.vehicle_type';
+  static const String applyVehicleTypeHint = 'apply.vehicle_type_hint';
+  static const String applyVehicleNumber = 'apply.vehicle_number';
+  static const String applyVehicleNumberHint = 'apply.vehicle_number_hint';
+  static const String applyVehicleLicense = 'apply.vehicle_license';
+  static const String applyVehicleLicenseHint = 'apply.vehicle_license_hint';
+  static const String applyEmailHint = 'apply.email_hint';
+  static const String applyPhoneHint = 'apply.phone_hint';
+  static const String applyIdNumber = 'apply.id_number';
+  static const String applyIdNumberHint = 'apply.id_number_hint';
+  static const String applyIdImage = 'apply.id_image';
+  static const String applyIdImageHint = 'apply.id_image_hint';
+  static const String applyPasswordHint = 'apply.password_hint';
+  static const String applyConfirmPasswordHint = 'apply.confirm_password_hint';
+  static const String applyGender = 'apply.gender';
+  static const String applyFemale = 'apply.female';
+  static const String applyMale = 'apply.male';
+  static const String applyCompleteRequiredFields =
+      'apply.complete_required_fields';
+  static const String applySubmittedSuccess = 'apply.submitted_success';
+  static const String applySuccessTitle = 'apply.success_title';
+  static const String applySuccessBody = 'apply.success_body';
 }
