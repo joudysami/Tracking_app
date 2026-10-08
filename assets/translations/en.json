@@ -36,6 +36,10 @@
         "get_started": "Get Started"
     },
     "auth": {
+        "enter_email": "Enter your email",
+        "enter_password": "Enter your password",
+        "didnt_receive_code": "Didn't receive the code?",
+        "code_resent": "Code sent again",
         "login_title": "Welcome Back!",
         "login_subtitle": "Sign in to continue ordering and tracking your flowers",
         "register_title": "Create Account",
@@ -49,7 +53,7 @@
         "forgot_password_desc": "Enter your email and we'll send you an OTP to reset your password",
         "send_code": "Send Code",
         "otp_title": "Verification Code",
-        "otp_subtitle": "Enter the 4-digit code sent to {target}",
+        "otp_subtitle": "Please enter your 6-digit verification code that send to your email address ",
         "verify": "Verify",
         "resend_code": "Resend Code",
         "resend_in": "Resend code in {seconds}s",
