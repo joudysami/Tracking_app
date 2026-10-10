@@ -8,12 +8,12 @@ class ApplyRequestModel {
   final String email;
   final String phone;
   final String nid;
-  final String nidImagePath;
+  final MultipartFile nidImage;
   final String vehicleTypeId;
   final String vehiclePlateNumber;
   final int vehicleCapacity;
-  final String licenceImagePath;
-  final int gender; // apiValue: male = 0, female = 1
+  final MultipartFile licenceImage;
+  final int gender;
   final String password;
   final String confirmPassword;
   final String fcmToken;
@@ -24,29 +24,39 @@ class ApplyRequestModel {
     required this.email,
     required this.phone,
     required this.nid,
-    required this.nidImagePath,
+    required this.nidImage,
     required this.vehicleTypeId,
     required this.vehiclePlateNumber,
     required this.vehicleCapacity,
-    required this.licenceImagePath,
+    required this.licenceImage,
     required this.gender,
     required this.password,
     required this.confirmPassword,
     required this.fcmToken,
   });
 
-  factory ApplyRequestModel.fromEntity(ApplyEntity entity) {
+  static Future<ApplyRequestModel> fromEntity(
+    ApplyParams entity,
+  ) async {
+    final licenceImage = await MultipartFile.fromFile(
+      entity.licenceImage,
+    );
+
+    final nidImage = await MultipartFile.fromFile(
+      entity.nidImage,
+    );
+
     return ApplyRequestModel(
       firstName: entity.firstName,
       lastName: entity.lastName,
       email: entity.email,
       phone: entity.phone,
       nid: entity.nid,
-      nidImagePath: entity.nidImage.path,
+      nidImage: nidImage,
       vehicleTypeId: entity.vehicleTypeId,
       vehiclePlateNumber: entity.vehiclePlateNumber,
       vehicleCapacity: entity.vehicleCapacity,
-      licenceImagePath: entity.licenceImage.path,
+      licenceImage: licenceImage,
       gender: entity.gender.apiValue,
       password: entity.password,
       confirmPassword: entity.confirmPassword,
@@ -54,7 +64,7 @@ class ApplyRequestModel {
     );
   }
 
-  Future<FormData> toFormData() async {
+  FormData toFormData() {
     return FormData.fromMap({
       'vehicleTypeId': vehicleTypeId,
       'firstName': firstName,
@@ -68,8 +78,8 @@ class ApplyRequestModel {
       'email': email,
       'password': password,
       'confirmPassword': confirmPassword,
-      'licenceImage': await MultipartFile.fromFile(licenceImagePath),
-      'nidImage': await MultipartFile.fromFile(nidImagePath),
+      'licenceImage': licenceImage,
+      'nidImage': nidImage,
     });
   }
 }

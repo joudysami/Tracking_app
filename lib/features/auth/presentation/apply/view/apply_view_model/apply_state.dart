@@ -15,9 +15,21 @@ abstract class ApplyState with _$ApplyState {
     BaseState<List<VehicleTypeEntity>> vehicleTypesState,
     @Default(BaseState<ApplyResultEntity>())
     BaseState<ApplyResultEntity> applyState,
+
+    // Form fields
+    @Default('') String firstName,
+    @Default('') String lastName,
+    @Default('') String plateNumber,
+    @Default('') String email,
+    @Default('') String phone,
+    @Default('') String nid,
+    @Default('') String password,
+    @Default('') String confirmPassword,
+
+    // Selected values and uploaded images
     VehicleTypeEntity? selectedVehicleType,
     Gender? gender,
-    File? licenseImage,
-    File? idImage,
+    String? licenseImage,
+    String? idImage,
   }) = _ApplyState;
 }

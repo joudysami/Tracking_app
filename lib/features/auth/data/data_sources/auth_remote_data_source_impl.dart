@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/features/auth/data/models/apply_request_model.dart';
 import 'package:tracking_app/features/auth/data/models/apply_response.dart';
@@ -14,30 +13,22 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   AuthRemoteDataSourceImpl({required this.apiClient});
 
   @override
-  Future<ApplyResponse> apply(ApplyRequestModel applyrequestmodel) async {
-    final licenceImage = await MultipartFile.fromFile(
-      applyrequestmodel.licenceImagePath,
-    );
-
-    final nidImage = await MultipartFile.fromFile(
-      applyrequestmodel.nidImagePath,
-    );
-
+  Future<ApplyResponse> apply(ApplyRequestModel applyRequestModel) {
     return apiClient.apply(
-      applyrequestmodel.vehicleTypeId,
-      applyrequestmodel.firstName,
-      applyrequestmodel.lastName,
-      applyrequestmodel.gender,
-      applyrequestmodel.vehicleCapacity,
-      applyrequestmodel.fcmToken,
-      applyrequestmodel.nid,
-      applyrequestmodel.phone,
-      applyrequestmodel.vehiclePlateNumber,
-      applyrequestmodel.email,
-      applyrequestmodel.password,
-      applyrequestmodel.confirmPassword,
-      licenceImage,
-      nidImage,
+      applyRequestModel.vehicleTypeId,
+      applyRequestModel.firstName,
+      applyRequestModel.lastName,
+      applyRequestModel.gender,
+      applyRequestModel.vehicleCapacity,
+      applyRequestModel.fcmToken,
+      applyRequestModel.nid,
+      applyRequestModel.phone,
+      applyRequestModel.vehiclePlateNumber,
+      applyRequestModel.email,
+      applyRequestModel.password,
+      applyRequestModel.confirmPassword,
+      applyRequestModel.licenceImage,
+      applyRequestModel.nidImage,
     );
   }
 

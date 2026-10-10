@@ -67,10 +67,10 @@ class ApplyVehicleSection extends StatelessWidget {
             final file = state.licenseImage;
 
             return AppTextField(
-              key: ValueKey(file?.path),
+              key: ValueKey(file),
               label: LocaleKeys.applyVehicleLicense.tr(),
               hint: LocaleKeys.applyVehicleLicenseHint.tr(),
-              initialValue: file?.path.split(RegExp(r'[/\\]')).last,
+              initialValue: file?.split(RegExp(r'[/\\]')).last,
               readOnly: true,
               onTap: () {
                 viewModel.doEvent(PickLicenseImageRequested());

@@ -6,9 +6,8 @@ import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/services/image_picker_service.dart';
-import 'package:tracking_app/features/auth/data/models/apply_request_model.dart';
+import 'package:tracking_app/features/auth/domain/entities/apply_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_result_entity.dart';
-import 'package:tracking_app/features/auth/domain/entities/gender.dart';
 import 'package:tracking_app/features/auth/domain/entities/vehicle_type_entity.dart';
 import 'package:tracking_app/features/auth/domain/use_cases/apply_use_case.dart';
 import 'package:tracking_app/features/auth/domain/use_cases/get_vehicle_types_usecase.dart';
@@ -30,46 +29,37 @@ class ApplyViewModel extends Cubit<ApplyState> {
   final GetVehicleTypesUseCase _getVehicleTypesUseCase;
   final ImagePickerService _imagePickerService;
 
-  String _firstName = '';
-  String _lastName = '';
-  String _plateNumber = '';
-  String _email = '';
-  String _phone = '';
-  String _nid = '';
-  String _password = '';
-  String _confirmPassword = '';
-
   Future<void> doEvent(ApplyEvent event) async {
     switch (event) {
       case VehicleTypesRequested():
         await _getVehicleTypes();
 
       case FirstNameChanged():
-        _firstName = event.value;
+        emit(state.copyWith(firstName: event.value));
 
       case LastNameChanged():
-        _lastName = event.value;
+        emit(state.copyWith(lastName: event.value));
 
       case VehicleTypeChanged():
         emit(state.copyWith(selectedVehicleType: event.value));
 
       case PlateNumberChanged():
-        _plateNumber = event.value;
+        emit(state.copyWith(plateNumber: event.value));
 
       case EmailChanged():
-        _email = event.value;
+        emit(state.copyWith(email: event.value));
 
       case PhoneChanged():
-        _phone = event.value;
+        emit(state.copyWith(phone: event.value));
 
       case NidChanged():
-        _nid = event.value;
+        emit(state.copyWith(nid: event.value));
 
       case PasswordChanged():
-        _password = event.value;
+        emit(state.copyWith(password: event.value));
 
       case ConfirmPasswordChanged():
-        _confirmPassword = event.value;
+        emit(state.copyWith(confirmPassword: event.value));
 
       case GenderChanged():
         emit(state.copyWith(gender: event.value));
@@ -77,13 +67,13 @@ class ApplyViewModel extends Cubit<ApplyState> {
       case PickLicenseImageRequested():
         final image = await _imagePickerService.pickImage();
         if (image != null) {
-          emit(state.copyWith(licenseImage: File(image.path)));
+          emit(state.copyWith(licenseImage: image.path));
         }
 
       case PickIdImageRequested():
         final image = await _imagePickerService.pickImage();
         if (image != null) {
-          emit(state.copyWith(idImage: File(image.path)));
+          emit(state.copyWith(idImage:image.path));
         }
 
       case ApplyRequested():
@@ -128,10 +118,12 @@ class ApplyViewModel extends Cubit<ApplyState> {
   }
 
   Future<void> _apply() async {
-    final vehicleType = state.selectedVehicleType;
-    final licenseImage = state.licenseImage;
-    final idImage = state.idImage;
-    final gender = state.gender;
+    final currentState = state;
+
+    final vehicleType = currentState.selectedVehicleType;
+    final licenseImage = currentState.licenseImage;
+    final idImage = currentState.idImage;
+    final gender = currentState.gender;
 
     if (vehicleType == null ||
         licenseImage == null ||
@@ -156,24 +148,24 @@ class ApplyViewModel extends Cubit<ApplyState> {
       ),
     );
 
-    final request = ApplyRequestModel(
-      firstName: _firstName,
-      lastName: _lastName,
-      email: _email,
-      phone: _phone,
-      nid: _nid,
-      nidImagePath: idImage.path,
+    final entity = ApplyParams(
+      firstName: currentState.firstName,
+      lastName: currentState.lastName,
+      email: currentState.email,
+      phone: currentState.phone,
+      nid: currentState.nid,
+      nidImage: idImage,
       vehicleTypeId: vehicleType.id,
-      vehiclePlateNumber: _plateNumber,
+      vehiclePlateNumber: currentState.plateNumber,
       vehicleCapacity: _defaultVehicleCapacity,
-      licenceImagePath: licenseImage.path,
-      gender: gender.apiValue,
-      password: _password,
-      confirmPassword: _confirmPassword,
+      licenceImage: licenseImage,
+      gender: gender,
+      password: currentState.password,
+      confirmPassword: currentState.confirmPassword,
       fcmToken: '',
     );
 
-    final response = await _applyUseCase(request);
+    final response = await _applyUseCase(entity);
 
     switch (response) {
       case SuccessResponse<ApplyResultEntity>():

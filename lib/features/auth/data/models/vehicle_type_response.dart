@@ -9,16 +9,12 @@ class VehicleTypesResponse {
   final int? code;
   final String? message;
   final List<VehicleTypeModel>? data; 
-  final dynamic pagination;
-  final dynamic errors;
-
+  
   VehicleTypesResponse({
     this.status,
     this.code,
     this.message,
     this.data,
-    this.pagination,
-    this.errors,
   });
 
   factory VehicleTypesResponse.fromJson(Map<String, dynamic> json) =>

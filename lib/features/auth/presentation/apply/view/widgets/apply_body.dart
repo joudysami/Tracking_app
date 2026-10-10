@@ -23,13 +23,6 @@ class ApplyBody extends StatefulWidget {
 
 class _ApplyBodyState extends State<ApplyBody> {
   final _formKey = GlobalKey<FormState>();
-  final _passwordController = TextEditingController();
-
-  @override
-  void dispose() {
-    _passwordController.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,22 +38,16 @@ class _ApplyBodyState extends State<ApplyBody> {
             children: [
               _buildHeader(),
               SizedBox(height: 16.h),
-
               _buildNameFields(viewModel),
               SizedBox(height: 16.h),
-
               ApplyVehicleSection(viewModel: viewModel),
               SizedBox(height: 16.h),
-
               _buildPersonalFields(viewModel),
               SizedBox(height: 16.h),
-
               _buildPasswordFields(viewModel),
               SizedBox(height: 16.h),
-
               _buildGender(viewModel),
               SizedBox(height: 24.h),
-
               _buildSubmitButton(viewModel),
             ],
           ),
@@ -78,7 +65,10 @@ class _ApplyBodyState extends State<ApplyBody> {
           style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
         ),
         SizedBox(height: 4.h),
-        Text(LocaleKeys.applySubtitle.tr(), style: TextStyle(fontSize: 14.sp)),
+        Text(
+          LocaleKeys.applySubtitle.tr(),
+          style: TextStyle(fontSize: 14.sp),
+        ),
       ],
     );
   }
@@ -152,12 +142,13 @@ class _ApplyBodyState extends State<ApplyBody> {
         ),
         SizedBox(height: 16.h),
         BlocBuilder<ApplyViewModel, ApplyState>(
-          buildWhen: (previous, current) => previous.idImage != current.idImage,
+          buildWhen: (previous, current) =>
+              previous.idImage != current.idImage,
           builder: (context, state) {
             return _buildImageField(
               label: LocaleKeys.applyIdImage.tr(),
               hint: LocaleKeys.applyIdImageHint.tr(),
-              file: state.idImage,
+              file: state.idImage == null ? null : File(state.idImage!),
               onTap: () {
                 viewModel.doEvent(PickIdImageRequested());
               },
@@ -176,7 +167,6 @@ class _ApplyBodyState extends State<ApplyBody> {
           child: AppTextField(
             label: LocaleKeys.authPassword.tr(),
             hint: LocaleKeys.applyPasswordHint.tr(),
-            controller: _passwordController,
             isPassword: true,
             textInputAction: TextInputAction.next,
             onChanged: (value) {
@@ -197,7 +187,7 @@ class _ApplyBodyState extends State<ApplyBody> {
             },
             validator: (value) => AppValidators.confirmPasswordValidator(
               value,
-              _passwordController.text,
+              viewModel.state.password,
             ),
           ),
         ),
@@ -250,12 +240,9 @@ class _ApplyBodyState extends State<ApplyBody> {
         return AppButton(
           text: LocaleKeys.commonContinue.tr(),
           isLoading: state.applyState.isLoading,
-        onPressed: () {
+          onPressed: () {
             if (_formKey.currentState!.validate()) {
-              debugPrint('Form is valid ✅');
               viewModel.doEvent(ApplyRequested());
-            } else {
-              debugPrint('Form is invalid ❌');
             }
           },
         );
@@ -277,7 +264,10 @@ class _ApplyBodyState extends State<ApplyBody> {
       readOnly: true,
       onTap: onTap,
       suffixIcon: const Icon(Icons.upload_outlined),
-      validator: (value) => AppValidators.requiredField(value, field: label),
+      validator: (value) => AppValidators.requiredField(
+        value,
+        field: label,
+      ),
     );
   }
 }

@@ -1,4 +1,6 @@
-class ApplyResultEntity {
+import 'package:equatable/equatable.dart';
+
+class ApplyResultEntity extends Equatable {
   final String id;
   final String name;
   final String email;
@@ -20,4 +22,17 @@ class ApplyResultEntity {
     this.createdAt,
     this.updatedAt,
   });
+
+  @override
+  List<Object?> get props => [
+        id,
+        name,
+        email,
+        phone,
+        role,
+        gender,
+        notificationStatus,
+        createdAt,
+        updatedAt,
+      ];
 }

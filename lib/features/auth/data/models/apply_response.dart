@@ -9,16 +9,14 @@ class ApplyResponse {
   final int? code;
   final String? message;
   final ApplyData? data;
-  final dynamic pagination;
-  final dynamic errors;
+  
 
   ApplyResponse({
     this.status,
     this.code,
     this.message,
     this.data,
-    this.pagination,
-    this.errors,
+  
   });
 
   factory ApplyResponse.fromJson(Map<String, dynamic> json) =>
