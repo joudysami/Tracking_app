@@ -77,9 +77,12 @@ class AppButton extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Text(
-          text,
-          style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+        Flexible(
+          child: Text(
+            text,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+          ),
         ),
         SizedBox(width: 12.w),
         SizedBox(

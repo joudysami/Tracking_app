@@ -4,6 +4,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tracking_app/core/extensions/string_extensions.dart';
 import 'package:tracking_app/core/helpers/app_validation.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
@@ -250,7 +251,7 @@ class _ApplyBodyState extends State<ApplyBody> {
     );
   }
 
-  Widget _buildImageField({
+ Widget _buildImageField({
     required String label,
     required String hint,
     required File? file,
@@ -260,14 +261,11 @@ class _ApplyBodyState extends State<ApplyBody> {
       key: ValueKey(file?.path),
       label: label,
       hint: hint,
-      initialValue: file?.path.split(RegExp(r'[/\\]')).last,
+      initialValue: file?.path.fileName,
       readOnly: true,
       onTap: onTap,
       suffixIcon: const Icon(Icons.upload_outlined),
-      validator: (value) => AppValidators.requiredField(
-        value,
-        field: label,
-      ),
+      validator: (value) => AppValidators.requiredField(value, field: label),
     );
   }
 }

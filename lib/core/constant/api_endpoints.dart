@@ -13,7 +13,7 @@ class ApiEndpoints {
   static Future<void> loadBaseUrl() async {
     await _ensureDotEnv();
     _resolvedBaseUrl = normalizeBaseUrl(
-      dotenv.env['BASE_URL'] ?? 'http://192.168.1.8:5000',
+      dotenv.env['BASE_URL'] ?? 'http://192.168.1.3:5000',
     );
   }
 

@@ -34,16 +34,19 @@ class SuccessApplyPage extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: Column(
                 children: [
-                  const Spacer(),
+                  const Spacer(flex: 2),
+
                   Image.asset(
                     AppAssets.check,
                     width: 120.w,
                     height: 120.w,
                     fit: BoxFit.contain,
                   ),
+
                   SizedBox(height: 32.h),
+
                   Text(
-                   LocaleKeys.applySuccessTitle.tr(),
+                    LocaleKeys.applySuccessTitle.tr(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20.sp,
@@ -51,7 +54,9 @@ class SuccessApplyPage extends StatelessWidget {
                       color: colors.black,
                     ),
                   ),
+
                   SizedBox(height: 12.h),
+
                   Text(
                     LocaleKeys.applySuccessBody.tr(),
                     textAlign: TextAlign.center,
@@ -62,14 +67,18 @@ class SuccessApplyPage extends StatelessWidget {
                       height: 1.4,
                     ),
                   ),
-                
-                  AppButton(
-                    text: LocaleKeys.authLogin.tr(),
-                    onPressed: () {
-                      context.go(AppRoutes.login);
-                    },
+
+                  const Spacer(flex: 3),
+
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 24.h),
+                    child: AppButton(
+                      text: LocaleKeys.authLogin.tr(),
+                      onPressed: () {
+                        context.go(AppRoutes.login);
+                      },
+                    ),
                   ),
-                  
                 ],
               ),
             ),

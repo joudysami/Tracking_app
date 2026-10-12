@@ -39,6 +39,12 @@ class AuthRepoImpl implements AuthRepo {
           );
         }
 
+        if (data.status == false) {
+          return ErrorResponse<ApplyResultEntity>(
+            appError: BadResponseError(data.message ?? 'Something went wrong.'),
+          );
+        }
+
         final result = data.data;
 
         if (result == null) {
@@ -69,6 +75,12 @@ class AuthRepoImpl implements AuthRepo {
         if (data == null) {
           return ErrorResponse<List<VehicleTypeEntity>>(
             appError: BadResponseError('The vehicle types response is empty.'),
+          );
+        }
+
+        if (data.status == false) {
+          return ErrorResponse<List<VehicleTypeEntity>>(
+            appError: BadResponseError(data.message ?? 'Something went wrong.'),
           );
         }
 

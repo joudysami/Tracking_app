@@ -24,7 +24,69 @@ class ApplyVehicleSection extends StatelessWidget {
               previous.vehicleTypesState != current.vehicleTypesState ||
               previous.selectedVehicleType != current.selectedVehicleType,
           builder: (context, state) {
-            final types = state.vehicleTypesState.data ?? [];
+            final vehicleTypesState = state.vehicleTypesState;
+            final types = vehicleTypesState.data ?? [];
+
+            if (vehicleTypesState.isLoading) {
+              return InputDecorator(
+                decoration: InputDecoration(
+                  labelText: LocaleKeys.applyVehicleType.tr(),
+                  border: const OutlineInputBorder(),
+                ),
+                child: SizedBox(
+                  height: 24.h,
+                  child: const Center(
+                    child: SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(strokeWidth: 2),
+                    ),
+                  ),
+                ),
+              );
+            }
+
+            if (vehicleTypesState.errorMessage.isNotEmpty) {
+              return InputDecorator(
+                decoration: InputDecoration(
+                  labelText: LocaleKeys.applyVehicleType.tr(),
+                  border: const OutlineInputBorder(),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        vehicleTypesState.errorMessage,
+                        style: TextStyle(
+                          fontSize: 12.sp,
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: 'Retry',
+                      onPressed: () {
+                        viewModel.doEvent(VehicleTypesRequested());
+                      },
+                      icon: const Icon(Icons.refresh),
+                    ),
+                  ],
+                ),
+              );
+            }
+
+            if (types.isEmpty) {
+              return InputDecorator(
+                decoration: InputDecoration(
+                  labelText: LocaleKeys.applyVehicleType.tr(),
+                  border: const OutlineInputBorder(),
+                ),
+                child: Text(
+                  'No vehicle types available',
+                  style: TextStyle(fontSize: 14.sp),
+                ),
+              );
+            }
 
             return DropdownButtonFormField<VehicleTypeEntity>(
               isExpanded: true,
@@ -41,11 +103,9 @@ class ApplyVehicleSection extends StatelessWidget {
                     ),
                   )
                   .toList(),
-              onChanged: state.vehicleTypesState.isLoading
-                  ? null
-                  : (value) {
-                      viewModel.doEvent(VehicleTypeChanged(value));
-                    },
+              onChanged: (value) {
+                viewModel.doEvent(VehicleTypeChanged(value));
+              },
             );
           },
         ),
