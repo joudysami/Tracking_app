@@ -82,7 +82,7 @@ class ApplyVehicleSection extends StatelessWidget {
                   border: const OutlineInputBorder(),
                 ),
                 child: Text(
-                  'No vehicle types available',
+                  LocaleKeys.applyNoVehicleTypesAvailable.tr(),
                   style: TextStyle(fontSize: 14.sp),
                 ),
               );

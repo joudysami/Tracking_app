@@ -261,6 +261,7 @@
         "delete_account": "Delete Account"
     },
     "apply": {
+        "no_vehicle_types_available": "No vehicle types available",
         "title": "Apply",
         "welcome": "Welcome!!",
         "subtitle": "You want to be a delivery man?\nJoin our team",

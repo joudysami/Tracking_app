@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:equatable/equatable.dart';
 import 'package:tracking_app/features/auth/domain/entities/gender.dart';
 

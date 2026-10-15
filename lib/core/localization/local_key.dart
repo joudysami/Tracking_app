@@ -340,4 +340,5 @@ abstract class LocaleKeys {
   static const String applySubmittedSuccess = 'apply.submitted_success';
   static const String applySuccessTitle = 'apply.success_title';
   static const String applySuccessBody = 'apply.success_body';
+  static const String applyNoVehicleTypesAvailable = 'apply.no_vehicle_types_available';
 }

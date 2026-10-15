@@ -261,6 +261,7 @@
         "delete_account": "حذف الحساب"
     },
     "apply": {
+        "no_vehicle_types_available": "لا توجد أنواع مركبات متاحة",
         "title": "التقديم",
         "welcome": "أهلاً بك!!",
         "subtitle": "هل تريد أن تصبح مندوب توصيل؟\nانضم إلى فريقنا",
