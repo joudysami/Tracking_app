@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
@@ -31,7 +32,12 @@ class ApplyPage extends StatelessWidget {
         }
       },
       child: Scaffold(
-        appBar: AppBar(title: Text(LocaleKeys.applyTitle.tr())),
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          centerTitle: false,
+          titleSpacing: 16.w, 
+          title: Text(LocaleKeys.applyTitle.tr()),
+        ),
         body: const ApplyBody(),
       ),
     );

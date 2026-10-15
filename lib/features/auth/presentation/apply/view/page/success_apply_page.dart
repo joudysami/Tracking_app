@@ -71,7 +71,7 @@ class SuccessApplyPage extends StatelessWidget {
                   const Spacer(flex: 3),
 
                   Padding(
-                    padding: EdgeInsets.only(bottom: 24.h),
+                    padding: EdgeInsets.only(bottom: 50.h),
                     child: AppButton(
                       text: LocaleKeys.authLogin.tr(),
                       onPressed: () {

@@ -31,7 +31,12 @@ class _ApplyBodyState extends State<ApplyBody> {
 
     return SafeArea(
       child: SingleChildScrollView(
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+        padding: EdgeInsets.fromLTRB(
+          16.w,
+          16.h,
+          16.w,
+          16.h,
+        ),
         child: Form(
           key: _formKey,
           child: Column(
@@ -63,7 +68,10 @@ class _ApplyBodyState extends State<ApplyBody> {
       children: [
         Text(
           LocaleKeys.applyWelcome.tr(),
-          style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
+          style: TextStyle(
+            fontSize: 18.sp,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         SizedBox(height: 4.h),
         Text(
@@ -149,7 +157,9 @@ class _ApplyBodyState extends State<ApplyBody> {
             return _buildImageField(
               label: LocaleKeys.applyIdImage.tr(),
               hint: LocaleKeys.applyIdImageHint.tr(),
-              file: state.idImage == null ? null : File(state.idImage!),
+              file: state.idImage == null
+                  ? null
+                  : File(state.idImage!),
               onTap: () {
                 viewModel.doEvent(PickIdImageRequested());
               },
@@ -186,7 +196,8 @@ class _ApplyBodyState extends State<ApplyBody> {
             onChanged: (value) {
               viewModel.doEvent(ConfirmPasswordChanged(value));
             },
-            validator: (value) => AppValidators.confirmPasswordValidator(
+            validator: (value) =>
+                AppValidators.confirmPasswordValidator(
               value,
               viewModel.state.password,
             ),
@@ -198,7 +209,8 @@ class _ApplyBodyState extends State<ApplyBody> {
 
   Widget _buildGender(ApplyViewModel viewModel) {
     return BlocBuilder<ApplyViewModel, ApplyState>(
-      buildWhen: (previous, current) => previous.gender != current.gender,
+      buildWhen: (previous, current) =>
+          previous.gender != current.gender,
       builder: (context, state) {
         return SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -236,7 +248,8 @@ class _ApplyBodyState extends State<ApplyBody> {
   Widget _buildSubmitButton(ApplyViewModel viewModel) {
     return BlocBuilder<ApplyViewModel, ApplyState>(
       buildWhen: (previous, current) =>
-          previous.applyState.isLoading != current.applyState.isLoading,
+          previous.applyState.isLoading !=
+          current.applyState.isLoading,
       builder: (context, state) {
         return AppButton(
           text: LocaleKeys.commonContinue.tr(),
@@ -251,7 +264,7 @@ class _ApplyBodyState extends State<ApplyBody> {
     );
   }
 
- Widget _buildImageField({
+  Widget _buildImageField({
     required String label,
     required String hint,
     required File? file,
@@ -265,7 +278,10 @@ class _ApplyBodyState extends State<ApplyBody> {
       readOnly: true,
       onTap: onTap,
       suffixIcon: const Icon(Icons.upload_outlined),
-      validator: (value) => AppValidators.requiredField(value, field: label),
+      validator: (value) => AppValidators.requiredField(
+        value,
+        field: label,
+      ),
     );
   }
 }
