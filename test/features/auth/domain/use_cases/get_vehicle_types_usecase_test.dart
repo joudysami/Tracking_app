@@ -3,6 +3,10 @@ import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_result_entity.dart';
+import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
+import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
+import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
+import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_response.dart';
 import 'package:tracking_app/features/auth/domain/entities/vehicle_type_entity.dart';
 import 'package:tracking_app/features/auth/domain/repos/auth_repo.dart';
 import 'package:tracking_app/features/auth/domain/use_cases/get_vehicle_types_usecase.dart';
@@ -20,6 +24,27 @@ class FakeAuthRepo implements AuthRepo {
   Future<BaseResponse<List<VehicleTypeEntity>>> getVehicleTypes() async {
     getVehicleTypesCallCount++;
     return getVehicleTypesResponse!;
+  }
+
+  @override
+  Future<BaseResponse<void>> forgetPassword({
+    required ForgetPasswordRequest forgetPasswordRequest,
+  }) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<BaseResponse<VerifyOtpResponse>> verifyOtp({
+    required VerifyOtpRequest verifyOtpRequest,
+  }) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<BaseResponse<void>> resetPassword({
+    required ResetPasswordRequest resetPasswordRequest,
+  }) async {
+    throw UnimplementedError();
   }
 }
 

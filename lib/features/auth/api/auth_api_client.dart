@@ -6,7 +6,6 @@ import 'package:tracking_app/core/constant/api_request_params.dart';
 import 'package:tracking_app/features/auth/data/models/apply_response.dart';
 import 'package:tracking_app/features/auth/data/models/vehicle_type_response.dart';
 
-import '../../../core/constant/api_endpoints.dart';
 import '../data/models/forget_password/forget_password_request_dto.dart';
 import '../data/models/forget_password/forget_password_response_dto.dart';
 import '../data/models/forget_password/reset_password_request_dto.dart';

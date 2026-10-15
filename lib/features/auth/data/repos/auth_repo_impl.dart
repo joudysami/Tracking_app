@@ -1,7 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
-import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/api_exception.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/features/auth/data/data_sources/auth_remote_data_source.dart';
@@ -17,7 +16,6 @@ import 'package:tracking_app/features/auth/domain/entities/forget_password/verif
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_response.dart';
 import 'package:tracking_app/features/auth/domain/repos/auth_repo.dart';
 
-import '../data_sources/auth_remote_data_source.dart';
 import '../mapper/forget_password_mapper.dart';
 
 @Injectable(as: AuthRepo)
@@ -31,7 +29,9 @@ class AuthRepoImpl implements AuthRepo {
   });
 
   @override
-  Future<BaseResponse<ApplyResultEntity>> apply(ApplyParams entity) async {
+  Future<BaseResponse<ApplyResultEntity>> apply(
+    ApplyParams entity,
+  ) async {
     final request = await ApplyRequestModel.fromEntity(entity);
 
     final response = await safeCall.safeApiCall(
@@ -44,13 +44,17 @@ class AuthRepoImpl implements AuthRepo {
 
         if (data == null) {
           return ErrorResponse<ApplyResultEntity>(
-            appError: BadResponseError('The application response is empty.'),
+            appError: BadResponseError(
+              'The application response is empty.',
+            ),
           );
         }
 
         if (data.status == false) {
           return ErrorResponse<ApplyResultEntity>(
-            appError: BadResponseError(data.message ?? 'Something went wrong.'),
+            appError: BadResponseError(
+              data.message ?? 'Something went wrong.',
+            ),
           );
         }
 
@@ -58,11 +62,15 @@ class AuthRepoImpl implements AuthRepo {
 
         if (result == null) {
           return ErrorResponse<ApplyResultEntity>(
-            appError: BadResponseError('The application data is empty.'),
+            appError: BadResponseError(
+              'The application data is empty.',
+            ),
           );
         }
 
-        return SuccessResponse<ApplyResultEntity>(result.toDomain());
+        return SuccessResponse<ApplyResultEntity>(
+          result.toDomain(),
+        );
 
       case ErrorResponse<ApplyResponse> error:
         return ErrorResponse<ApplyResultEntity>(
@@ -83,13 +91,17 @@ class AuthRepoImpl implements AuthRepo {
 
         if (data == null) {
           return ErrorResponse<List<VehicleTypeEntity>>(
-            appError: BadResponseError('The vehicle types response is empty.'),
+            appError: BadResponseError(
+              'The vehicle types response is empty.',
+            ),
           );
         }
 
         if (data.status == false) {
           return ErrorResponse<List<VehicleTypeEntity>>(
-            appError: BadResponseError(data.message ?? 'Something went wrong.'),
+            appError: BadResponseError(
+              data.message ?? 'Something went wrong.',
+            ),
           );
         }
 
@@ -97,7 +109,9 @@ class AuthRepoImpl implements AuthRepo {
             .map((vehicleType) => vehicleType.toDomain())
             .toList();
 
-        return SuccessResponse<List<VehicleTypeEntity>>(entities);
+        return SuccessResponse<List<VehicleTypeEntity>>(
+          entities,
+        );
 
       case ErrorResponse<VehicleTypesResponse> error:
         return ErrorResponse<List<VehicleTypeEntity>>(
@@ -105,9 +119,6 @@ class AuthRepoImpl implements AuthRepo {
         );
     }
   }
-} 
-
-  AuthRepoImpl({required this.remoteDataSource, required this.safeCall});
 
   @override
   Future<BaseResponse<void>> forgetPassword({
@@ -117,6 +128,7 @@ class AuthRepoImpl implements AuthRepo {
       final response = await remoteDataSource.forgetPassword(
         forgetPasswordRequest.toDto(),
       );
+
       _checkStatus(
         response.status,
         response.code,
@@ -134,6 +146,7 @@ class AuthRepoImpl implements AuthRepo {
       final response = await remoteDataSource.verifyOtp(
         verifyOtpRequest.toDto(),
       );
+
       _checkStatus(
         response.status,
         response.code,
@@ -142,7 +155,11 @@ class AuthRepoImpl implements AuthRepo {
       );
 
       final data = response.data;
-      if (data == null) throw ApiException(message: _defaultError);
+
+      if (data == null) {
+        throw ApiException(message: _defaultError);
+      }
+
       return data.toEntity();
     });
   }
@@ -155,6 +172,7 @@ class AuthRepoImpl implements AuthRepo {
       final response = await remoteDataSource.resetPassword(
         resetPasswordRequest.toDto(),
       );
+
       _checkStatus(
         response.status,
         response.code,
@@ -167,12 +185,13 @@ class AuthRepoImpl implements AuthRepo {
   static const _defaultError = 'Something went wrong.';
 
   void _checkStatus(
-      bool? status,
-      int? code,
-      String? message,
-      dynamic errors,
-      ) {
+    bool? status,
+    int? code,
+    String? message,
+    dynamic errors,
+  ) {
     if (status == true) return;
+
     throw ApiException(
       message: message ?? _defaultError,
       statusCode: code,

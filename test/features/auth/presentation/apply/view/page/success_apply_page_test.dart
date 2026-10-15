@@ -7,7 +7,7 @@ import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
-import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 
 void main() {
   Widget buildTestWidget({Widget? home, String? initialLocation}) {

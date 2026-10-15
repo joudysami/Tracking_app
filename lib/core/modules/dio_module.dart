@@ -15,7 +15,6 @@ abstract class DioModule {
 
     dio.options = BaseOptions(
     baseUrl: ApiEndpoints.resolvedBaseUrl,
-      baseUrl: ApiEndpoints.baseUrl,
       receiveTimeout: const Duration(seconds: 60),
       connectTimeout: const Duration(seconds: 60),
       sendTimeout: const Duration(seconds: 60),

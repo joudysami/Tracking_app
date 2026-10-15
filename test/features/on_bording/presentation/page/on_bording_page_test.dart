@@ -12,7 +12,7 @@ import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_mo
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_state.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
-import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class MockApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {

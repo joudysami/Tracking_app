@@ -25,7 +25,7 @@ class FakeApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {
   final List<ApplyEvent> dispatchedEvents = [];
 
   FakeApplyViewModel([ApplyState initialState = const ApplyState()])
-      : super(initialState);
+    : super(initialState);
 
   @override
   Future<void> doEvent(ApplyEvent event) async {
@@ -94,59 +94,56 @@ void main() {
     );
   }
 
-  testWidgets('Verify ApplyPage shows form fields, headers, and submit button', (
-    WidgetTester tester,
-  ) async {
-    await tester.binding.setSurfaceSize(const Size(500, 1200));
+  testWidgets(
+    'Verify ApplyPage shows form fields, headers, and submit button',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(500, 1200));
 
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pump();
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pump();
 
-    expect(find.byType(ApplyPage), findsOneWidget);
-    expect(find.text(LocaleKeys.applyTitle.tr()), findsOneWidget);
-    expect(find.text(LocaleKeys.applyWelcome.tr()), findsOneWidget);
-    expect(find.text(LocaleKeys.applySubtitle.tr()), findsOneWidget);
+      expect(find.byType(ApplyPage), findsOneWidget);
+      expect(find.text(LocaleKeys.applyTitle.tr()), findsOneWidget);
+      expect(find.text(LocaleKeys.applyWelcome.tr()), findsOneWidget);
+      expect(find.text(LocaleKeys.applySubtitle.tr()), findsOneWidget);
 
-    expect(find.byType(AppTextField), findsWidgets);
-    expect(
-      find.byType(DropdownButtonFormField<VehicleTypeEntity>),
-      findsOneWidget,
-    );
-    expect(find.byType(Radio<Gender>), findsNWidgets(2));
-    expect(find.byType(AppButton), findsOneWidget);
-    expect(find.text(LocaleKeys.commonContinue.tr()), findsOneWidget);
+      expect(find.byType(AppTextField), findsWidgets);
+      expect(find.byType(InputDecorator), findsWidgets);
+      expect(find.byType(Radio<Gender>), findsNWidgets(2));
+      expect(find.byType(AppButton), findsOneWidget);
+      expect(find.text(LocaleKeys.commonContinue.tr()), findsOneWidget);
 
-    await tester.binding.setSurfaceSize(null);
-  });
+      await tester.binding.setSurfaceSize(null);
+    },
+  );
 
-  testWidgets('Verify loading state displays progress indicator on Continue button', (
-    WidgetTester tester,
-  ) async {
-    await tester.binding.setSurfaceSize(const Size(500, 1200));
+  testWidgets(
+    'Verify loading state displays progress indicator on Continue button',
+    (WidgetTester tester) async {
+      await tester.binding.setSurfaceSize(const Size(500, 1200));
 
-    fakeViewModel = FakeApplyViewModel(
-      const ApplyState(
-        applyState: BaseState(isLoading: true),
-      ),
-    );
-    getIt.unregister<ApplyViewModel>();
-    getIt.registerFactory<ApplyViewModel>(() => fakeViewModel);
+      fakeViewModel = FakeApplyViewModel(
+        const ApplyState(applyState: BaseState(isLoading: true)),
+      );
+      getIt.unregister<ApplyViewModel>();
+      getIt.registerFactory<ApplyViewModel>(() => fakeViewModel);
 
-    await tester.pumpWidget(buildTestWidget());
-    await tester.pump();
+      await tester.pumpWidget(buildTestWidget());
+      await tester.pump();
 
-    final buttonFinder = find.byType(AppButton);
-    expect(buttonFinder, findsOneWidget);
-    expect(
-      find.descendant(
-        of: buttonFinder,
-        matching: find.byType(CircularProgressIndicator),
-      ),
-      findsOneWidget,
-    );
+      final buttonFinder = find.byType(AppButton);
+      expect(buttonFinder, findsOneWidget);
+      expect(
+        find.descendant(
+          of: buttonFinder,
+          matching: find.byType(CircularProgressIndicator),
+        ),
+        findsOneWidget,
+      );
 
-    await tester.binding.setSurfaceSize(null);
-  });
+      await tester.binding.setSurfaceSize(null);
+    },
+  );
 
   testWidgets('Verify error state displays SnackBar with the error message', (
     WidgetTester tester,
@@ -167,8 +164,9 @@ void main() {
     expect(find.byType(SnackBar), findsOneWidget);
     expect(find.text('Invalid phone number'), findsOneWidget);
 
-    ScaffoldMessenger.of(tester.element(find.byType(ApplyPage)))
-        .hideCurrentSnackBar();
+    ScaffoldMessenger.of(
+      tester.element(find.byType(ApplyPage)),
+    ).hideCurrentSnackBar();
     await tester.pumpAndSettle();
 
     await tester.binding.setSurfaceSize(null);
@@ -181,9 +179,7 @@ void main() {
 
     fakeViewModel = FakeApplyViewModel(
       const ApplyState(
-        vehicleTypesState: BaseState(
-          data: [tVehicleTypeCar, tVehicleTypeVan],
-        ),
+        vehicleTypesState: BaseState(data: [tVehicleTypeCar, tVehicleTypeVan]),
       ),
     );
     getIt.unregister<ApplyViewModel>();
@@ -192,8 +188,9 @@ void main() {
     await tester.pumpWidget(buildTestWidget());
     await tester.pump();
 
-    final dropdownFinder =
-        find.byType(DropdownButtonFormField<VehicleTypeEntity>);
+    final dropdownFinder = find.byType(
+      DropdownButtonFormField<VehicleTypeEntity>,
+    );
     expect(dropdownFinder, findsOneWidget);
 
     await tester.tap(dropdownFinder);
