@@ -5,6 +5,8 @@ import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:tracking_app/core/constant/api_endpoints.dart';
 import 'package:tracking_app/core/network/auth_interceptors.dart';
 
+import '../constant/api_endpoints.dart';
+
 @module
 abstract class DioModule {
   @singleton
@@ -13,6 +15,7 @@ abstract class DioModule {
 
     dio.options = BaseOptions(
     baseUrl: ApiEndpoints.resolvedBaseUrl,
+      baseUrl: ApiEndpoints.baseUrl,
       receiveTimeout: const Duration(seconds: 60),
       connectTimeout: const Duration(seconds: 60),
       sendTimeout: const Duration(seconds: 60),
