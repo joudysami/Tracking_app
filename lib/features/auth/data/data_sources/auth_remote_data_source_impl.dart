@@ -4,6 +4,8 @@ import 'package:tracking_app/features/auth/data/models/forget_password/forget_pa
 import 'package:tracking_app/features/auth/data/models/forget_password/reset_password_request_dto.dart';
 import 'package:tracking_app/features/auth/data/models/forget_password/verify_otp_request_dto.dart';
 import 'package:tracking_app/features/auth/data/models/forget_password/verify_otp_response_dto.dart';
+import 'package:tracking_app/features/auth/data/models/login/login_request.dart';
+import 'package:tracking_app/features/auth/data/models/login/login_response.dart';
 import '../../api/auth_api_client.dart';
 import 'auth_remote_data_source.dart';
 
@@ -11,6 +13,10 @@ import 'auth_remote_data_source.dart';
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   final AuthApiClient apiClient;
   AuthRemoteDataSourceImpl({required this.apiClient});
+@override
+  Future<LoginResponse> login(LoginRequest request) {
+    return apiClient.login(request);
+  }
 
   @override
   Future<ForgetPasswordResponseDto> forgetPassword(

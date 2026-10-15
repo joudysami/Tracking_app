@@ -4,12 +4,11 @@ import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
 import 'package:tracking_app/core/di/di.dart';
-import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
-import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
-import '../../features/auth/presentation/forget_password/view/page/forget_password_page.dart';
-import '../../features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
-import '../../features/auth/presentation/login/view/page/login_page.dart';
-
+import 'package:tracking_app/features/auth/presentation/apply/apply_page.dart';
+import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
+import 'package:tracking_app/features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class AppRouter {
@@ -34,16 +33,19 @@ class AppRouter {
     return const Scaffold(body: Center(child: Text(AppConstants.pageNotFound)));
   }
 
-  static GoRoute _loginRoute() {
+   static GoRoute _loginRoute() {
     return GoRoute(
       path: AppRoutes.login,
       builder: (context, state) {
-        return const LoginPage();
-        ;
+        return BlocProvider(
+          create: (_) => getIt<LoginViewModel>(),
+          
+            child: const LoginPage(),
+          
+        );
       },
     );
-    
-  } 
+  }
     static GoRoute _onBordingRoute() {
     return GoRoute(
       path: AppRoutes.onBoarding,

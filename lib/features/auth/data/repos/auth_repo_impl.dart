@@ -2,10 +2,13 @@ import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/api_exception.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
+import 'package:tracking_app/core/network/token_storage.dart';
+import 'package:tracking_app/features/auth/data/models/login/login_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_response.dart';
+import 'package:tracking_app/features/auth/domain/entities/login/login_entity.dart';
 import 'package:tracking_app/features/auth/domain/repos/auth_repo.dart';
 
 import '../data_sources/auth_remote_data_source.dart';
@@ -15,9 +18,26 @@ import '../mapper/forget_password_mapper.dart';
 class AuthRepoImpl implements AuthRepo {
   final AuthRemoteDataSource remoteDataSource;
   final SafeCall safeCall;
+    final TokenStorage tokenStorage;
 
-  AuthRepoImpl({required this.remoteDataSource, required this.safeCall});
+  AuthRepoImpl({required this.remoteDataSource, required this.safeCall, required this.tokenStorage});
 
+ @override
+  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) {
+    return safeCall.safeApiCall(() async {
+      final response = await remoteDataSource.login(request);
+      await tokenStorage.saveTokens(
+        accessToken: response.data.accessToken,
+        refreshToken: response.data.refreshToken,
+      );
+      return response.data.toDomain();
+    });
+  }
+
+  @override
+  Future<void> signOut() {
+    return tokenStorage.clearTokens();
+  }
   @override
   Future<BaseResponse<void>> forgetPassword({
     required ForgetPasswordRequest forgetPasswordRequest,
