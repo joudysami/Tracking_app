@@ -62,6 +62,9 @@ static String _resolvedBaseUrl = '';
   static const String verifyOtp = '/api/identity/auth/otp-verification';
   static const String resetPassword = '/api/identity/auth/reset-password';
   static const String login ="/api/identity/auth/login";
+  //// Apply (Driver) ////
+  static const String applyDriver = '/api/identity/drivers/apply';
+  static const String vehicleTypes = '/api/identity/vehicle-types';
 }
 Future<void> _ensureDotEnv() async {
   if (dotenv.isInitialized) return;
