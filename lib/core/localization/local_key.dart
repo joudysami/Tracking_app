@@ -137,6 +137,7 @@ abstract class LocaleKeys {
   static const String authDontHaveAccount = 'auth.dont_have_account';
   static const String authAlreadyHaveAccount = 'auth.already_have_account';
   static const String authAgreeTerms = 'auth.agree_terms';
+  static const String rememberMe = 'auth.remember_me';
 
   // Navigation
   static const String navHome = 'nav.home';

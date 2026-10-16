@@ -11,6 +11,7 @@ import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_mo
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import '../../features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import '../../features/auth/presentation/login/view/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class AppRouter {
@@ -34,7 +35,20 @@ class AppRouter {
     return const Scaffold(body: Center(child: Text(AppConstants.pageNotFound)));
   }
 
-  static GoRoute _onBordingRoute() {
+   static GoRoute _loginRoute() {
+    return GoRoute(
+      path: AppRoutes.login,
+      builder: (context, state) {
+        return BlocProvider(
+          create: (_) => getIt<LoginViewModel>(),
+          
+            child: const LoginPage(),
+          
+        );
+      },
+    );
+  }
+    static GoRoute _onBordingRoute() {
     return GoRoute(
       path: AppRoutes.onBoarding,
       builder: (context, state) {
@@ -43,14 +57,6 @@ class AppRouter {
     );
   }
 
-  static GoRoute _loginRoute() {
-    return GoRoute(
-      path: AppRoutes.login,
-      builder: (context, state) {
-        return const LoginPage();
-      },
-    );
-  }
 
   static GoRoute _applyRoute() {
     return GoRoute(

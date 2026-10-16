@@ -1,33 +1,17 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
-
 class ApiEndpoints {
-    ApiEndpoints._();
-
-  static const String baseUrl = String.fromEnvironment(
-    'BASE_URL',
-    defaultValue: 'http://192.168.1.5:5000/',
-  );
-
-  static const String forgetPassword = 'api/identity/auth/forget-password';
-  static const String verifyOtp = 'api/identity/auth/otp-verification';
-  static const String resetPassword = 'api/identity/auth/reset-password';
-
-  static String _resolvedBaseUrl = '';
+  ApiEndpoints._();
+static String _resolvedBaseUrl = '';
 
   static String get resolvedBaseUrl => _resolvedBaseUrl;
 
   static Future<void> loadBaseUrl() async {
     await _ensureDotEnv();
-    _resolvedBaseUrl = normalizeBaseUrl(
-      dotenv.env['BASE_URL'] ?? 'http://192.168.1.3:5000',
-    );
+    _resolvedBaseUrl = normalizeBaseUrl(dotenv.env['BASE_URL'] ?? '');
   }
-
-  @visibleForTesting
-  static void setResolvedBaseUrl(String url) => _resolvedBaseUrl = url;
 
   static String normalizeBaseUrl(String raw) {
     var url = raw.trim();
@@ -73,15 +57,15 @@ class ApiEndpoints {
     return path.startsWith('/') ? '$origin$path' : '$origin/$path';
   }
 
-  //// AUTH ////
-  static const String login = '/api/identity/auth/login';
-  static const String refreshToken = '/api/identity/auth/refresh-token';
 
+  static const String forgetPassword = '/api/identity/auth/forget-password';
+  static const String verifyOtp = '/api/identity/auth/otp-verification';
+  static const String resetPassword = '/api/identity/auth/reset-password';
+  static const String login ="/api/identity/auth/login";
   //// Apply (Driver) ////
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
 }
-
 Future<void> _ensureDotEnv() async {
   if (dotenv.isInitialized) return;
   await dotenv.load(fileName: '.env', isOptional: true);
