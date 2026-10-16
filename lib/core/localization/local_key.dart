@@ -149,6 +149,13 @@ abstract class LocaleKeys {
   static const String navProfile = 'nav.profile';
 
   // Home
+  static const String homeFloweryRider = 'home.flowery_rider';
+  static const String homeFlowerOrder = 'home.flower_order';
+  static const String homePickupAddress = 'home.pickup_address';
+  static const String homeUserAddress = 'home.user_address';
+  static const String homeAccept = 'home.accept';
+  static const String homeFloweryStore = 'home.flowery_store';
+  static const String homeEgp = 'home.egp';
   static const String homeDeliveryTo = 'home.delivery_to';
   static const String homeGreeting = 'home.greeting';
   static const String homeBannerTitle = 'home.banner_title';

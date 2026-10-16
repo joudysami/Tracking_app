@@ -4,6 +4,7 @@ import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
 import 'package:tracking_app/features/auth/presentation/apply/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
+import 'package:tracking_app/features/home/presentation/view/screen/home_screen.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class AppRouter {
@@ -18,6 +19,7 @@ class AppRouter {
         _loginRoute(),
         _applyRoute(),
         _forgetPasswordRoute(),
+        _homeRoute(),
       ],
     );
   }
@@ -60,6 +62,15 @@ class AppRouter {
       builder: (context, state) {
         //return ForgetPasswordPage();
         throw UnimplementedError('Forget password page is not implemented');
+      },
+    );
+  }
+
+  static GoRoute _homeRoute() {
+    return GoRoute(
+      path: AppRoutes.home,
+      builder: (context, state) {
+        return const HomeScreen();
       },
     );
   }
