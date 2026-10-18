@@ -1,9 +1,10 @@
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
-import 'package:tracking_app/app/router/app_routes.dart' show AppRoutes;
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/helpers/app_validation.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
@@ -23,16 +24,16 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
-  bool isChecked = false;
+
   final _formKey = GlobalKey<FormState>();
-  late final LoginViewModel loginViewModel;
+
+  bool isChecked = false;
 
   @override
   void initState() {
     super.initState();
     _emailController = TextEditingController();
     _passwordController = TextEditingController();
-    loginViewModel = context.read<LoginViewModel>();
   }
 
   @override
@@ -44,17 +45,46 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-         appBar: AppBar(
-                title:  Text(LocaleKeys.authLogin.tr()),
-                leading:IconButton(onPressed:(){},icon: Icon(Icons.arrow_back_ios), ),
-                ),
-        body: BlocProvider(
-          create: (context) => loginViewModel,
-          child: SingleChildScrollView(
+    return BlocListener<LoginViewModel, LoginState>(
+      listenWhen: (previous, current) {
+        return previous.loginState.data != current.loginState.data ||
+            previous.loginState.errorMessage !=
+                current.loginState.errorMessage;
+      },
+      listener: (context, state) {
+        final loginState = state.loginState;
+
+        if (loginState.data != null &&
+            !loginState.isLoading &&
+            loginState.errorMessage.isEmpty) {
+          context.go(AppRoutes.home);
+        } else if (loginState.errorMessage.isNotEmpty) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(loginState.errorMessage),
+            ),
+          );
+        }
+      },
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(LocaleKeys.authLogin.tr()),
+            leading: IconButton(
+              onPressed: () {
+                if (context.canPop()) {
+                  context.pop();
+                }
+              },
+              icon: const Icon(Icons.arrow_back_ios),
+            ),
+          ),
+          body: SingleChildScrollView(
             child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(
+                horizontal: 16.w,
+                vertical: 16.h,
+              ),
               child: Form(
                 key: _formKey,
                 child: Column(
@@ -72,7 +102,6 @@ class _LoginPageState extends State<LoginPage> {
                       hint: LocaleKeys.authEnterPassword.tr(),
                       validator: AppValidators.passwordValidator,
                       controller: _passwordController,
-                      
                     ),
                     StatefulBuilder(
                       builder: (context, setState) {
@@ -81,7 +110,8 @@ class _LoginPageState extends State<LoginPage> {
                             Checkbox(
                               activeColor: context.colors.pink,
                               side: BorderSide(
-                                color: context.colors.grey[900] ?? Colors.grey,
+                                color: context.colors.grey[900] ??
+                                    Colors.grey,
                                 width: 1.5.w,
                               ),
                               shape: RoundedRectangleBorder(
@@ -90,7 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                               value: isChecked,
                               onChanged: (value) {
                                 setState(() {
-                                  isChecked = value!;
+                                  isChecked = value ?? false;
                                 });
                               },
                             ),
@@ -101,7 +131,7 @@ class _LoginPageState extends State<LoginPage> {
                                 fontSize: 14.sp,
                               ),
                             ),
-                            Spacer(),
+                            const Spacer(),
                             TextButton(
                               onPressed: () {
                                 context.push(AppRoutes.forgetPassword);
@@ -120,37 +150,36 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                     ),
-          
                     SizedBox(height: 16.h),
                     SizedBox(
                       width: double.infinity,
                       child: BlocBuilder<LoginViewModel, LoginState>(
                         builder: (context, state) {
-                          return state.loginState.isLoading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: context.colors.pink,
+                          if (state.loginState.isLoading) {
+                            return Center(
+                              child: CircularProgressIndicator(
+                                color: context.colors.pink,
+                              ),
+                            );
+                          }
+
+                          return CustomButton(
+                            text: LocaleKeys.commonContinue.tr(),
+                            color: context.colors.white,
+                            onTap: () {
+                              if (_formKey.currentState!.validate()) {
+                                context.read<LoginViewModel>().doEvent(
+                                  LoginSubmitted(
+                                    email: _emailController.text.trim(),
+                                    password: _passwordController.text,
                                   ),
-                                )
-                              : CustomButton(
-                                  text:LocaleKeys.commonContinue.tr(),
-                                  color: context.colors.white,
-                                  onTap: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      loginViewModel.doEvent(
-                                        LoginSubmitted(
-                                          email: _emailController.text,
-                                          password: _passwordController.text,
-                                        ),
-                                      );
-                                    }
-                                  },
                                 );
+                              }
+                            },
+                          );
                         },
                       ),
                     ),
-          
-                  
                   ],
                 ),
               ),

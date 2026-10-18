@@ -18,7 +18,6 @@ class LoginViewModel extends Cubit<LoginState> {
     switch (event) {
       case LoginSubmitted():
         _login(event.email, event.password);
-        break;
     }
   }
 
@@ -28,6 +27,7 @@ class LoginViewModel extends Cubit<LoginState> {
         loginState: state.loginState.copyWith(
           isLoading: true,
           errorMessage: '',
+          data: null,
         ),
       ),
     );
@@ -37,30 +37,42 @@ class LoginViewModel extends Cubit<LoginState> {
       password: password,
     );
 
-    final response = await _loginUseCase(request);
+    try {
+      final response = await _loginUseCase(request);
 
-    switch (response) {
-      case SuccessResponse<LoginEntity>():
-        emit(
-          state.copyWith(
-            loginState: state.loginState.copyWith(
-              isLoading: false,
-              data: response.data,
-              errorMessage: '',
+      switch (response) {
+        case SuccessResponse<LoginEntity>():
+          emit(
+            state.copyWith(
+              loginState: state.loginState.copyWith(
+                isLoading: false,
+                data: response.data,
+                errorMessage: '',
+              ),
             ),
-          ),
-        );
-        break;
+          );
 
-      case ErrorResponse<LoginEntity>():
-        emit(
-          state.copyWith(
-            loginState: state.loginState.copyWith(
-              isLoading: false,
-              errorMessage: response.errorMessage,
+        case ErrorResponse<LoginEntity>():
+          emit(
+            state.copyWith(
+              loginState: state.loginState.copyWith(
+                isLoading: false,
+                errorMessage: response.errorMessage,
+                data: null,
+              ),
             ),
+          );
+      }
+    } catch (e) {
+      emit(
+        state.copyWith(
+          loginState: state.loginState.copyWith(
+            isLoading: false,
+            errorMessage: 'Something went wrong. Please try again.',
+            data: null,
           ),
-        );
+        ),
+      );
     }
   }
 }
