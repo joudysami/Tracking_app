@@ -1,7 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
+import 'package:tracking_app/features/auth/data/models/login/login_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_entity.dart';
+import 'package:tracking_app/features/auth/domain/entities/login/login_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_result_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
@@ -46,6 +48,16 @@ class FakeAuthRepo implements AuthRepo {
   }) async {
     throw UnimplementedError();
   }
+
+  @override
+  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> signOut() {
+    throw UnimplementedError();
+  }
 }
 
 void main() {
@@ -64,8 +76,9 @@ void main() {
 
   group('GetVehicleTypesUseCase', () {
     test('delegates to the repo and returns the same response', () async {
-      const expectedResponse =
-          SuccessResponse<List<VehicleTypeEntity>>(tVehicleTypes);
+      const expectedResponse = SuccessResponse<List<VehicleTypeEntity>>(
+        tVehicleTypes,
+      );
       fakeRepo.getVehicleTypesResponse = expectedResponse;
 
       final result = await useCase();
@@ -87,8 +100,7 @@ void main() {
     });
 
     test('reaches the repo correctly', () async {
-      const expectedResponse =
-          SuccessResponse<List<VehicleTypeEntity>>([]);
+      const expectedResponse = SuccessResponse<List<VehicleTypeEntity>>([]);
       fakeRepo.getVehicleTypesResponse = expectedResponse;
 
       await useCase();

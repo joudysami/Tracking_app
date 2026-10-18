@@ -9,15 +9,17 @@ import 'package:tracking_app/core/widgets/app_button.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 
+import '../../../../../../support/register_login_view_model.dart';
+
 void main() {
+  setUpAll(registerLoginViewModelForTests);
+
   Widget buildTestWidget({Widget? home, String? initialLocation}) {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) {
         if (home != null) {
-          return MaterialApp(
-            home: home,
-          );
+          return MaterialApp(home: home);
         }
         return MaterialApp.router(
           routerConfig: AppRouter.createRouter(
@@ -33,9 +35,7 @@ void main() {
   ) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
-    await tester.pumpWidget(
-      buildTestWidget(home: const SuccessApplyPage()),
-    );
+    await tester.pumpWidget(buildTestWidget(home: const SuccessApplyPage()));
     await tester.pump();
 
     // Verify Scaffold and AppButton presence

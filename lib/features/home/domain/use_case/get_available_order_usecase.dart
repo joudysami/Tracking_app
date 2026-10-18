@@ -1,7 +1,9 @@
+import 'package:injectable/injectable.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart';
 import 'package:tracking_app/features/home/domain/repo/order_repo.dart';
 
+@Injectable()
 class GetAvailableOrdersUseCase {
   final OrderRepo orderRepo;
 

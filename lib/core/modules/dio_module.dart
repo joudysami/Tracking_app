@@ -21,6 +21,7 @@ abstract class DioModule {
     );
 
     dio.interceptors.add(authInterceptors);
+    authInterceptors.attachDio(dio);
 
     if (kDebugMode) {
       dio.interceptors.add(

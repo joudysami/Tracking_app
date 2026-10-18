@@ -2,9 +2,10 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+
 class ApiEndpoints {
   ApiEndpoints._();
-static String _resolvedBaseUrl = '';
+  static String _resolvedBaseUrl = '';
 
   static String get resolvedBaseUrl => _resolvedBaseUrl;
 
@@ -57,18 +58,20 @@ static String _resolvedBaseUrl = '';
     return path.startsWith('/') ? '$origin$path' : '$origin/$path';
   }
 
-
   static const String forgetPassword = '/api/identity/auth/forget-password';
   static const String verifyOtp = '/api/identity/auth/otp-verification';
   static const String resetPassword = '/api/identity/auth/reset-password';
-  static const String login ="/api/identity/auth/login";
+  static const String login = "/api/identity/auth/login";
+  static const String refreshToken = '/api/identity/auth/refresh-token';
   //// Apply (Driver) ////
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
-/// home ///
-static const String availableOrders ="/api/orders/drivers/available-orders";
-static const String claim="api/orders/{orderId:guid}/claim";
+
+  /// home ///
+  static const String availableOrders = "/api/orders/drivers/available-orders";
+  static const String claim = '/api/orders/{orderId}/claim';
 }
+
 Future<void> _ensureDotEnv() async {
   if (dotenv.isInitialized) return;
   await dotenv.load(fileName: '.env', isOptional: true);

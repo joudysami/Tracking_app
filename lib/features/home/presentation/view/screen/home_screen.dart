@@ -1,7 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 
 import 'package:tracking_app/features/home/presentation/view/widgets/order_card.dart';
@@ -15,6 +17,21 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
+      listenWhen: (previous, current) {
+        final claimError = current.claimOrderState.errorMessage;
+        final claimSuccess = current.claimOrderState.data;
+        final ordersError = current.ordersState.errorMessage;
+        final newClaimError =
+            claimError.isNotEmpty &&
+            claimError != previous.claimOrderState.errorMessage;
+        final newClaimSuccess =
+            claimSuccess != null &&
+            claimSuccess.orderId != previous.claimOrderState.data?.orderId;
+        final newOrdersError =
+            ordersError.isNotEmpty &&
+            ordersError != previous.ordersState.errorMessage;
+        return newClaimError || newClaimSuccess || newOrdersError;
+      },
       listener: (context, state) {
         final claimError = state.claimOrderState.errorMessage;
         final ordersError = state.ordersState.errorMessage;
@@ -108,8 +125,8 @@ class HomeScreen extends StatelessWidget {
 
                     return RefreshIndicator(
                       color: const Color(0xFFD51D72),
-                      onRefresh: () async {
-                        context.read<HomeCubit>().doEvent(
+                      onRefresh: () {
+                        return context.read<HomeCubit>().doEvent(
                           const GetAvailableOrdersEvent(),
                         );
                       },
@@ -130,9 +147,13 @@ class HomeScreen extends StatelessWidget {
                             customerName: order.customerName,
                             customerAddress: order.customerAddress,
                             price: order.totalAmount.toStringAsFixed(2),
-                            isClaiming:
-                                state.claimOrderState.isLoading &&
-                                state.claimOrderState.data == null,
+                            isClaiming: state.claimingOrderId == order.orderId,
+                            onOpen: () {
+                              context.push(
+                                AppRoutes.orderDetails,
+                                extra: order,
+                              );
+                            },
                             onAccept: () {
                               context.read<HomeCubit>().doEvent(
                                 ClaimOrderEvent(orderId: order.orderId),

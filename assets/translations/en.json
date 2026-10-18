@@ -295,5 +295,51 @@
         "submitted_success": "Application submitted successfully",
         "success_title": "Your application has been submitted!",
         "success_body": "Thank you for providing your application, we will review your application and will get back to you soon."
+    },
+    "order_details": {
+        "title": "Order details",
+        "status": "Status",
+        "order_id": "Order ID",
+        "pickup_address": "Pickup address",
+        "user_address": "User address",
+        "total": "Total",
+        "currency": "EGP",
+        "unavailable": "Order details are unavailable.",
+        "unknown_store": "Unknown store",
+        "no_address": "No address"
+    },
+    "status": {
+        "pending": "Pending",
+        "placed": "Placed",
+        "accepted": "Accepted",
+        "picked": "Picked",
+        "out_for_delivery": "Out for delivery",
+        "awaiting_delivery_confirmation": "Awaiting confirmation",
+        "arrived": "Arrived",
+        "delivered": "Delivered",
+        "cancelled": "Cancelled"
+    },
+    "date": {
+        "mon": "Mon",
+        "tue": "Tue",
+        "wed": "Wed",
+        "thu": "Thu",
+        "fri": "Fri",
+        "sat": "Sat",
+        "sun": "Sun",
+        "jan": "Jan",
+        "feb": "Feb",
+        "mar": "Mar",
+        "apr": "Apr",
+        "may": "May",
+        "jun": "Jun",
+        "jul": "Jul",
+        "aug": "Aug",
+        "sep": "Sep",
+        "oct": "Oct",
+        "nov": "Nov",
+        "dec": "Dec",
+        "am": "AM",
+        "pm": "PM"
     }
 }

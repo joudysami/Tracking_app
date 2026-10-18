@@ -44,114 +44,125 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-         appBar: AppBar(
-                title:  Text(LocaleKeys.authLogin.tr()),
-                leading:IconButton(onPressed:(){},icon: Icon(Icons.arrow_back_ios), ),
-                ),
-        body: BlocProvider(
-          create: (context) => loginViewModel,
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    AppTextField(
-                      label: LocaleKeys.authEmail.tr(),
-                      hint: LocaleKeys.authEnterEmail.tr(),
-                      validator: AppValidators.emailValidator,
-                      controller: _emailController,
-                    ),
-                    SizedBox(height: 16.h),
-                    AppTextField(
-                      label: LocaleKeys.authPassword.tr(),
-                      hint: LocaleKeys.authEnterPassword.tr(),
-                      validator: AppValidators.passwordValidator,
-                      controller: _passwordController,
-                      
-                    ),
-                    StatefulBuilder(
-                      builder: (context, setState) {
-                        return Row(
-                          children: [
-                            Checkbox(
-                              activeColor: context.colors.pink,
-                              side: BorderSide(
-                                color: context.colors.grey[900] ?? Colors.grey,
-                                width: 1.5.w,
+    return BlocListener<LoginViewModel, LoginState>(
+      listenWhen: (previous, current) =>
+          previous.loginState.data == null && current.loginState.data != null,
+      listener: (context, state) => context.go(AppRoutes.home),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: AppBar(
+            title: Text(LocaleKeys.authLogin.tr()),
+            leading: IconButton(
+              onPressed: () {},
+              icon: Icon(Icons.arrow_back_ios),
+            ),
+          ),
+          body: BlocProvider(
+            create: (context) => loginViewModel,
+            child: SingleChildScrollView(
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      AppTextField(
+                        label: LocaleKeys.authEmail.tr(),
+                        hint: LocaleKeys.authEnterEmail.tr(),
+                        validator: AppValidators.emailValidator,
+                        controller: _emailController,
+                      ),
+                      SizedBox(height: 16.h),
+                      AppTextField(
+                        label: LocaleKeys.authPassword.tr(),
+                        hint: LocaleKeys.authEnterPassword.tr(),
+                        validator: AppValidators.passwordValidator,
+                        controller: _passwordController,
+                      ),
+                      StatefulBuilder(
+                        builder: (context, setState) {
+                          return Row(
+                            children: [
+                              Checkbox(
+                                activeColor: context.colors.pink,
+                                side: BorderSide(
+                                  color:
+                                      context.colors.grey[900] ?? Colors.grey,
+                                  width: 1.5.w,
+                                ),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(4.r),
+                                ),
+                                value: isChecked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    isChecked = value!;
+                                  });
+                                },
                               ),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(4.r),
-                              ),
-                              value: isChecked,
-                              onChanged: (value) {
-                                setState(() {
-                                  isChecked = value!;
-                                });
-                              },
-                            ),
-                            Text(
-                              LocaleKeys.rememberMe.tr(),
-                              style: TextStyle(
-                                color: context.colors.black,
-                                fontSize: 14.sp,
-                              ),
-                            ),
-                            Spacer(),
-                            TextButton(
-                              onPressed: () {
-                                context.push(AppRoutes.forgetPassword);
-                              },
-                              child: Text(
-                                LocaleKeys.authForgotPassword.tr(),
-                                style: TextStyle(
-                                  color: context.colors.pink,
-                                  fontSize: 14.sp,
-                                  decoration: TextDecoration.underline,
-                                  decorationColor: context.colors.pink,
+                              Flexible(
+                                child: Text(
+                                  LocaleKeys.rememberMe.tr(),
+                                  overflow: TextOverflow.ellipsis,
+                                  style: TextStyle(
+                                    color: context.colors.black,
+                                    fontSize: 14.sp,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        );
-                      },
-                    ),
-          
-                    SizedBox(height: 16.h),
-                    SizedBox(
-                      width: double.infinity,
-                      child: BlocBuilder<LoginViewModel, LoginState>(
-                        builder: (context, state) {
-                          return state.loginState.isLoading
-                              ? Center(
-                                  child: CircularProgressIndicator(
-                                    color: context.colors.pink,
-                                  ),
-                                )
-                              : CustomButton(
-                                  text:LocaleKeys.commonContinue.tr(),
-                                  color: context.colors.white,
-                                  onTap: () {
-                                    if (_formKey.currentState!.validate()) {
-                                      loginViewModel.doEvent(
-                                        LoginSubmitted(
-                                          email: _emailController.text,
-                                          password: _passwordController.text,
-                                        ),
-                                      );
-                                    }
+                              Flexible(
+                                child: TextButton(
+                                  onPressed: () {
+                                    context.push(AppRoutes.forgetPassword);
                                   },
-                                );
+                                  child: Text(
+                                    LocaleKeys.authForgotPassword.tr(),
+                                    overflow: TextOverflow.ellipsis,
+                                    style: TextStyle(
+                                      color: context.colors.pink,
+                                      fontSize: 14.sp,
+                                      decoration: TextDecoration.underline,
+                                      decorationColor: context.colors.pink,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
                         },
                       ),
-                    ),
-          
-                  
-                  ],
+
+                      SizedBox(height: 16.h),
+                      SizedBox(
+                        width: double.infinity,
+                        child: BlocBuilder<LoginViewModel, LoginState>(
+                          builder: (context, state) {
+                            return state.loginState.isLoading
+                                ? Center(
+                                    child: CircularProgressIndicator(
+                                      color: context.colors.pink,
+                                    ),
+                                  )
+                                : CustomButton(
+                                    text: LocaleKeys.commonContinue.tr(),
+                                    color: context.colors.white,
+                                    onTap: () {
+                                      if (_formKey.currentState!.validate()) {
+                                        loginViewModel.doEvent(
+                                          LoginSubmitted(
+                                            email: _emailController.text,
+                                            password: _passwordController.text,
+                                          ),
+                                        );
+                                      }
+                                    },
+                                  );
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

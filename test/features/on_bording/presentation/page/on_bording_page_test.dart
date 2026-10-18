@@ -15,6 +15,8 @@ import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_pa
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
+import '../../../../support/register_login_view_model.dart';
+
 class MockApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {
   MockApplyViewModel() : super(const ApplyState());
   @override
@@ -26,6 +28,7 @@ void main() {
     if (!getIt.isRegistered<ApplyViewModel>()) {
       getIt.registerFactory<ApplyViewModel>(() => MockApplyViewModel());
     }
+    registerLoginViewModelForTests();
   });
 
   testWidgets('Verify onboarding screen structure', (
@@ -34,21 +37,14 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
     await tester.pumpWidget(
-      ScreenUtilInit(
-        child: const MaterialApp(
-          home: OnBordingPage(),
-        ),
-      ),
+      ScreenUtilInit(child: const MaterialApp(home: OnBordingPage())),
     );
 
     expect(find.byType(Scaffold), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
     expect(find.byType(AppButton), findsNWidgets(2));
 
-    expect(
-      find.text(LocaleKeys.onboardingWelcome.tr()),
-      findsOneWidget,
-    );
+    expect(find.text(LocaleKeys.onboardingWelcome.tr()), findsOneWidget);
 
     expect(find.text(LocaleKeys.authLogin.tr()), findsOneWidget);
     expect(find.text(LocaleKeys.commonApply.tr()), findsOneWidget);

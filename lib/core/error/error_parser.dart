@@ -48,7 +48,8 @@ AppError _connectionError(DioException exception) {
 AppError _parseBadResponse(DioException exception) {
   final data = exception.response?.data;
   if (data is Map<String, dynamic>) {
-    final fieldErrors = fieldErrorsMessage(data['errors']) ??
+    final fieldErrors =
+        fieldErrorsMessage(data['errors']) ??
         fieldErrorsMessage(_validationFieldErrors(data['data']));
     if (fieldErrors != null) return BadResponseError(fieldErrors);
     if (data['message'] != null) {
@@ -67,6 +68,7 @@ AppError _parseBadResponse(DioException exception) {
 Map<String, dynamic>? _validationFieldErrors(dynamic raw) {
   if (raw is! Map) return null;
   if (raw.containsKey('userId') ||
+      raw.containsKey('token') ||
       raw.containsKey('accessToken') ||
       raw.containsKey('refreshToken')) {
     return null;

@@ -101,8 +101,7 @@ abstract class LocaleKeys {
   static const String authEnterNewPassword = 'auth.enter_new_password';
   static const String authResetPassword = 'auth.reset_password';
   static const String authLogin = 'auth.login';
-  static const String authWrongEmailOrPassword =
-      'auth.wrong_email_or_password';
+  static const String authWrongEmailOrPassword = 'auth.wrong_email_or_password';
   static const String authPasswordUpdated = 'auth.password_updated';
   static const String rememberMe = 'auth.remember_me';
 
@@ -138,6 +137,8 @@ abstract class LocaleKeys {
       'order_details.payment_method';
   static const String orderDetailsCash = 'order_details.cash';
   static const String orderDetailsTotal = 'order_details.total';
+  static const String orderDetailsCurrency = 'order_details.currency';
+  static const String orderDetailsUnavailable = 'order_details.unavailable';
   static const String orderDetailsArrivedAtPickup =
       'order_details.arrived_at_pickup';
   static const String orderDetailsStartDeliver = 'order_details.start_deliver';
@@ -151,12 +152,37 @@ abstract class LocaleKeys {
   static const String orderDetailsNoAddress = 'order_details.no_address';
 
   static const String statusPending = 'status.pending';
+  static const String statusPlaced = 'status.placed';
   static const String statusAccepted = 'status.accepted';
   static const String statusPicked = 'status.picked';
   static const String statusOutForDelivery = 'status.out_for_delivery';
+  static const String statusAwaitingDeliveryConfirmation =
+      'status.awaiting_delivery_confirmation';
   static const String statusArrived = 'status.arrived';
   static const String statusDelivered = 'status.delivered';
   static const String statusCancelled = 'status.cancelled';
+
+  static const String dateMon = 'date.mon';
+  static const String dateTue = 'date.tue';
+  static const String dateWed = 'date.wed';
+  static const String dateThu = 'date.thu';
+  static const String dateFri = 'date.fri';
+  static const String dateSat = 'date.sat';
+  static const String dateSun = 'date.sun';
+  static const String dateJan = 'date.jan';
+  static const String dateFeb = 'date.feb';
+  static const String dateMar = 'date.mar';
+  static const String dateApr = 'date.apr';
+  static const String dateMay = 'date.may';
+  static const String dateJun = 'date.jun';
+  static const String dateJul = 'date.jul';
+  static const String dateAug = 'date.aug';
+  static const String dateSep = 'date.sep';
+  static const String dateOct = 'date.oct';
+  static const String dateNov = 'date.nov';
+  static const String dateDec = 'date.dec';
+  static const String dateAm = 'date.am';
+  static const String datePm = 'date.pm';
 
   static const String profileTitle = 'profile.title';
   static const String profileMyOrders = 'profile.my_orders';

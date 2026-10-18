@@ -7,6 +7,7 @@ import 'package:mockito/mockito.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
+import 'package:tracking_app/core/network/token_storage.dart';
 import 'package:tracking_app/features/auth/data/data_sources/auth_remote_data_source.dart';
 import 'package:tracking_app/features/auth/data/models/apply_request_model.dart';
 import 'package:tracking_app/features/auth/data/models/apply_response.dart';
@@ -56,7 +57,8 @@ void main() {
 
   setUpAll(() {
     tempDir = Directory.systemTemp.createTempSync('auth_repo_test_');
-    licenseFile = File('${tempDir.path}/license.png')..writeAsStringSync('dummy');
+    licenseFile = File('${tempDir.path}/license.png')
+      ..writeAsStringSync('dummy');
     nidFile = File('${tempDir.path}/nid.png')..writeAsStringSync('dummy');
   });
 
@@ -73,6 +75,7 @@ void main() {
     repo = AuthRepoImpl(
       remoteDataSource: mockRemoteDataSource,
       safeCall: safeCall,
+      tokenStorage: _MemoryTokenStorage(),
     );
 
     tApplyParams = ApplyParams(
@@ -94,47 +97,52 @@ void main() {
   });
 
   group('AuthRepoImpl - apply', () {
-    test('returns SuccessResponse with mapped ApplyResultEntity on success', () async {
-      when(mockRemoteDataSource.apply(any)).thenAnswer(
-        (_) async => ApplyResponse(
-          status: true,
-          data: tApplyData,
-        ),
-      );
+    test(
+      'returns SuccessResponse with mapped ApplyResultEntity on success',
+      () async {
+        when(mockRemoteDataSource.apply(any)).thenAnswer(
+          (_) async => ApplyResponse(status: true, data: tApplyData),
+        );
 
-      final result = await repo.apply(tApplyParams);
+        final result = await repo.apply(tApplyParams);
 
-      expect(result, isA<SuccessResponse<ApplyResultEntity>>());
-      final successResponse = result as SuccessResponse<ApplyResultEntity>;
-      expect(successResponse.data, tApplyResult);
-      verify(mockRemoteDataSource.apply(any)).called(1);
-    });
+        expect(result, isA<SuccessResponse<ApplyResultEntity>>());
+        final successResponse = result as SuccessResponse<ApplyResultEntity>;
+        expect(successResponse.data, tApplyResult);
+        verify(mockRemoteDataSource.apply(any)).called(1);
+      },
+    );
 
-    test('returns ErrorResponse with message when envelope status is false', () async {
-      const errorMessage = 'Invalid national ID';
-      when(mockRemoteDataSource.apply(any)).thenAnswer(
-        (_) async => ApplyResponse(
-          status: false,
-          message: errorMessage,
-        ),
-      );
+    test(
+      'returns ErrorResponse with message when envelope status is false',
+      () async {
+        const errorMessage = 'Invalid national ID';
+        when(mockRemoteDataSource.apply(any)).thenAnswer(
+          (_) async => ApplyResponse(status: false, message: errorMessage),
+        );
 
-      final result = await repo.apply(tApplyParams);
+        final result = await repo.apply(tApplyParams);
 
-      expect(result, isA<ErrorResponse<ApplyResultEntity>>());
-      final errorResponse = result as ErrorResponse<ApplyResultEntity>;
-      expect(errorResponse.errorMessage, errorMessage);
-      verify(mockRemoteDataSource.apply(any)).called(1);
-    });
+        expect(result, isA<ErrorResponse<ApplyResultEntity>>());
+        final errorResponse = result as ErrorResponse<ApplyResultEntity>;
+        expect(errorResponse.errorMessage, errorMessage);
+        verify(mockRemoteDataSource.apply(any)).called(1);
+      },
+    );
 
-    test('returns ErrorResponse when remote data source throws an exception', () async {
-      when(mockRemoteDataSource.apply(any)).thenThrow(Exception('Connection error'));
+    test(
+      'returns ErrorResponse when remote data source throws an exception',
+      () async {
+        when(
+          mockRemoteDataSource.apply(any),
+        ).thenThrow(Exception('Connection error'));
 
-      final result = await repo.apply(tApplyParams);
+        final result = await repo.apply(tApplyParams);
 
-      expect(result, isA<ErrorResponse<ApplyResultEntity>>());
-      verify(mockRemoteDataSource.apply(any)).called(1);
-    });
+        expect(result, isA<ErrorResponse<ApplyResultEntity>>());
+        verify(mockRemoteDataSource.apply(any)).called(1);
+      },
+    );
   });
 
   group('AuthRepoImpl - getVehicleTypes', () {
@@ -149,16 +157,14 @@ void main() {
       ];
 
       when(mockRemoteDataSource.getVehicleTypes()).thenAnswer(
-        (_) async => VehicleTypesResponse(
-          status: true,
-          data: tModels,
-        ),
+        (_) async => VehicleTypesResponse(status: true, data: tModels),
       );
 
       final result = await repo.getVehicleTypes();
 
       expect(result, isA<SuccessResponse<List<VehicleTypeEntity>>>());
-      final successResponse = result as SuccessResponse<List<VehicleTypeEntity>>;
+      final successResponse =
+          result as SuccessResponse<List<VehicleTypeEntity>>;
       expect(successResponse.data, expectedEntities);
       verify(mockRemoteDataSource.getVehicleTypes()).called(1);
     });
@@ -166,10 +172,7 @@ void main() {
     test('returns ErrorResponse when envelope status is false', () async {
       const errorMessage = 'Failed to fetch vehicle types';
       when(mockRemoteDataSource.getVehicleTypes()).thenAnswer(
-        (_) async => VehicleTypesResponse(
-          status: false,
-          message: errorMessage,
-        ),
+        (_) async => VehicleTypesResponse(status: false, message: errorMessage),
       );
 
       final result = await repo.getVehicleTypes();
@@ -180,41 +183,47 @@ void main() {
       verify(mockRemoteDataSource.getVehicleTypes()).called(1);
     });
 
-    test('returns ErrorResponse when remote data source throws an exception', () async {
-      when(mockRemoteDataSource.getVehicleTypes()).thenThrow(Exception('Server error'));
+    test(
+      'returns ErrorResponse when remote data source throws an exception',
+      () async {
+        when(
+          mockRemoteDataSource.getVehicleTypes(),
+        ).thenThrow(Exception('Server error'));
 
-      final result = await repo.getVehicleTypes();
+        final result = await repo.getVehicleTypes();
 
-      expect(result, isA<ErrorResponse<List<VehicleTypeEntity>>>());
-      verify(mockRemoteDataSource.getVehicleTypes()).called(1);
-    });
+        expect(result, isA<ErrorResponse<List<VehicleTypeEntity>>>());
+        verify(mockRemoteDataSource.getVehicleTypes()).called(1);
+      },
+    );
 
-    test('returns SuccessResponse with empty list when data is empty', () async {
-      when(mockRemoteDataSource.getVehicleTypes()).thenAnswer(
-        (_) async => VehicleTypesResponse(
-          status: true,
-          data: [],
-        ),
-      );
+    test(
+      'returns SuccessResponse with empty list when data is empty',
+      () async {
+        when(
+          mockRemoteDataSource.getVehicleTypes(),
+        ).thenAnswer((_) async => VehicleTypesResponse(status: true, data: []));
 
-      final result = await repo.getVehicleTypes();
+        final result = await repo.getVehicleTypes();
 
-      expect(result, isA<SuccessResponse<List<VehicleTypeEntity>>>());
-      final successResponse = result as SuccessResponse<List<VehicleTypeEntity>>;
-      expect(successResponse.data, isEmpty);
-      verify(mockRemoteDataSource.getVehicleTypes()).called(1);
-    });
+        expect(result, isA<SuccessResponse<List<VehicleTypeEntity>>>());
+        final successResponse =
+            result as SuccessResponse<List<VehicleTypeEntity>>;
+        expect(successResponse.data, isEmpty);
+        verify(mockRemoteDataSource.getVehicleTypes()).called(1);
+      },
+    );
   });
 
   AppError errorOf(BaseResponse response) =>
       (response as ErrorResponse).appError;
 
   ForgetPasswordResponseDto okResponse() => ForgetPasswordResponseDto(
-        status: true,
-        code: 200,
-        message: 'success',
-        data: true,
-      );
+    status: true,
+    code: 200,
+    message: 'success',
+    data: true,
+  );
 
   ForgetPasswordResponseDto failedResponse({dynamic errors}) =>
       ForgetPasswordResponseDto(
@@ -225,9 +234,9 @@ void main() {
       );
 
   DioException dioError(DioExceptionType type) => DioException(
-        requestOptions: RequestOptions(path: '/'),
-        type: type,
-      );
+    requestOptions: RequestOptions(path: '/'),
+    type: type,
+  );
 
   group('forgetPassword', () {
     const request = ForgetPasswordRequest(email: 'a@b.com');
@@ -238,40 +247,52 @@ void main() {
       final result = await repo.forgetPassword(forgetPasswordRequest: request);
 
       expect(result, isA<SuccessResponse>());
-      final sent = verify(remote.forgetPassword(captureAny)).captured.single
-      as ForgetPasswordRequestDto;
+      final sent =
+          verify(remote.forgetPassword(captureAny)).captured.single
+              as ForgetPasswordRequestDto;
       expect(sent.email, 'a@b.com');
     });
 
-    test('returns BadResponseError with the server message when status is false',
-            () async {
-          when(remote.forgetPassword(any))
-              .thenAnswer((_) async => failedResponse());
+    test(
+      'returns BadResponseError with the server message when status is false',
+      () async {
+        when(
+          remote.forgetPassword(any),
+        ).thenAnswer((_) async => failedResponse());
 
-          final result = await repo.forgetPassword(forgetPasswordRequest: request);
+        final result = await repo.forgetPassword(
+          forgetPasswordRequest: request,
+        );
 
-          expect(result, isA<ErrorResponse>());
-          expect(errorOf(result), isA<BadResponseError>());
-          expect(errorOf(result).message, 'Invalid email');
-        });
+        expect(result, isA<ErrorResponse>());
+        expect(errorOf(result), isA<BadResponseError>());
+        expect(errorOf(result).message, 'Invalid email');
+      },
+    );
 
-    test('uses the field errors as the message when the server sends them',
-            () async {
-          when(remote.forgetPassword(any)).thenAnswer(
-                (_) async => failedResponse(errors: {
+    test(
+      'uses the field errors as the message when the server sends them',
+      () async {
+        when(remote.forgetPassword(any)).thenAnswer(
+          (_) async => failedResponse(
+            errors: {
               'email': ['Not found'],
-            }),
-          );
+            },
+          ),
+        );
 
-          final result = await repo.forgetPassword(forgetPasswordRequest: request);
+        final result = await repo.forgetPassword(
+          forgetPasswordRequest: request,
+        );
 
-          expect(errorOf(result).message, 'Not found');
-        });
+        expect(errorOf(result).message, 'Not found');
+      },
+    );
 
     test('falls back to the default message when message is null', () async {
-      when(remote.forgetPassword(any)).thenAnswer(
-            (_) async => ForgetPasswordResponseDto(status: false),
-      );
+      when(
+        remote.forgetPassword(any),
+      ).thenAnswer((_) async => ForgetPasswordResponseDto(status: false));
 
       final result = await repo.forgetPassword(forgetPasswordRequest: request);
 
@@ -280,7 +301,7 @@ void main() {
 
     test('treats a null status as a failure', () async {
       when(remote.forgetPassword(any)).thenAnswer(
-            (_) async => ForgetPasswordResponseDto(message: 'no status'),
+        (_) async => ForgetPasswordResponseDto(message: 'no status'),
       );
 
       final result = await repo.forgetPassword(forgetPasswordRequest: request);
@@ -290,7 +311,7 @@ void main() {
 
     test('maps a timeout DioException to TimeOutError', () async {
       when(remote.forgetPassword(any)).thenAnswer(
-            (_) async => throw dioError(DioExceptionType.connectionTimeout),
+        (_) async => throw dioError(DioExceptionType.connectionTimeout),
       );
 
       final result = await repo.forgetPassword(forgetPasswordRequest: request);
@@ -304,7 +325,7 @@ void main() {
 
     test('returns the entity mapped from the data DTO', () async {
       when(remote.verifyOtp(any)).thenAnswer(
-            (_) async => VerifyOtpResponseDto(
+        (_) async => VerifyOtpResponseDto(
           status: true,
           code: 200,
           message: 'OTP verified',
@@ -319,16 +340,17 @@ void main() {
         (result as SuccessResponse<VerifyOtpResponse>).data,
         const VerifyOtpResponse(otpToken: 'token-1', expiresInMinutes: 30),
       );
-      final sent = verify(remote.verifyOtp(captureAny)).captured.single
-      as VerifyOtpRequestDto;
+      final sent =
+          verify(remote.verifyOtp(captureAny)).captured.single
+              as VerifyOtpRequestDto;
       expect(sent.email, 'a@b.com');
       expect(sent.otp, '123456');
     });
 
     test('returns an error when status is true but data is null', () async {
-      when(remote.verifyOtp(any)).thenAnswer(
-            (_) async => VerifyOtpResponseDto(status: true, code: 200),
-      );
+      when(
+        remote.verifyOtp(any),
+      ).thenAnswer((_) async => VerifyOtpResponseDto(status: true, code: 200));
 
       final result = await repo.verifyOtp(verifyOtpRequest: request);
 
@@ -338,7 +360,7 @@ void main() {
 
     test('returns the server message when the code is wrong', () async {
       when(remote.verifyOtp(any)).thenAnswer(
-            (_) async => VerifyOtpResponseDto(
+        (_) async => VerifyOtpResponseDto(
           status: false,
           code: 400,
           message: 'Invalid OTP',
@@ -353,7 +375,7 @@ void main() {
 
     test('maps a connection error to NoInternetError', () async {
       when(remote.verifyOtp(any)).thenAnswer(
-            (_) async => throw DioException(
+        (_) async => throw DioException(
           requestOptions: RequestOptions(path: '/'),
           type: DioExceptionType.connectionError,
           message: 'offline',
@@ -379,17 +401,16 @@ void main() {
       final result = await repo.resetPassword(resetPasswordRequest: request);
 
       expect(result, isA<SuccessResponse>());
-      final sent = verify(remote.resetPassword(captureAny)).captured.single
-      as ResetPasswordRequestDto;
+      final sent =
+          verify(remote.resetPassword(captureAny)).captured.single
+              as ResetPasswordRequestDto;
       expect(sent.otpToken, 'token-1');
       expect(sent.password, 'Abcdef1');
       expect(sent.confirmPassword, 'Abcdef1');
     });
 
     test('returns BadResponseError when status is false', () async {
-      when(remote.resetPassword(any)).thenAnswer(
-            (_) async => failedResponse(),
-      );
+      when(remote.resetPassword(any)).thenAnswer((_) async => failedResponse());
 
       final result = await repo.resetPassword(resetPasswordRequest: request);
 
@@ -399,7 +420,7 @@ void main() {
 
     test('maps a 401 DioException to UnauthorizedError', () async {
       when(remote.resetPassword(any)).thenAnswer(
-            (_) async => throw DioException(
+        (_) async => throw DioException(
           requestOptions: RequestOptions(path: '/'),
           type: DioExceptionType.badResponse,
           response: Response(
@@ -414,4 +435,35 @@ void main() {
       expect(errorOf(result), isA<UnauthorizedError>());
     });
   });
+}
+
+class _MemoryTokenStorage implements TokenStorage {
+  String? accessToken;
+  String? refreshToken;
+
+  @override
+  Future<void> clearTokens() async {
+    accessToken = null;
+    refreshToken = null;
+  }
+
+  @override
+  Future<String?> getAccessToken() async => accessToken;
+
+  @override
+  Future<String?> getRefreshToken() async => refreshToken;
+
+  @override
+  Future<void> saveAccessToken(String accessToken) async {
+    this.accessToken = accessToken;
+  }
+
+  @override
+  Future<void> saveTokens({
+    required String accessToken,
+    required String refreshToken,
+  }) async {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+  }
 }
