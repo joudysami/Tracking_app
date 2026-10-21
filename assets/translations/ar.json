@@ -259,5 +259,11 @@
         "logout": "تسجيل الخروج",
         "logout_confirm": "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
         "delete_account": "حذف الحساب"
+    },
+    "order_map": {
+        "your_location": "موقعك",
+        "pickup_address": "عنوان الاستلام",
+        "user_address": "عنوان العميل",
+        "user": "العميل"
     }
 }

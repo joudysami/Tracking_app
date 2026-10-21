@@ -392,4 +392,9 @@ abstract class LocaleKeys {
       'profile.logout_confirm';
   static const String profileDeleteAccount =
       'profile.delete_account';
+    // Order Map
+  static const String orderMapYourLocation = 'order_map.your_location';
+  static const String orderMapPickupAddress = 'order_map.pickup_address';
+  static const String orderMapUserAddress = 'order_map.user_address';
+  static const String orderMapUser = 'order_map.user';    
 }

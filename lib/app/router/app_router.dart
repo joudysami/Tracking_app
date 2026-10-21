@@ -4,6 +4,8 @@ import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
 import 'package:tracking_app/features/auth/presentation/apply/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/page/login_page.dart';
+import 'package:tracking_app/features/location_tracking/data/models/map_party_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/page/order_map_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 class AppRouter {
@@ -11,13 +13,14 @@ class AppRouter {
 
   static GoRouter createRouter({String? initialLocation}) {
     return GoRouter(
-      initialLocation: initialLocation ?? AppRoutes.onBoarding,
+      initialLocation: initialLocation ?? AppRoutes.orderMap,
       errorBuilder: _errorBuilder,
       routes: [
         _onBordingRoute(),
         _loginRoute(),
         _applyRoute(),
         _forgetPasswordRoute(),
+        _orderMapRoute(),
       ],
     );
   }
@@ -60,6 +63,15 @@ class AppRouter {
       builder: (context, state) {
         //return ForgetPasswordPage();
         throw UnimplementedError('Forget password page is not implemented');
+      },
+    );
+  }
+  static GoRoute _orderMapRoute() {
+    return GoRoute(
+      path: AppRoutes.orderMap,
+      builder: (context, state) {
+        final stage = state.extra as OrderMapStage? ?? OrderMapStage.pickup;
+        return OrderMapPage(order: orderMapMock, stage: stage);
       },
     );
   }

@@ -15,11 +15,18 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 
+import '../../features/location_tracking/data/repos/location_repo_impl.dart'
+    as _i1033;
+import '../../features/location_tracking/domain/repos/location_repo.dart'
+    as _i1053;
+import '../../features/location_tracking/domain/use_cases/location_tracking_use_case.dart'
+    as _i258;
 import '../modules/dio_module.dart' as _i948;
 import '../network/auth_interceptors.dart' as _i466;
 import '../network/safe_call.dart' as _i185;
 import '../network/token_refresh.dart' as _i36;
 import '../network/token_storage.dart' as _i964;
+import '../services/location_service.dart' as _i669;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -33,7 +40,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i466.AuthSessionNotifier>(
       () => _i466.AuthSessionNotifier(),
     );
+    gh.lazySingleton<_i669.LocationService>(() => _i669.LocationService());
+    gh.factory<_i1053.LocationRepo>(
+      () => _i1033.LocationRepoImpl(
+        gh<_i669.LocationService>(),
+        gh<_i185.SafeCall>(),
+      ),
+    );
     gh.lazySingleton<_i36.TokenRefresher>(() => _i36.ApiTokenRefresher());
+    gh.factory<_i258.LocationTrackingUseCase>(
+      () => _i258.LocationTrackingUseCase(gh<_i1053.LocationRepo>()),
+    );
     gh.lazySingleton<_i964.TokenStorage>(
       () => _i964.SecureTokenStorage(gh<_i558.FlutterSecureStorage>()),
     );
