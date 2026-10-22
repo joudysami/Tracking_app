@@ -9,6 +9,8 @@ import 'package:tracking_app/features/auth/presentation/apply/view/page/success_
 import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_event.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
 import '../../features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import '../../features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
@@ -21,7 +23,7 @@ class AppRouter {
 
   static GoRouter createRouter({String? initialLocation}) {
     return GoRouter(
-      initialLocation: initialLocation ?? AppRoutes.orderMap,
+      initialLocation: initialLocation ?? AppRoutes.onBoarding,
       errorBuilder: _errorBuilder,
       routes: [
         _onBordingRoute(),
@@ -98,8 +100,12 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.orderMap,
       builder: (context, state) {
-        final stage = state.extra as OrderMapStage? ?? OrderMapStage.pickup;
-        return OrderMapPage(order: orderMapMock, stage: stage);
+      return BlocProvider(
+          create: (_) =>
+              getIt<LocationTrackingViewModel>()
+                ..doEvent(LocationTrackingStarted()),
+          child: OrderMapPage(order: orderMapMock, stage: OrderMapStage.pickup),
+        );
       },
     );
   }

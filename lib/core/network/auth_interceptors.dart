@@ -63,6 +63,10 @@ class AuthInterceptors extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await _tokenStorage.getAccessToken();
+    debugPrint(
+      '[AuthInterceptors] Access token exists: '
+      '${token?.isNotEmpty == true}',
+    );
 
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';

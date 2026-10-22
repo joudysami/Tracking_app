@@ -1,5 +1,5 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
+import 'package:tracking_app/features/location_tracking/domain/entities/location_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/repos/location_repo.dart';
 
 @injectable
@@ -8,7 +8,7 @@ class LocationTrackingUseCase {
 
   final LocationRepo _locationRepo;
 
-  Stream<Position> call() {
+  Stream<LocationEntity> call() {
     return _locationRepo.getPositionStream();
   }
 }

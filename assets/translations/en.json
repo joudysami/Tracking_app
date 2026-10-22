@@ -301,5 +301,20 @@
         "submitted_success": "Application submitted successfully",
         "success_title": "Your application has been submitted!",
         "success_body": "Thank you for providing your application, we will review your application and will get back to you soon."
+    },
+    "location_tracking": {
+        "unable_to_check_permission": "Unable to check location permission",
+        "locationPermissionDialogTitle": "Location Permission Required",
+        "locationPermissionDialogMessage": "We need your location to track the driver's position. Please allow location access.",
+        "cancel": "Cancel",
+        "locationOpenSettings": "Open Settings",
+        "locationServiceDisabledTitle": "Location Service Is Disabled",
+        "locationServiceDisabledMessage": "Please enable your device location service to start tracking.",
+        "locationServiceCheckFailed": "Failed to check the location service status.",
+        "locationPermissionCheckFailed": "Failed to check location permission.",
+        "locationPermissionDenied": "Location permission was denied. Please allow location access to continue.",
+        "locationStreamFailed": "Failed to receive location updates. Please try again.",
+        "locationReportFailed": "Failed to send your location to the server.",
+        "locationOpenSettingsFailed": "Failed to open settings. Please open them manually."
     }
 }

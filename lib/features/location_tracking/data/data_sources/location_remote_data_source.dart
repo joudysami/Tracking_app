@@ -1,0 +1,8 @@
+import 'package:tracking_app/features/location_tracking/data/models/location_report_request_model.dart';
+import 'package:tracking_app/features/location_tracking/data/models/location_report_response_model.dart';
+
+abstract interface class LocationRemoteDataSource {
+  Future<LocationReportResponseModel> reportLocation(
+    LocationReportRequestModel request,
+  );
+}
