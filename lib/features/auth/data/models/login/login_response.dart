@@ -5,8 +5,12 @@ part 'login_response.g.dart';
 
 @JsonSerializable()
 class LoginResponse {
+  @JsonKey(name: 'status')
   final bool isSuccess;
+
+  @JsonKey(name: 'code')
   final int statusCode;
+
   final String message;
   final LoginData data;
 
@@ -18,40 +22,34 @@ class LoginResponse {
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$LoginResponseFromJson({
-        ...json,
-        'isSuccess': json['isSuccess'] ?? json['success'] ?? false,
-      });
+      _$LoginResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
 }
 
 @JsonSerializable()
 class LoginData {
+  final LoginUser? user;
+
+  @JsonKey(name: 'token')
   final String accessToken;
+
   final String refreshToken;
-  final int expiresIn;
-  final String role;
-  final String? driverApplicationStatus;
-  final bool canAccessDriverHome;
-  final String? driverApplicationRejectionReason;
+  @JsonKey(defaultValue: '')
+  final String accessTokenExpiresAt;
 
   LoginData({
+    this.user,
     required this.accessToken,
     required this.refreshToken,
-    required this.expiresIn,
-    required this.role,
-    this.driverApplicationStatus,
-    required this.canAccessDriverHome,
-    this.driverApplicationRejectionReason,
+    required this.accessTokenExpiresAt,
   });
 
   LoginEntity toDomain() {
     return LoginEntity(
       accessToken: accessToken,
       refreshToken: refreshToken,
-      role: role,
-      
+      role: user?.roles.isNotEmpty == true ? user!.roles.first : '',
     );
   }
 
@@ -59,4 +57,53 @@ class LoginData {
       _$LoginDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginDataToJson(this);
+}
+
+@JsonSerializable()
+class LoginUser {
+  final String id;
+  final String email;
+  final List<String> roles;
+
+  // The Driver login response returns name instead of firstName/lastName.
+  @JsonKey(name: 'name', defaultValue: '')
+  final String name;
+
+  LoginUser({
+    required this.id,
+    required this.email,
+    required this.roles,
+    this.name = '',
+  });
+
+  factory LoginUser.fromJson(Map<String, dynamic> json) =>
+      _$LoginUserFromJson(json);
+
+  Map<String, dynamic> toJson() => _$LoginUserToJson(this);
+}
+
+LoginData loginDataFromJson(dynamic raw) {
+  if (raw is Map<String, dynamic>) {
+    return LoginData.fromJson(raw);
+  }
+
+  if (raw is List &&
+      raw.isNotEmpty &&
+      raw.first is Map<String, dynamic>) {
+    return LoginData.fromJson(raw.first as Map<String, dynamic>);
+  }
+
+  throw const FormatException('Login response data is not valid.');
+}
+
+LoginUser? loginUserFromJson(dynamic raw) {
+  if (raw is Map<String, dynamic>) {
+    return LoginUser.fromJson(raw);
+  }
+
+  if (raw is List && raw.isNotEmpty && raw.first is Map<String, dynamic>) {
+    return LoginUser.fromJson(raw.first as Map<String, dynamic>);
+  }
+
+  return null;
 }

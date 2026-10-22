@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:injectable/injectable.dart';
 
@@ -10,4 +11,7 @@ abstract class ServicesModule {
 
   @lazySingleton
   ImagePicker provideImagePicker() => ImagePicker();
+
+  @lazySingleton
+  GeolocatorPlatform provideGeolocator() => GeolocatorPlatform.instance;
 }
