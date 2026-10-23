@@ -16,18 +16,11 @@ class AcceptButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 29,
       child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: const Color(0xFFD51D72),
-          foregroundColor: Colors.white,
-          disabledBackgroundColor: const Color(0xFFDDA1BC),
-          disabledForegroundColor: Colors.white,
-          elevation: 0,
-          padding: const EdgeInsets.symmetric(horizontal: 20),
-          shape: const StadiumBorder(),
+         padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
+        onPressed: isLoading ? null : onPressed,
         child: isLoading
             ? const SizedBox(
                 width: 14,
@@ -40,7 +33,8 @@ class AcceptButton extends StatelessWidget {
             : Text(
                 LocaleKeys.homeAccept.tr(),
                 style: const TextStyle(
-                  fontSize: 11,
+                  color: Colors.white,
+                  fontSize: 14,
                   fontWeight: FontWeight.w600,
                 ),
               ),

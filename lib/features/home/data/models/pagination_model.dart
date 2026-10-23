@@ -4,14 +4,22 @@ import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart'
 part 'pagination_model.g.dart';
 
 @JsonSerializable()
-class PaginationModel extends PaginationEntity {
+class PaginationModel  {
+  final int page;
+  final int pageSize;
+
+  final int totalCount;
+  final int totalPages;
+  final bool hasNextPage;
+  final bool hasPreviousPage;
+
   const PaginationModel({
-    required super.page,
-    required super.pageSize,
-    required super.totalCount,
-    required super.totalPages,
-    required super.hasNextPage,
-    required super.hasPreviousPage,
+    required this.page,
+    required this.pageSize,
+    required this.totalCount,
+    required this.totalPages,
+    required this.hasNextPage,
+    required this.hasPreviousPage,
   });
 
   factory PaginationModel.fromJson(
@@ -21,4 +29,14 @@ class PaginationModel extends PaginationEntity {
 
   Map<String, dynamic> toJson() =>
       _$PaginationModelToJson(this);
+      pagination_entity toDomain() {
+    return pagination_entity(
+      page: page,
+      pageSize: pageSize,
+      totalCount: totalCount,
+      totalPages: totalPages,
+      hasNextPage: hasNextPage,
+      hasPreviousPage: hasPreviousPage,
+    );
+      }
 }

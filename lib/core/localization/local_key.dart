@@ -105,6 +105,7 @@ abstract class LocaleKeys {
       'auth.wrong_email_or_password';
   static const String authPasswordUpdated = 'auth.password_updated';
   static const String rememberMe = 'auth.remember_me';
+  static const String authRememberMe = 'auth.remember_me';
 
   static const String navHome = 'nav.home';
   static const String navOrders = 'nav.orders';
@@ -125,6 +126,7 @@ abstract class LocaleKeys {
   static const String ordersTitle = 'orders.title';
   static const String ordersActiveTab = 'orders.active_tab';
   static const String ordersCompletedTab = 'orders.completed_tab';
+  static const String ordersCancelledTab = 'orders.cancelled_tab';
   static const String ordersNoOrders = 'orders.no_orders';
   static const String ordersOrderNumber = 'orders.order_number';
 

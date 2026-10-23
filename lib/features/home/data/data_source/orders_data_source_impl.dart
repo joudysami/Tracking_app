@@ -5,30 +5,25 @@ import 'package:tracking_app/features/home/data/models/available_orders_response
 import 'package:tracking_app/features/home/data/models/claim_order_response.dart';
 @Injectable(as: OrdersRemoteDataSource)
 
-class OrdersRemoteDataSourceImpl  extends OrdersRemoteDataSource{
-  final OrderApiClient orderApiClient;
-  OrdersRemoteDataSourceImpl({required this.orderApiClient});
+class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource{
+  final HomeApiClient  homeApiClient ;
+  OrdersRemoteDataSourceImpl({required this.homeApiClient});
   @override
-  Future<AvailableOrdersResponse> getAvailableOrders({
-    required int page,
-    required int pageSize,
-  }) async {
-    final json = await orderApiClient.getAvailableOrders(
-      page: page,
-      pageSize: pageSize,
-    );
+Future<AvailableOrdersResponse> getAvailableOrders(
+  {
+  required int page,
+  required int pageSize,
 
-    return AvailableOrdersResponse.fromJson(json);
   }
-
-  @override
-  Future<ClaimOrderResponse> claimOrder({
-    required String orderId,
-  }) async {
-    final json = await orderApiClient.claimOrder(
-      orderId: orderId,
-    );
-
-    return ClaimOrderResponse.fromJson(json);
-  }
+) {
+  return homeApiClient.getAvailableOrders(page: page, pageSize: pageSize);
+}
+@override
+Future<ClaimOrderResponse> claimOrder({
+  required String orderId,
+}) {
+  return homeApiClient.claimOrder(
+    orderId: orderId,
+  );
+}
 }

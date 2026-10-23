@@ -1,9 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
 import 'package:tracking_app/core/localization/local_key.dart';
-
+import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/order_card.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_state.dart';
@@ -39,42 +38,33 @@ class HomeScreen extends StatelessWidget {
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F8F8),
         appBar: AppBar(
-          title: Text(
-            LocaleKeys.homeTitle.tr(),
-            style: const TextStyle(fontSize: 14),
+          title: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              LocaleKeys.homeTitle.tr(),
+              style:  TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: context.colors.pink,
+              ),
+            ),
           ),
-          backgroundColor: const Color(0xFFF8F8F8),
-          foregroundColor: const Color(0xFF555555),
-          elevation: 0,
-          scrolledUnderElevation: 0,
         ),
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: Text(
-                  LocaleKeys.homeBrand.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFFD51D72),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'serif',
-                  ),
-                ),
-              ),
+             
               Expanded(
                 child: BlocBuilder<HomeCubit, HomeState>(
                   builder: (context, state) {
                     final ordersState = state.ordersState;
 
                     if (ordersState.isLoading && ordersState.data == null) {
-                      return const Center(
+                      return Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFFD51D72),
+                          color:context.colors.pink,
                         ),
                       );
                     }
@@ -93,7 +83,8 @@ class HomeScreen extends StatelessWidget {
                                   const GetAvailableOrdersEvent(),
                                 );
                               },
-                              child: const Text('Retry'),
+                              child: Text(LocaleKeys.commonRetry.tr(),
+                            ),
                             ),
                           ],
                         ),
@@ -103,11 +94,10 @@ class HomeScreen extends StatelessWidget {
                     final orders = ordersState.data ?? [];
 
                     if (orders.isEmpty) {
-                      return const Center(child: Text('No available orders'));
+                      return Center(child: Text(LocaleKeys.homeNoPendingOrders.tr()));
                     }
-
                     return RefreshIndicator(
-                      color: const Color(0xFFD51D72),
+                      color: context.colors.pink,
                       onRefresh: () async {
                         context.read<HomeCubit>().doEvent(
                           const GetAvailableOrdersEvent(),

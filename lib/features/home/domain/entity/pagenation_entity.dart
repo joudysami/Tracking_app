@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 
-class PaginationEntity extends Equatable{
+class pagination_entity extends Equatable{
   final int page;
   final int pageSize;
   final int totalCount;
@@ -8,7 +8,7 @@ class PaginationEntity extends Equatable{
   final bool hasNextPage;
   final bool hasPreviousPage;
 
-  const PaginationEntity({
+  const pagination_entity({
     required this.page,
     required this.pageSize,
     required this.totalCount,

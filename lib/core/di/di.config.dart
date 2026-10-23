@@ -43,6 +43,13 @@ import '../../features/home/data/api/order_api_client.dart' as _i670;
 import '../../features/home/data/data_source/orders_data_source.dart' as _i717;
 import '../../features/home/data/data_source/orders_data_source_impl.dart'
     as _i888;
+import '../../features/home/data/repo/order_repo_impl.dart' as _i50;
+import '../../features/home/domain/repo/order_repo.dart' as _i621;
+import '../../features/home/domain/use_case/claim_order_usecase.dart' as _i610;
+import '../../features/home/domain/use_case/get_available_order_usecase.dart'
+    as _i264;
+import '../../features/home/presentation/view_model/home_view_model.dart'
+    as _i77;
 import '../modules/api_module.dart' as _i98;
 import '../modules/dio_module.dart' as _i948;
 import '../modules/services_module.dart' as _i120;
@@ -76,11 +83,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i644.ImagePickerService>(
       () => _i644.ImagePickerService(gh<_i183.ImagePicker>()),
     );
-    gh.factory<_i717.OrdersRemoteDataSource>(
-      () => _i888.OrdersRemoteDataSourceImpl(
-        orderApiClient: gh<_i670.OrderApiClient>(),
-      ),
-    );
     gh.lazySingleton<_i964.TokenStorage>(
       () => _i964.SecureTokenStorage(gh<_i558.FlutterSecureStorage>()),
     );
@@ -97,9 +99,17 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i710.AuthApiClient>(
       () => apiModule.provideAuthApiClient(gh<_i361.Dio>()),
     );
+    gh.factory<_i670.HomeApiClient>(
+      () => apiModule.provideHomeApiClient(gh<_i361.Dio>()),
+    );
     gh.factory<_i25.AuthRemoteDataSource>(
       () =>
           _i182.AuthRemoteDataSourceImpl(apiClient: gh<_i710.AuthApiClient>()),
+    );
+    gh.factory<_i717.OrdersRemoteDataSource>(
+      () => _i888.OrdersRemoteDataSourceImpl(
+        homeApiClient: gh<_i670.HomeApiClient>(),
+      ),
     );
     gh.factory<_i877.AuthRepo>(
       () => _i152.AuthRepoImpl(
@@ -108,17 +118,35 @@ extension GetItInjectableX on _i174.GetIt {
         tokenStorage: gh<_i964.TokenStorage>(),
       ),
     );
+    gh.factory<_i621.OrderRepo>(
+      () => _i50.OrdersRepoImpl(
+        gh<_i717.OrdersRemoteDataSource>(),
+        gh<_i185.SafeCall>(),
+      ),
+    );
     gh.factory<_i1038.LoginUseCase>(
       () => _i1038.LoginUseCase(gh<_i877.AuthRepo>()),
     );
     gh.factory<_i725.LoginViewModel>(
       () => _i725.LoginViewModel(gh<_i1038.LoginUseCase>()),
     );
+    gh.factory<_i610.ClaimOrderUseCase>(
+      () => _i610.ClaimOrderUseCase(gh<_i621.OrderRepo>()),
+    );
+    gh.factory<_i264.GetAvailableOrdersUseCase>(
+      () => _i264.GetAvailableOrdersUseCase(gh<_i621.OrderRepo>()),
+    );
     gh.factory<_i743.ApplyUseCase>(
       () => _i743.ApplyUseCase(gh<_i877.AuthRepo>()),
     );
     gh.factory<_i311.GetVehicleTypesUseCase>(
       () => _i311.GetVehicleTypesUseCase(gh<_i877.AuthRepo>()),
+    );
+    gh.factory<_i77.HomeCubit>(
+      () => _i77.HomeCubit(
+        getAvailableOrdersUseCase: gh<_i264.GetAvailableOrdersUseCase>(),
+        claimOrderUseCase: gh<_i610.ClaimOrderUseCase>(),
+      ),
     );
     gh.factory<_i483.ForgetPasswordUseCase>(
       () => _i483.ForgetPasswordUseCase(gh<_i877.AuthRepo>()),

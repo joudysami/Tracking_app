@@ -50,8 +50,13 @@ class _LoginPageState extends State<LoginPage> {
                 title:  Text(LocaleKeys.authLogin.tr()),
                 leading:IconButton(onPressed:(){},icon: Icon(Icons.arrow_back_ios), ),
                 ),
-        body: BlocProvider(
-          create: (context) => loginViewModel,
+        body: BlocListener<LoginViewModel,LoginState>(
+          listener: (BuildContext context, LoginState state) { 
+            print('Login State: ${state.loginState}');
+            if(state.loginState.data != null&& state.loginState.isLoading == false){
+              context.go(AppRoutes.home);
+            }
+          },
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),

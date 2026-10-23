@@ -4,12 +4,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tracking_app/app/router/app_router.dart';
 import 'package:tracking_app/core/constant/api_endpoints.dart';
 import 'package:tracking_app/core/di/di.dart';
-import 'package:tracking_app/core/constant/api_endpoints.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/core/theme/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-import 'core/di/di.dart';
 
 
 Future<void> main() async {

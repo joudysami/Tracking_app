@@ -10,10 +10,10 @@ class ButtonNavigationBar extends StatefulWidget {
 
   @override
   State<ButtonNavigationBar> createState() =>
-      _MainScreenState();
+      _ButtonNavigationBarState();
 }
 
-class _MainScreenState extends State<ButtonNavigationBar> {
+class _ButtonNavigationBarState extends State<ButtonNavigationBar> {
   int currentIndex = 0;
 
   final List<Widget> screens = const [

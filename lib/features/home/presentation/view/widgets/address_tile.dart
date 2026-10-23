@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import 'package:tracking_app/core/theme/app_color.dart';
 
 class AddressTile extends StatelessWidget {
   final String title;
@@ -13,8 +14,6 @@ class AddressTile extends StatelessWidget {
     this.isStore = false,
   });
 
-  static const Color pink = Color(0xFFD51D72);
-
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,19 +26,19 @@ class AddressTile extends StatelessWidget {
       child: Row(
         children: [
           CircleAvatar(
-            radius: 15,
+            radius: 18,
             backgroundColor:
-                isStore ? pink : const Color(0xFFE9D6C0),
+                isStore ? context.colors.pink : context.colors.white,
             child: isStore
                 ? const Icon(
                     Icons.local_florist,
                     color: Colors.white,
-                    size: 17,
+                    size: 20,
                   )
                 : const Icon(
                     Icons.person,
                     color: Colors.brown,
-                    size: 19,
+                    size: 20,
                   ),
           ),
           const SizedBox(width: 8),
@@ -60,10 +59,10 @@ class AddressTile extends StatelessWidget {
                 const SizedBox(height: 3),
                 Row(
                   children: [
-                    const Icon(
+                     Icon(
                       Icons.location_on_outlined,
-                      size: 12,
-                      color: Colors.black54,
+                      size: 16,
+                      color: context.colors.black,
                     ),
                     const SizedBox(width: 3),
                     Expanded(
@@ -71,9 +70,9 @@ class AddressTile extends StatelessWidget {
                         address,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          fontSize: 9,
-                          color: Color(0xFF555555),
+                        style: TextStyle(
+                          fontSize: 14,
+                          color: context.colors.black,
                         ),
                       ),
                     ),

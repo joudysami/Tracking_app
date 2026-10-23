@@ -25,14 +25,16 @@ import '../mapper/forget_password_mapper.dart';
 class AuthRepoImpl implements AuthRepo {
   final AuthRemoteDataSource remoteDataSource;
   final SafeCall safeCall;
-    final TokenStorage tokenStorage;
+  final TokenStorage tokenStorage;
 
-  AuthRepoImpl({required this.remoteDataSource, required this.safeCall, required this.tokenStorage});
+  AuthRepoImpl({
+    required this.remoteDataSource,
+    required this.safeCall,
+    required this.tokenStorage,
+  });
 
   @override
-  Future<BaseResponse<ApplyResultEntity>> apply(
-    ApplyParams entity,
-  ) async {
+  Future<BaseResponse<ApplyResultEntity>> apply(ApplyParams entity) async {
     final request = await ApplyRequestModel.fromEntity(entity);
 
     final response = await safeCall.safeApiCall(
@@ -45,17 +47,13 @@ class AuthRepoImpl implements AuthRepo {
 
         if (data == null) {
           return ErrorResponse<ApplyResultEntity>(
-            appError: BadResponseError(
-              'The application response is empty.',
-            ),
+            appError: BadResponseError('The application response is empty.'),
           );
         }
 
         if (data.status == false) {
           return ErrorResponse<ApplyResultEntity>(
-            appError: BadResponseError(
-              data.message ?? 'Something went wrong.',
-            ),
+            appError: BadResponseError(data.message ?? 'Something went wrong.'),
           );
         }
 
@@ -63,20 +61,14 @@ class AuthRepoImpl implements AuthRepo {
 
         if (result == null) {
           return ErrorResponse<ApplyResultEntity>(
-            appError: BadResponseError(
-              'The application data is empty.',
-            ),
+            appError: BadResponseError('The application data is empty.'),
           );
         }
 
-        return SuccessResponse<ApplyResultEntity>(
-          result.toDomain(),
-        );
+        return SuccessResponse<ApplyResultEntity>(result.toDomain());
 
       case ErrorResponse<ApplyResponse> error:
-        return ErrorResponse<ApplyResultEntity>(
-          appError: error.appError,
-        );
+        return ErrorResponse<ApplyResultEntity>(appError: error.appError);
     }
   }
 
@@ -92,17 +84,13 @@ class AuthRepoImpl implements AuthRepo {
 
         if (data == null) {
           return ErrorResponse<List<VehicleTypeEntity>>(
-            appError: BadResponseError(
-              'The vehicle types response is empty.',
-            ),
+            appError: BadResponseError('The vehicle types response is empty.'),
           );
         }
 
         if (data.status == false) {
           return ErrorResponse<List<VehicleTypeEntity>>(
-            appError: BadResponseError(
-              data.message ?? 'Something went wrong.',
-            ),
+            appError: BadResponseError(data.message ?? 'Something went wrong.'),
           );
         }
 
@@ -110,23 +98,19 @@ class AuthRepoImpl implements AuthRepo {
             .map((vehicleType) => vehicleType.toDomain())
             .toList();
 
-        return SuccessResponse<List<VehicleTypeEntity>>(
-          entities,
-        );
+        return SuccessResponse<List<VehicleTypeEntity>>(entities);
 
       case ErrorResponse<VehicleTypesResponse> error:
-        return ErrorResponse<List<VehicleTypeEntity>>(
-          appError: error.appError,
-        );
+        return ErrorResponse<List<VehicleTypeEntity>>(appError: error.appError);
     }
   }
 
- @override
-  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) {
+  @override
+  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) async {
     return safeCall.safeApiCall(() async {
       final response = await remoteDataSource.login(request);
       await tokenStorage.saveTokens(
-        accessToken: response.data.accessToken,
+        accessToken: response.data.token,
         refreshToken: response.data.refreshToken,
       );
       return response.data.toDomain();
@@ -137,6 +121,7 @@ class AuthRepoImpl implements AuthRepo {
   Future<void> signOut() {
     return tokenStorage.clearTokens();
   }
+
   @override
   Future<BaseResponse<void>> forgetPassword({
     required ForgetPasswordRequest forgetPasswordRequest,
@@ -201,12 +186,7 @@ class AuthRepoImpl implements AuthRepo {
 
   static const _defaultError = 'Something went wrong.';
 
-  void _checkStatus(
-    bool? status,
-    int? code,
-    String? message,
-    dynamic errors,
-  ) {
+  void _checkStatus(bool? status, int? code, String? message, dynamic errors) {
     if (status == true) return;
 
     throw ApiException(

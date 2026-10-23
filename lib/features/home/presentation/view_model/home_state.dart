@@ -8,7 +8,7 @@ import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart'
 class HomeState extends Equatable {
   final BaseState<List<AvailableOrderEntity>> ordersState;
   final BaseState<ClaimedOrderEntity> claimOrderState;
-  final PaginationEntity? pagination;
+  final pagination_entity? pagination;
 
   const HomeState({
     this.ordersState = const BaseState(),
@@ -19,7 +19,7 @@ class HomeState extends Equatable {
   HomeState copyWith({
     BaseState<List<AvailableOrderEntity>>? ordersState,
     BaseState<ClaimedOrderEntity>? claimOrderState,
-    PaginationEntity? pagination,
+    pagination_entity? pagination,
   }) {
     return HomeState(
       ordersState: ordersState ?? this.ordersState,

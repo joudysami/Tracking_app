@@ -2,6 +2,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
+import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/accept_button.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/address_tile.dart';
 
@@ -35,18 +36,26 @@ class OrderCard extends StatelessWidget {
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: const Color(0xFFEBEBEB),
+          color: context.colors.white,
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.2),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
             LocaleKeys.homeFlowerOrder.tr(),
-            style: const TextStyle(
-              fontSize: 12,
+            style:  TextStyle(
+              fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: Color(0xFF333333),
+              color:context.colors.black.shade50 ,
             ),
           ),
           const SizedBox(height: 8),
@@ -54,7 +63,7 @@ class OrderCard extends StatelessWidget {
           Text(
             LocaleKeys.homePickupAddress.tr(),
             style: const TextStyle(
-              fontSize: 9,
+              fontSize:14,
               color: Colors.grey,
             ),
           ),
@@ -71,7 +80,7 @@ class OrderCard extends StatelessWidget {
           Text(
             LocaleKeys.homeUserAddress.tr(),
             style: const TextStyle(
-              fontSize: 9,
+              fontSize: 14,
               color: Colors.grey,
             ),
           ),
@@ -93,8 +102,8 @@ class OrderCard extends StatelessWidget {
                     namedArgs: {'price': price},
                   ),
                   style: const TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
               ),
