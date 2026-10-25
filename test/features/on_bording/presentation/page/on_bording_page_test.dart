@@ -34,21 +34,14 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
     await tester.pumpWidget(
-      ScreenUtilInit(
-        child: const MaterialApp(
-          home: OnBordingPage(),
-        ),
-      ),
+      ScreenUtilInit(child: const MaterialApp(home: OnBordingPage())),
     );
 
     expect(find.byType(Scaffold), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
     expect(find.byType(AppButton), findsNWidgets(2));
 
-    expect(
-      find.text(LocaleKeys.onboardingWelcome.tr()),
-      findsOneWidget,
-    );
+    expect(find.text(LocaleKeys.onboardingWelcome.tr()), findsOneWidget);
 
     expect(find.text(LocaleKeys.authLogin.tr()), findsOneWidget);
     expect(find.text(LocaleKeys.commonApply.tr()), findsOneWidget);

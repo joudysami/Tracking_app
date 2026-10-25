@@ -22,8 +22,9 @@ void main() {
   Future<void> pump(WidgetTester tester) =>
       pumpStep(tester, viewModel: viewModel, step: const EmailStepView());
 
-  testWidgets('renders title, description, email field and continue button',
-      (tester) async {
+  testWidgets('renders title, description, email field and continue button', (
+    tester,
+  ) async {
     await pump(tester);
 
     expect(find.text(LocaleKeys.authForgotPassword), findsOneWidget);
@@ -40,19 +41,24 @@ void main() {
     expect(find.text('saved@mail.com'), findsOneWidget);
   });
 
-  testWidgets('shows required error and dispatches nothing when empty',
-      (tester) async {
+  testWidgets('shows required error and dispatches nothing when empty', (
+    tester,
+  ) async {
     await pump(tester);
 
     await tester.tap(continueButton());
     await tester.pump();
 
-    expect(find.text(LocaleKeys.validationPleaseEnterYourEmail), findsOneWidget);
+    expect(
+      find.text(LocaleKeys.validationPleaseEnterYourEmail),
+      findsOneWidget,
+    );
     expect(viewModel.events, isEmpty);
   });
 
-  testWidgets('shows invalid email error for a malformed email',
-      (tester) async {
+  testWidgets('shows invalid email error for a malformed email', (
+    tester,
+  ) async {
     await pump(tester);
 
     await tester.enterText(emailField(), 'not-an-email');
@@ -66,8 +72,9 @@ void main() {
     expect(viewModel.events, isEmpty);
   });
 
-  testWidgets('dispatches SendEmailEvent with the trimmed email',
-      (tester) async {
+  testWidgets('dispatches SendEmailEvent with the trimmed email', (
+    tester,
+  ) async {
     await pump(tester);
 
     await tester.enterText(emailField(), '  user@mail.com  ');
@@ -81,8 +88,9 @@ void main() {
     );
   });
 
-  testWidgets('disables the button and locks the field while loading',
-      (tester) async {
+  testWidgets('disables the button and locks the field while loading', (
+    tester,
+  ) async {
     viewModel.setState(const ForgetPasswordState(isLoading: true));
     await pump(tester);
 
@@ -109,6 +117,9 @@ void main() {
     viewModel.setState(const ForgetPasswordState());
     await tester.pump();
 
-    expect(tester.widget<ElevatedButton>(continueButton()).onPressed, isNotNull);
+    expect(
+      tester.widget<ElevatedButton>(continueButton()).onPressed,
+      isNotNull,
+    );
   });
 }

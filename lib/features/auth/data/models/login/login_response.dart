@@ -5,58 +5,75 @@ part 'login_response.g.dart';
 
 @JsonSerializable()
 class LoginResponse {
-  final bool isSuccess;
-  final int statusCode;
+  final bool status;
+  final int code;
   final String message;
   final LoginData data;
 
-  LoginResponse({
-    required this.isSuccess,
-    required this.statusCode,
+  const LoginResponse({
+    required this.status,
+    required this.code,
     required this.message,
     required this.data,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
-      _$LoginResponseFromJson({
-        ...json,
-        'isSuccess': json['isSuccess'] ?? json['success'] ?? false,
-      });
+      _$LoginResponseFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginResponseToJson(this);
 }
 
 @JsonSerializable()
 class LoginData {
-  final String accessToken;
+  final UserModel user;
+  final String token;
   final String refreshToken;
-  final int expiresIn;
-  final String role;
-  final String? driverApplicationStatus;
-  final bool canAccessDriverHome;
-  final String? driverApplicationRejectionReason;
 
-  LoginData({
-    required this.accessToken,
+  const LoginData({
+    required this.user,
+    required this.token,
     required this.refreshToken,
-    required this.expiresIn,
-    required this.role,
-    this.driverApplicationStatus,
-    required this.canAccessDriverHome,
-    this.driverApplicationRejectionReason,
   });
-
-  LoginEntity toDomain() {
-    return LoginEntity(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      role: role,
-      
-    );
-  }
 
   factory LoginData.fromJson(Map<String, dynamic> json) =>
       _$LoginDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginDataToJson(this);
+  LoginEntity toDomain() {
+    return LoginEntity(
+      accessToken: token,
+      refreshToken: refreshToken,
+      role: user.roles.isNotEmpty ? user.roles.first : '',
+    );
+  }
+}
+
+@JsonSerializable()
+class UserModel {
+  final String id;
+  final String email;
+  final String phone;
+  final String name;
+  final List<String> roles;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String gender;
+  final String notificationStatus;
+
+  const UserModel({
+    required this.id,
+    required this.email,
+    required this.phone,
+    required this.name,
+    required this.roles,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.gender,
+    required this.notificationStatus,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
+
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }

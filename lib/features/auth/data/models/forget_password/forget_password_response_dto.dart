@@ -17,7 +17,7 @@ class ForgetPasswordResponseDto {
   @JsonKey(name: "errors")
   final dynamic? errors;
 
-  ForgetPasswordResponseDto ({
+  ForgetPasswordResponseDto({
     this.status,
     this.code,
     this.message,
@@ -34,5 +34,3 @@ class ForgetPasswordResponseDto {
     return _$ForgetPasswordResponseDtoToJson(this);
   }
 }
-
-

@@ -29,14 +29,14 @@ abstract interface class TokenRefresher {
 @LazySingleton(as: TokenRefresher)
 class ApiTokenRefresher implements TokenRefresher {
   ApiTokenRefresher()
-      : _dio = Dio(
-    BaseOptions(
-      connectTimeout: const Duration(seconds: 30),
-      sendTimeout: const Duration(seconds: 30),
-      receiveTimeout: const Duration(seconds: 30),
-      headers: const {'Content-Type': 'application/json'},
-    ),
-  );
+    : _dio = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 30),
+          sendTimeout: const Duration(seconds: 30),
+          receiveTimeout: const Duration(seconds: 30),
+          headers: const {'Content-Type': 'application/json'},
+        ),
+      );
 
   final Dio _dio;
 

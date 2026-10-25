@@ -47,19 +47,41 @@ AppError _connectionError(DioException exception) {
 
 AppError _parseBadResponse(DioException exception) {
   final data = exception.response?.data;
-  if (data is Map<String, dynamic>) {
-    final fieldErrors = fieldErrorsMessage(data['errors']) ??
-        fieldErrorsMessage(_validationFieldErrors(data['data']));
-    if (fieldErrors != null) return BadResponseError(fieldErrors);
-    if (data['message'] != null) {
-      return BadResponseError(data['message'].toString());
+
+  if (data is Map) {
+    final responseData = Map<String, dynamic>.from(data);
+
+    final rawErrors = responseData['errors'];
+    final rawValidationData = responseData['data'];
+
+    final fieldErrors =
+        fieldErrorsMessage(_toStringDynamicMap(rawErrors)) ??
+        fieldErrorsMessage(_validationFieldErrors(rawValidationData));
+
+    if (fieldErrors != null) {
+      return BadResponseError(fieldErrors);
     }
-    if (data['error'] != null) {
-      return BadResponseError(data['error'].toString());
+
+    if (responseData['message'] != null) {
+      return BadResponseError(responseData['message'].toString());
+    }
+
+    if (responseData['error'] != null) {
+      return BadResponseError(responseData['error'].toString());
     }
   }
-  if (exception.response?.statusCode == 401) return UnauthorizedError();
+
+  if (exception.response?.statusCode == 401) {
+    return UnauthorizedError();
+  }
+
   return BadResponseError(statusCodeToMessage(exception.response?.statusCode));
+}
+
+Map<String, dynamic>? _toStringDynamicMap(dynamic raw) {
+  if (raw is! Map) return null;
+
+  return Map<String, dynamic>.from(raw);
 }
 
 /// Docker identity validation failures put field errors in `data`

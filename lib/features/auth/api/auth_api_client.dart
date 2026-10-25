@@ -19,11 +19,11 @@ part 'auth_api_client.g.dart';
 @RestApi()
 abstract class AuthApiClient {
   factory AuthApiClient(Dio dio, {String baseUrl}) = _AuthApiClient;
-  
- @POST(ApiEndpoints.login)
+
+  @POST(ApiEndpoints.login)
   Future<LoginResponse> login(@Body() LoginRequest request);
 
- @MultiPart()
+  @MultiPart()
   @POST(ApiEndpoints.applyDriver)
   Future<ApplyResponse> apply(
     @Part(name: ApiRequestParams.vehicleTypeId) String vehicleTypeId,
@@ -43,7 +43,6 @@ abstract class AuthApiClient {
   );
   @GET(ApiEndpoints.vehicleTypes)
   Future<VehicleTypesResponse> getVehicleTypes();
-  
 
   @POST(ApiEndpoints.forgetPassword)
   Future<ForgetPasswordResponseDto> forgetPassword(

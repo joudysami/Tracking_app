@@ -46,12 +46,16 @@ class _EmailStepViewState extends State<EmailStepView> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading =
-    context.select((ForgetPasswordViewModel v) => v.state.isLoading);
+    final isLoading = context.select(
+      (ForgetPasswordViewModel v) => v.state.isLoading,
+    );
 
     return StepLayout(
       title: LocaleKeys.authForgotPassword.tr(),
-      description: Text(LocaleKeys.authForgotPasswordDesc.tr(),textAlign: TextAlign.center,),
+      description: Text(
+        LocaleKeys.authForgotPasswordDesc.tr(),
+        textAlign: TextAlign.center,
+      ),
       child: Form(
         key: _formKey,
         child: Column(

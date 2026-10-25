@@ -25,14 +25,14 @@ class ApplyResultEntity extends Equatable {
 
   @override
   List<Object?> get props => [
-        id,
-        name,
-        email,
-        phone,
-        role,
-        gender,
-        notificationStatus,
-        createdAt,
-        updatedAt,
-      ];
+    id,
+    name,
+    email,
+    phone,
+    role,
+    gender,
+    notificationStatus,
+    createdAt,
+    updatedAt,
+  ];
 }

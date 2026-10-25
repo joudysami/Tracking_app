@@ -22,7 +22,11 @@ class StepLayout extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Text(title, style: Theme.of(context).textTheme.titleLarge , textAlign: TextAlign.center),
+            Text(
+              title,
+              style: Theme.of(context).textTheme.titleLarge,
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 12.h),
             description,
             SizedBox(height: 32.h),

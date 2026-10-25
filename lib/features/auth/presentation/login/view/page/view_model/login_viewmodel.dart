@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
@@ -32,10 +31,7 @@ class LoginViewModel extends Cubit<LoginState> {
       ),
     );
 
-    final request = LoginRequest(
-      email: email,
-      password: password,
-    );
+    final request = LoginRequest(email: email, password: password);
 
     final response = await _loginUseCase(request);
 

@@ -39,7 +39,6 @@ class AppTextField extends StatefulWidget {
   final VoidCallback? onTap;
   final ValueChanged<String>? onChanged;
 
-
   @override
   State<AppTextField> createState() => _AppTextFieldState();
 }

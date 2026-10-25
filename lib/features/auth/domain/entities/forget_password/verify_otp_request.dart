@@ -4,13 +4,8 @@ class VerifyOtpRequest extends Equatable {
   final String? email;
   final String? otp;
 
-  const VerifyOtpRequest ({
-    this.email,
-    this.otp,
-  });
+  const VerifyOtpRequest({this.email, this.otp});
 
   @override
   List<Object?> get props => [email, otp];
 }
-
-

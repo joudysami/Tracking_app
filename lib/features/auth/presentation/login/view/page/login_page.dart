@@ -46,12 +46,21 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Scaffold(
-         appBar: AppBar(
-                title:  Text(LocaleKeys.authLogin.tr()),
-                leading:IconButton(onPressed:(){},icon: Icon(Icons.arrow_back_ios), ),
-                ),
-        body: BlocProvider(
-          create: (context) => loginViewModel,
+        appBar: AppBar(
+          title: Text(LocaleKeys.authLogin.tr()),
+          leading: IconButton(
+            onPressed: () {},
+            icon: Icon(Icons.arrow_back_ios),
+          ),
+        ),
+        body: BlocListener<LoginViewModel, LoginState>(
+          listener: (BuildContext context, LoginState state) {
+            print('Login State: ${state.loginState}');
+            if (state.loginState.data != null &&
+                state.loginState.isLoading == false) {
+              context.go(AppRoutes.home);
+            }
+          },
           child: SingleChildScrollView(
             child: Padding(
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
@@ -72,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
                       hint: LocaleKeys.authEnterPassword.tr(),
                       validator: AppValidators.passwordValidator,
                       controller: _passwordController,
-                      
                     ),
                     StatefulBuilder(
                       builder: (context, setState) {
@@ -120,7 +128,7 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       },
                     ),
-          
+
                     SizedBox(height: 16.h),
                     SizedBox(
                       width: double.infinity,
@@ -133,7 +141,7 @@ class _LoginPageState extends State<LoginPage> {
                                   ),
                                 )
                               : CustomButton(
-                                  text:LocaleKeys.commonContinue.tr(),
+                                  text: LocaleKeys.commonContinue.tr(),
                                   color: context.colors.white,
                                   onTap: () {
                                     if (_formKey.currentState!.validate()) {
@@ -149,8 +157,6 @@ class _LoginPageState extends State<LoginPage> {
                         },
                       ),
                     ),
-          
-                  
                   ],
                 ),
               ),
