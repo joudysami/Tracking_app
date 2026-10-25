@@ -9,8 +9,7 @@ class ButtonNavigationBar extends StatefulWidget {
   const ButtonNavigationBar({super.key});
 
   @override
-  State<ButtonNavigationBar> createState() =>
-      _ButtonNavigationBarState();
+  State<ButtonNavigationBar> createState() => _ButtonNavigationBarState();
 }
 
 class _ButtonNavigationBarState extends State<ButtonNavigationBar> {
@@ -25,10 +24,7 @@ class _ButtonNavigationBarState extends State<ButtonNavigationBar> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(
-        index: currentIndex,
-        children: screens,
-      ),
+      body: IndexedStack(index: currentIndex, children: screens),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {

@@ -48,7 +48,8 @@ AppError _connectionError(DioException exception) {
 AppError _parseBadResponse(DioException exception) {
   final data = exception.response?.data;
   if (data is Map<String, dynamic>) {
-    final fieldErrors = fieldErrorsMessage(data['errors']) ??
+    final fieldErrors =
+        fieldErrorsMessage(data['errors']) ??
         fieldErrorsMessage(_validationFieldErrors(data['data']));
     if (fieldErrors != null) return BadResponseError(fieldErrors);
     if (data['message'] != null) {

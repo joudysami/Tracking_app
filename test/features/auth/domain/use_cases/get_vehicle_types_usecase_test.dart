@@ -64,8 +64,9 @@ void main() {
 
   group('GetVehicleTypesUseCase', () {
     test('delegates to the repo and returns the same response', () async {
-      const expectedResponse =
-          SuccessResponse<List<VehicleTypeEntity>>(tVehicleTypes);
+      const expectedResponse = SuccessResponse<List<VehicleTypeEntity>>(
+        tVehicleTypes,
+      );
       fakeRepo.getVehicleTypesResponse = expectedResponse;
 
       final result = await useCase();
@@ -87,8 +88,7 @@ void main() {
     });
 
     test('reaches the repo correctly', () async {
-      const expectedResponse =
-          SuccessResponse<List<VehicleTypeEntity>>([]);
+      const expectedResponse = SuccessResponse<List<VehicleTypeEntity>>([]);
       fakeRepo.getVehicleTypesResponse = expectedResponse;
 
       await useCase();

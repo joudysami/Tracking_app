@@ -5,16 +5,13 @@ import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart'
 
 abstract interface class OrderRepo {
   Future<
-      BaseResponse<
-          ({
-            List<AvailableOrderEntity> orders,
-            pagination_entity pagination,
-          })>> getAvailableOrders({
-    required int page,
-    required int pageSize,
-  });
+    BaseResponse<
+      ({List<AvailableOrderEntity> orders, PaginationEntity pagination})
+    >
+  >
+  getAvailableOrders({required int page, required int pageSize});
 
- Future<BaseResponse<ClaimedOrderEntity>> claimOrder({
-  required String orderId,
-});
+  Future<BaseResponse<ClaimedOrderEntity>> claimOrder({
+    required String orderId,
+  });
 }

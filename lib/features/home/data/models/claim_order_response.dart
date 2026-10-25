@@ -17,13 +17,10 @@ class ClaimOrderResponse {
     this.data,
   });
 
-  factory ClaimOrderResponse.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory ClaimOrderResponse.fromJson(Map<String, dynamic> json) =>
       _$ClaimOrderResponseFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$ClaimOrderResponseToJson(this);
+  Map<String, dynamic> toJson() => _$ClaimOrderResponseToJson(this);
 }
 
 @JsonSerializable()
@@ -36,11 +33,8 @@ class ClaimOrderData extends ClaimedOrderEntity {
     required super.assignedAt,
   });
 
-  factory ClaimOrderData.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory ClaimOrderData.fromJson(Map<String, dynamic> json) =>
       _$ClaimOrderDataFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$ClaimOrderDataToJson(this);
+  Map<String, dynamic> toJson() => _$ClaimOrderDataToJson(this);
 }

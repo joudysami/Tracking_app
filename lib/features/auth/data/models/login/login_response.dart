@@ -77,4 +77,3 @@ class UserModel {
 
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }
-

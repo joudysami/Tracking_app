@@ -147,12 +147,14 @@ class DarkThemeColor implements AppColors {
   @override
   Color get green => Color(0xFF28A745);
 }
+
 final lightThemeColors = LightThemeColor();
 final darkThemeColors = DarkThemeColor();
+
 extension ThemeColors on BuildContext {
-  AppColors get colors =>
-      Theme.of(this).brightness == Brightness.light
-          ? lightThemeColors
-          : darkThemeColors;
+  AppColors get colors => Theme.of(this).brightness == Brightness.light
+      ? lightThemeColors
+      : darkThemeColors;
 }
+
 //  color: context.appColors.error,

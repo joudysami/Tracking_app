@@ -1,4 +1,3 @@
-
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
@@ -21,10 +20,7 @@ class HomeCubit extends Cubit<HomeState> {
   void doEvent(HomeEvent event) {
     switch (event) {
       case GetAvailableOrdersEvent():
-        _getAvailableOrders(
-          page: event.page,
-          pageSize: event.pageSize,
-        );
+        _getAvailableOrders(page: event.page, pageSize: event.pageSize);
         break;
 
       case ClaimOrderEvent():
@@ -33,10 +29,24 @@ class HomeCubit extends Cubit<HomeState> {
     }
   }
 
-  Future<void> _getAvailableOrders({
-    int page = 1,
-    int pageSize = 20,
-  }) async {
+  void loadNextPage() {
+    if (state.ordersState.isLoading) return;
+
+    final pagination = state.pagination;
+
+    if (pagination == null || !pagination.hasNextPage) return;
+
+    doEvent(
+      GetAvailableOrdersEvent(
+        page: pagination.page + 1,
+        pageSize: pagination.pageSize,
+      ),
+    );
+  }
+
+  Future<void> _getAvailableOrders({int page = 1, int pageSize = 20}) async {
+    if (state.ordersState.isLoading) return;
+
     emit(
       state.copyWith(
         ordersState: state.ordersState.copyWith(
@@ -46,56 +56,58 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     );
 
-    try {
-      final result = await getAvailableOrdersUseCase(
-        page: page,
-        pageSize: pageSize,
-      );
+    final result = await getAvailableOrdersUseCase(
+      page: page,
+      pageSize: pageSize,
+    );
 
-      switch (result) {
-        case SuccessResponse(data: final data):
-          if (data == null) {
-            emit(
-              state.copyWith(
-                ordersState: state.ordersState.copyWith(
-                  isLoading: false,
-                  errorMessage: 'No data received',
+    switch (result) {
+      case SuccessResponse(data: final data):
+        if (data == null) {
+          emit(
+            state.copyWith(
+              ordersState: state.ordersState.copyWith(
+                isLoading: false,
+                errorMessage: 'No data received',
+              ),
+            ),
+          );
+          return;
+        }
+
+        final currentOrders = state.ordersState.data ?? [];
+
+        final updatedOrders = page == 1
+            ? data.orders
+            : [
+                ...currentOrders,
+                ...data.orders.where(
+                  (newOrder) => !currentOrders.any(
+                    (order) => order.orderId == newOrder.orderId,
+                  ),
                 ),
-              ),
-            );
-            return;
-          }
+              ];
 
-          emit(
-            state.copyWith(
-              ordersState: state.ordersState.copyWith(
-                isLoading: false,
-                errorMessage: '',
-                data: data.orders,
-              ),
-              pagination: data.pagination,
+        emit(
+          state.copyWith(
+            ordersState: state.ordersState.copyWith(
+              isLoading: false,
+              errorMessage: '',
+              data: updatedOrders,
             ),
-          );
-
-        case ErrorResponse(appError: final appError):
-          emit(
-            state.copyWith(
-              ordersState: state.ordersState.copyWith(
-                isLoading: false,
-                errorMessage: appError.message,
-              ),
-            ),
-          );
-      }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          ordersState: state.ordersState.copyWith(
-            isLoading: false,
-            errorMessage: e.toString(),
+            pagination: data.pagination,
           ),
-        ),
-      );
+        );
+
+      case ErrorResponse(appError: final appError):
+        emit(
+          state.copyWith(
+            ordersState: state.ordersState.copyWith(
+              isLoading: false,
+              errorMessage: appError.message,
+            ),
+          ),
+        );
     }
   }
 
@@ -112,59 +124,48 @@ class HomeCubit extends Cubit<HomeState> {
       ),
     );
 
-    try {
-      final result = await claimOrderUseCase(orderId: orderId);
+    final result = await claimOrderUseCase(orderId: orderId);
 
-      switch (result) {
-        case SuccessResponse(data: final claimedOrder):
-          if (claimedOrder == null) {
-            emit(
-              state.copyWith(
-                claimOrderState: state.claimOrderState.copyWith(
-                  isLoading: false,
-                  errorMessage: 'No data received',
-                ),
-              ),
-            );
-            return;
-          }
-
-          final updatedOrders = (state.ordersState.data ?? [])
-              .where((order) => order.orderId != orderId)
-              .toList();
-
+    switch (result) {
+      case SuccessResponse(data: final claimedOrder):
+        if (claimedOrder == null) {
           emit(
             state.copyWith(
-              ordersState: state.ordersState.copyWith(
-                data: updatedOrders,
-              ),
+              claimingOrderId: orderId,
               claimOrderState: state.claimOrderState.copyWith(
-                isLoading: false,
+                isLoading: true,
                 errorMessage: '',
-                data: claimedOrder,
+                data: null,
               ),
             ),
           );
+          return;
+        }
 
-        case ErrorResponse(appError: final appError):
-          emit(
-            state.copyWith(
-              claimOrderState: state.claimOrderState.copyWith(
-                isLoading: false,
-                errorMessage: appError.message,
-              ),
+        final updatedOrders = (state.ordersState.data ?? [])
+            .where((order) => order.orderId != orderId)
+            .toList();
+
+        emit(
+          state.copyWith(
+            ordersState: state.ordersState.copyWith(data: updatedOrders),
+            claimOrderState: state.claimOrderState.copyWith(
+              isLoading: false,
+              errorMessage: '',
+              data: claimedOrder,
             ),
-          );
-      }
-    } catch (e) {
-      emit(
-        state.copyWith(
-          claimOrderState: state.claimOrderState.copyWith(
-            isLoading: false,
-            errorMessage: e.toString(),
           ),
-        ),
-      );
+        );
+
+      case ErrorResponse(appError: final appError):
+        emit(
+          state.copyWith(
+            claimOrderState: state.claimOrderState.copyWith(
+              isLoading: false,
+              errorMessage: appError.message,
+            ),
+          ),
+        );
     }
   }
 }

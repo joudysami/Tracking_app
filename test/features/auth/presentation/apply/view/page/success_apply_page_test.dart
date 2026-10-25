@@ -15,9 +15,7 @@ void main() {
       designSize: const Size(375, 812),
       builder: (context, child) {
         if (home != null) {
-          return MaterialApp(
-            home: home,
-          );
+          return MaterialApp(home: home);
         }
         return MaterialApp.router(
           routerConfig: AppRouter.createRouter(
@@ -33,9 +31,7 @@ void main() {
   ) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
-    await tester.pumpWidget(
-      buildTestWidget(home: const SuccessApplyPage()),
-    );
+    await tester.pumpWidget(buildTestWidget(home: const SuccessApplyPage()));
     await tester.pump();
 
     // Verify Scaffold and AppButton presence

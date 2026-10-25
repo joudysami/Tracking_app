@@ -51,8 +51,9 @@ void main() {
     await tester.pump();
   }
 
-  testWidgets('renders title, both password fields and confirm button',
-      (tester) async {
+  testWidgets('renders title, both password fields and confirm button', (
+    tester,
+  ) async {
     await pump(tester);
 
     expect(find.text(LocaleKeys.authResetPassword), findsOneWidget);
@@ -101,8 +102,9 @@ void main() {
     expect(viewModel.events, isEmpty);
   });
 
-  testWidgets('rejects a password that does not meet the requirements',
-      (tester) async {
+  testWidgets('rejects a password that does not meet the requirements', (
+    tester,
+  ) async {
     await pump(tester);
 
     await fillAndSubmit(tester, password: 'weak', confirm: 'weak');
@@ -120,8 +122,9 @@ void main() {
     expect(viewModel.events, isEmpty);
   });
 
-  testWidgets('dispatches ResetPasswordEvent with valid matching passwords',
-      (tester) async {
+  testWidgets('dispatches ResetPasswordEvent with valid matching passwords', (
+    tester,
+  ) async {
     await pump(tester);
 
     await fillAndSubmit(tester, password: 'Password1', confirm: 'Password1');
@@ -135,8 +138,9 @@ void main() {
     );
   });
 
-  testWidgets('disables the button and locks fields while loading',
-      (tester) async {
+  testWidgets('disables the button and locks fields while loading', (
+    tester,
+  ) async {
     viewModel.setState(resetState.copyWith(isLoading: true));
     await pump(tester);
 

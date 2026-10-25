@@ -42,12 +42,16 @@ class _ResetPasswordStepViewState extends State<ResetPasswordStepView> {
 
   @override
   Widget build(BuildContext context) {
-    final isLoading =
-    context.select((ForgetPasswordViewModel v) => v.state.isLoading);
+    final isLoading = context.select(
+      (ForgetPasswordViewModel v) => v.state.isLoading,
+    );
 
     return StepLayout(
       title: LocaleKeys.authResetPassword.tr(),
-      description: Text(LocaleKeys.validationResetPasswordRequirement.tr() ,textAlign: TextAlign.center,),
+      description: Text(
+        LocaleKeys.validationResetPasswordRequirement.tr(),
+        textAlign: TextAlign.center,
+      ),
       child: Form(
         key: _formKey,
         child: Column(

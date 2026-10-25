@@ -20,11 +20,8 @@ class AvailableOrdersResponse {
     required this.pagination,
   });
 
-  factory AvailableOrdersResponse.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory AvailableOrdersResponse.fromJson(Map<String, dynamic> json) =>
       _$AvailableOrdersResponseFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$AvailableOrdersResponseToJson(this);
+  Map<String, dynamic> toJson() => _$AvailableOrdersResponseToJson(this);
 }

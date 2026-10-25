@@ -101,8 +101,7 @@ abstract class LocaleKeys {
   static const String authEnterNewPassword = 'auth.enter_new_password';
   static const String authResetPassword = 'auth.reset_password';
   static const String authLogin = 'auth.login';
-  static const String authWrongEmailOrPassword =
-      'auth.wrong_email_or_password';
+  static const String authWrongEmailOrPassword = 'auth.wrong_email_or_password';
   static const String authPasswordUpdated = 'auth.password_updated';
   static const String rememberMe = 'auth.remember_me';
   static const String authRememberMe = 'auth.remember_me';

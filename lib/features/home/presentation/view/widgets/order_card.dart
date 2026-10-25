@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
@@ -15,6 +14,7 @@ class OrderCard extends StatelessWidget {
   final String price;
   final VoidCallback onAccept;
   final bool isClaiming;
+  final bool isAcceptDisabled;
 
   const OrderCard({
     super.key,
@@ -26,6 +26,7 @@ class OrderCard extends StatelessWidget {
     required this.price,
     required this.onAccept,
     this.isClaiming = false,
+    this.isAcceptDisabled = false,
   });
 
   @override
@@ -35,9 +36,7 @@ class OrderCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: context.colors.white,
-        ),
+        border: Border.all(color: context.colors.white),
         boxShadow: [
           BoxShadow(
             color: Colors.grey.withOpacity(0.2),
@@ -52,44 +51,31 @@ class OrderCard extends StatelessWidget {
         children: [
           Text(
             LocaleKeys.homeFlowerOrder.tr(),
-            style:  TextStyle(
+            style: TextStyle(
               fontSize: 14,
               fontWeight: FontWeight.w600,
-              color:context.colors.black.shade50 ,
+              color: context.colors.black.shade50,
             ),
           ),
           const SizedBox(height: 8),
 
           Text(
             LocaleKeys.homePickupAddress.tr(),
-            style: const TextStyle(
-              fontSize:14,
-              color: Colors.grey,
-            ),
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
           const SizedBox(height: 4),
 
-          AddressTile(
-            title: storeName,
-            address: storeAddress,
-            isStore: true,
-          ),
+          AddressTile(title: storeName, address: storeAddress, isStore: true),
 
           const SizedBox(height: 8),
 
           Text(
             LocaleKeys.homeUserAddress.tr(),
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
+            style: const TextStyle(fontSize: 14, color: Colors.grey),
           ),
           const SizedBox(height: 4),
 
-          AddressTile(
-            title: customerName,
-            address: customerAddress,
-          ),
+          AddressTile(title: customerName, address: customerAddress),
 
           const SizedBox(height: 9),
 
@@ -98,9 +84,7 @@ class OrderCard extends StatelessWidget {
             children: [
               Expanded(
                 child: Text(
-                  LocaleKeys.homePrice.tr(
-                    namedArgs: {'price': price},
-                  ),
+                  LocaleKeys.homePrice.tr(namedArgs: {'price': price}),
                   style: const TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -110,6 +94,7 @@ class OrderCard extends StatelessWidget {
               AcceptButton(
                 onPressed: onAccept,
                 isLoading: isClaiming,
+                isDisabled: isAcceptDisabled,
               ),
             ],
           ),

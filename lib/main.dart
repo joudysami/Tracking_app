@@ -8,10 +8,8 @@ import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/core/theme/app_theme.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
-
-
 Future<void> main() async {
- WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: '.env', isOptional: true);
   await ApiEndpoints.loadBaseUrl();
   // ignore: avoid_print
@@ -29,6 +27,7 @@ Future<void> main() async {
     ),
   );
 }
+
 class MyApp extends StatelessWidget {
   MyApp({super.key});
   final _router = AppRouter.createRouter();

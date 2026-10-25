@@ -80,10 +80,7 @@ class AuthInterceptors extends Interceptor {
   }
 
   @override
-  void onError(
-    DioException err,
-    ErrorInterceptorHandler handler,
-  ) {
+  void onError(DioException err, ErrorInterceptorHandler handler) {
     _handleError(err, handler);
   }
 
@@ -94,11 +91,9 @@ class AuthInterceptors extends Interceptor {
     final options = err.requestOptions;
     final statusCode = err.response?.statusCode;
 
-    final skipRefresh =
-        options.extra[AuthRequestExtra.skipRefresh] == true;
+    final skipRefresh = options.extra[AuthRequestExtra.skipRefresh] == true;
 
-    final alreadyRetried =
-        options.extra[AuthRequestExtra.retried] == true;
+    final alreadyRetried = options.extra[AuthRequestExtra.retried] == true;
 
     if (statusCode != 401 || skipRefresh || alreadyRetried) {
       return handler.next(err);
@@ -131,10 +126,7 @@ class AuthInterceptors extends Interceptor {
       _log('Token refresh succeeded');
 
       try {
-        final response = await _retryRequest(
-          options,
-          tokens.accessToken,
-        );
+        final response = await _retryRequest(options, tokens.accessToken);
 
         return handler.resolve(response);
       } catch (_) {
@@ -146,23 +138,17 @@ class AuthInterceptors extends Interceptor {
 
         await _expireSession();
 
-        return handler.reject(
-          _sessionExpiredException(err),
-        );
+        return handler.reject(_sessionExpiredException(err));
       }
     } on DioException catch (refreshError) {
       final refreshStatus = refreshError.response?.statusCode;
 
       if (refreshStatus == 401 || refreshStatus == 400) {
-        _log(
-          'Token refresh failed: refresh token invalid or expired',
-        );
+        _log('Token refresh failed: refresh token invalid or expired');
 
         // Session expiration is already handled once inside
         // _refreshTokens() by the first caller.
-        return handler.reject(
-          _sessionExpiredException(err),
-        );
+        return handler.reject(_sessionExpiredException(err));
       }
 
       _log('Token refresh failed: network or server error');
@@ -173,17 +159,13 @@ class AuthInterceptors extends Interceptor {
 
       // Session expiration is already handled once inside
       // _refreshTokens() by the first caller.
-      return handler.reject(
-        _sessionExpiredException(err),
-      );
+      return handler.reject(_sessionExpiredException(err));
     }
   }
 
   /// Single-flight refresh:
   /// concurrent 401s share one refresh Future.
-  Future<AuthTokens?> _refreshTokens(
-    String refreshToken,
-  ) {
+  Future<AuthTokens?> _refreshTokens(String refreshToken) {
     final inFlight = _refreshCompleter;
 
     if (inFlight != null) {
@@ -218,9 +200,7 @@ class AuthInterceptors extends Interceptor {
     return completer.future;
   }
 
-  Future<void> _persistTokens(
-    AuthTokens tokens,
-  ) async {
+  Future<void> _persistTokens(AuthTokens tokens) async {
     final newRefresh = tokens.refreshToken;
 
     if (newRefresh != null && newRefresh.isNotEmpty) {
@@ -229,9 +209,7 @@ class AuthInterceptors extends Interceptor {
         refreshToken: newRefresh,
       );
     } else {
-      await _tokenStorage.saveAccessToken(
-        tokens.accessToken,
-      );
+      await _tokenStorage.saveAccessToken(tokens.accessToken);
     }
   }
 
@@ -242,9 +220,7 @@ class AuthInterceptors extends Interceptor {
     final dio = _dio;
 
     if (dio == null) {
-      throw StateError(
-        'AuthInterceptors.attachDio was not called',
-      );
+      throw StateError('AuthInterceptors.attachDio was not called');
     }
 
     options.headers['Authorization'] = 'Bearer $accessToken';
@@ -258,9 +234,7 @@ class AuthInterceptors extends Interceptor {
     _log('Session expired');
   }
 
-  DioException _sessionExpiredException(
-    DioException original,
-  ) {
+  DioException _sessionExpiredException(DioException original) {
     return DioException(
       requestOptions: original.requestOptions,
       response: original.response,
@@ -272,10 +246,7 @@ class AuthInterceptors extends Interceptor {
 
   void _log(String message) {
     if (kDebugMode) {
-      developer.log(
-        message,
-        name: 'AuthInterceptors',
-      );
+      developer.log(message, name: 'AuthInterceptors');
     }
   }
 }

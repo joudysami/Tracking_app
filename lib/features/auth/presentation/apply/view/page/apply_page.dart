@@ -35,7 +35,7 @@ class ApplyPage extends StatelessWidget {
         appBar: AppBar(
           automaticallyImplyLeading: false,
           centerTitle: false,
-          titleSpacing: 16.w, 
+          titleSpacing: 16.w,
           title: Text(LocaleKeys.applyTitle.tr()),
         ),
         body: const ApplyBody(),

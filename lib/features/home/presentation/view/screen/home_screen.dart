@@ -1,6 +1,8 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/order_card.dart';
@@ -8,8 +10,39 @@ import 'package:tracking_app/features/home/presentation/view_model/home_event.da
 import 'package:tracking_app/features/home/presentation/view_model/home_state.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    if (_scrollController.position.extentAfter < 200) {
+      context.read<HomeCubit>().loadNextPage();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,6 +68,7 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           );
+          context.push(AppRoutes.order, extra: state.claimOrderState.data);
         }
       },
       child: Scaffold(
@@ -43,7 +77,7 @@ class HomeScreen extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: Text(
               LocaleKeys.homeTitle.tr(),
-              style:  TextStyle(
+              style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
                 color: context.colors.pink,
@@ -55,7 +89,6 @@ class HomeScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-             
               Expanded(
                 child: BlocBuilder<HomeCubit, HomeState>(
                   builder: (context, state) {
@@ -64,7 +97,7 @@ class HomeScreen extends StatelessWidget {
                     if (ordersState.isLoading && ordersState.data == null) {
                       return Center(
                         child: CircularProgressIndicator(
-                          color:context.colors.pink,
+                          color: context.colors.pink,
                         ),
                       );
                     }
@@ -83,8 +116,7 @@ class HomeScreen extends StatelessWidget {
                                   const GetAvailableOrdersEvent(),
                                 );
                               },
-                              child: Text(LocaleKeys.commonRetry.tr(),
-                            ),
+                              child: Text(LocaleKeys.commonRetry.tr()),
                             ),
                           ],
                         ),
@@ -94,7 +126,9 @@ class HomeScreen extends StatelessWidget {
                     final orders = ordersState.data ?? [];
 
                     if (orders.isEmpty) {
-                      return Center(child: Text(LocaleKeys.homeNoPendingOrders.tr()));
+                      return Center(
+                        child: Text(LocaleKeys.homeNoPendingOrders.tr()),
+                      );
                     }
                     return RefreshIndicator(
                       color: context.colors.pink,
@@ -108,24 +142,49 @@ class HomeScreen extends StatelessWidget {
                           horizontal: 16,
                           vertical: 2,
                         ),
-                        itemCount: orders.length,
+                        controller: _scrollController,
+                        itemCount:
+                            orders.length +
+                            (state.pagination?.hasNextPage == true ? 1 : 0),
                         separatorBuilder: (_, __) => const SizedBox(height: 14),
                         itemBuilder: (context, index) {
+                          if (index >= orders.length) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
                           final order = orders[index];
 
-                          return OrderCard(
-                            orderId: order.orderId,
-                            storeName: order.storeName,
-                            storeAddress: order.storeAddress,
-                            customerName: order.customerName,
-                            customerAddress: order.customerAddress,
-                            price: order.totalAmount.toStringAsFixed(2),
-                            isClaiming:
-                                state.claimOrderState.isLoading &&
-                                state.claimOrderState.data == null,
-                            onAccept: () {
-                              context.read<HomeCubit>().doEvent(
-                                ClaimOrderEvent(orderId: order.orderId),
+                          return BlocSelector<
+                            HomeCubit,
+                            HomeState,
+                            ({bool isClaiming, bool isDisabled})
+                          >(
+                            selector: (state) {
+                              return (
+                                isClaiming:
+                                    state.claimingOrderId == order.orderId,
+                                isDisabled: state.claimOrderState.isLoading,
+                              );
+                            },
+                            builder: (context, claimStatus) {
+                              return OrderCard(
+                                orderId: order.orderId,
+                                storeName: order.storeName,
+                                storeAddress: order.storeAddress,
+                                customerName: order.customerName,
+                                customerAddress: order.customerAddress,
+                                price: order.totalAmount.toStringAsFixed(2),
+                                isClaiming: claimStatus.isClaiming,
+                                isAcceptDisabled: claimStatus.isDisabled,
+                                onAccept: () {
+                                  if (claimStatus.isDisabled) return;
+
+                                  context.read<HomeCubit>().doEvent(
+                                    ClaimOrderEvent(orderId: order.orderId),
+                                  );
+                                },
                               );
                             },
                           );

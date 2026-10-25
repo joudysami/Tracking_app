@@ -17,7 +17,7 @@ class VerifyOtpResponseDto {
   @JsonKey(name: "errors")
   final dynamic? errors;
 
-  VerifyOtpResponseDto ({
+  VerifyOtpResponseDto({
     this.status,
     this.code,
     this.message,
@@ -42,10 +42,7 @@ class VerifyOtpDataDto {
   @JsonKey(name: "expiresInMinutes")
   final int? expiresInMinutes;
 
-  VerifyOtpDataDto ({
-    this.otpToken,
-    this.expiresInMinutes,
-  });
+  VerifyOtpDataDto({this.otpToken, this.expiresInMinutes});
 
   factory VerifyOtpDataDto.fromJson(Map<String, dynamic> json) {
     return _$VerifyOtpDataDtoFromJson(json);
@@ -55,5 +52,3 @@ class VerifyOtpDataDto {
     return _$VerifyOtpDataDtoToJson(this);
   }
 }
-
-

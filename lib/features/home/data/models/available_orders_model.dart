@@ -4,9 +4,9 @@ import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.
 part 'available_orders_model.g.dart';
 
 @JsonSerializable()
-class AvailableOrderModel  {
+class AvailableOrderModel {
   final String orderId;
-  final String customerName;  
+  final String customerName;
   final String customerAddress;
   final String storeId;
   final String storeName;
@@ -27,14 +27,11 @@ class AvailableOrderModel  {
     required this.createdAt,
   });
 
-  factory AvailableOrderModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory AvailableOrderModel.fromJson(Map<String, dynamic> json) =>
       _$AvailableOrderModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$AvailableOrderModelToJson(this);
-      AvailableOrderEntity toDomain() {
+  Map<String, dynamic> toJson() => _$AvailableOrderModelToJson(this);
+  AvailableOrderEntity toDomain() {
     return AvailableOrderEntity(
       orderId: orderId,
       customerName: customerName,
@@ -45,7 +42,6 @@ class AvailableOrderModel  {
       totalAmount: totalAmount,
       status: status,
       createdAt: DateTime.parse(createdAt),
-    );      
-
-      }
+    );
+  }
 }

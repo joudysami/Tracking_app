@@ -8,5 +8,6 @@ import '../../features/auth/api/auth_api_client.dart';
 abstract class ApiModule {
   @singleton
   AuthApiClient provideAuthApiClient(Dio dio) => AuthApiClient(dio);
+  @lazySingleton
   HomeApiClient provideHomeApiClient(Dio dio) => HomeApiClient(dio);
 }

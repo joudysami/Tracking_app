@@ -4,7 +4,7 @@ import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart'
 part 'pagination_model.g.dart';
 
 @JsonSerializable()
-class PaginationModel  {
+class PaginationModel {
   final int page;
   final int pageSize;
 
@@ -22,15 +22,12 @@ class PaginationModel  {
     required this.hasPreviousPage,
   });
 
-  factory PaginationModel.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory PaginationModel.fromJson(Map<String, dynamic> json) =>
       _$PaginationModelFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$PaginationModelToJson(this);
-      pagination_entity toDomain() {
-    return pagination_entity(
+  Map<String, dynamic> toJson() => _$PaginationModelToJson(this);
+  PaginationEntity toDomain() {
+    return PaginationEntity(
       page: page,
       pageSize: pageSize,
       totalCount: totalCount,
@@ -38,5 +35,5 @@ class PaginationModel  {
       hasNextPage: hasNextPage,
       hasPreviousPage: hasPreviousPage,
     );
-      }
+  }
 }

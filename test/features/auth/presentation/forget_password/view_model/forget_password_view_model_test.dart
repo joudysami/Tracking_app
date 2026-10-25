@@ -48,18 +48,21 @@ void main() {
   );
 
   void stubForgetPassword(BaseResponse<void> response) {
-    when(forgetPasswordUseCase(request: anyNamed('request')))
-        .thenAnswer((_) async => response);
+    when(
+      forgetPasswordUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) async => response);
   }
 
   void stubVerifyOtp(BaseResponse<VerifyOtpResponse> response) {
-    when(verifyOtpUseCase(request: anyNamed('request')))
-        .thenAnswer((_) async => response);
+    when(
+      verifyOtpUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) async => response);
   }
 
   void stubResetPassword(BaseResponse<void> response) {
-    when(resetPasswordUseCase(request: anyNamed('request')))
-        .thenAnswer((_) async => response);
+    when(
+      resetPasswordUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) async => response);
   }
 
   ErrorResponse<T> failure<T>(String message) =>
@@ -82,9 +85,11 @@ void main() {
         ForgetPasswordState(step: ForgetPasswordStep.otp, email: 'a@b.com'),
       ],
       verify: (_) {
-        verify(forgetPasswordUseCase(
-          request: const ForgetPasswordRequest(email: 'a@b.com'),
-        )).called(1);
+        verify(
+          forgetPasswordUseCase(
+            request: const ForgetPasswordRequest(email: 'a@b.com'),
+          ),
+        ).called(1);
       },
     );
 
@@ -122,9 +127,11 @@ void main() {
     blocTest<ForgetPasswordViewModel, ForgetPasswordState>(
       'moves to reset step and keeps the otpToken on success',
       build: () {
-        stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(
-          VerifyOtpResponse(otpToken: 'token-1', expiresInMinutes: 30),
-        ));
+        stubVerifyOtp(
+          const SuccessResponse<VerifyOtpResponse>(
+            VerifyOtpResponse(otpToken: 'token-1', expiresInMinutes: 30),
+          ),
+        );
         return buildCubit();
       },
       seed: () => otpStep,
@@ -142,10 +149,11 @@ void main() {
         ),
       ],
       verify: (_) {
-        verify(verifyOtpUseCase(
-          request: const VerifyOtpRequest(email: 'a@b.com', otp: '123456'),
-        )).called(1);
-
+        verify(
+          verifyOtpUseCase(
+            request: const VerifyOtpRequest(email: 'a@b.com', otp: '123456'),
+          ),
+        ).called(1);
       },
     );
 
@@ -163,9 +171,11 @@ void main() {
     blocTest<ForgetPasswordViewModel, ForgetPasswordState>(
       'stays on the otp step when the otpToken is empty',
       build: () {
-        stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(
-          VerifyOtpResponse(otpToken: '', expiresInMinutes: 30),
-        ));
+        stubVerifyOtp(
+          const SuccessResponse<VerifyOtpResponse>(
+            VerifyOtpResponse(otpToken: '', expiresInMinutes: 30),
+          ),
+        );
         return buildCubit();
       },
       seed: () => otpStep,
@@ -215,9 +225,11 @@ void main() {
         ForgetPasswordState(step: ForgetPasswordStep.otp, email: 'a@b.com'),
       ],
       verify: (_) {
-        verify(forgetPasswordUseCase(
-          request: const ForgetPasswordRequest(email: 'a@b.com'),
-        )).called(1);
+        verify(
+          forgetPasswordUseCase(
+            request: const ForgetPasswordRequest(email: 'a@b.com'),
+          ),
+        ).called(1);
       },
     );
   });
@@ -236,22 +248,23 @@ void main() {
         return buildCubit();
       },
       seed: () => resetStep,
-      act: (c) => c.onEvent(const ResetPasswordEvent(
-        password: 'Abcdef1',
-        confirmPassword: 'Abcdef1',
-      )),
-      expect: () => [
-        resetStep.copyWith(isLoading: true),
-        resetStep,
-      ],
+      act: (c) => c.onEvent(
+        const ResetPasswordEvent(
+          password: 'Abcdef1',
+          confirmPassword: 'Abcdef1',
+        ),
+      ),
+      expect: () => [resetStep.copyWith(isLoading: true), resetStep],
       verify: (_) {
-        verify(resetPasswordUseCase(
-          request: const ResetPasswordRequest(
-            otpToken: 'token-1',
-            password: 'Abcdef1',
-            confirmPassword: 'Abcdef1',
+        verify(
+          resetPasswordUseCase(
+            request: const ResetPasswordRequest(
+              otpToken: 'token-1',
+              password: 'Abcdef1',
+              confirmPassword: 'Abcdef1',
+            ),
           ),
-        )).called(1);
+        ).called(1);
       },
     );
   });
@@ -269,7 +282,7 @@ void main() {
       'resetPassword -> otp',
       build: buildCubit,
       seed: () =>
-      const ForgetPasswordState(step: ForgetPasswordStep.resetPassword),
+          const ForgetPasswordState(step: ForgetPasswordStep.resetPassword),
       act: (c) => c.onEvent(const GoBackEvent()),
       expect: () => const [ForgetPasswordState(step: ForgetPasswordStep.otp)],
     );
@@ -296,20 +309,25 @@ void main() {
 
     Future<void> pump() => Future<void>.delayed(Duration.zero);
 
-    test('ShowErrorUiEvent carries the error message when sending email fails',
-            () async {
-          stubForgetPassword(failure<void>('Invalid email'));
+    test(
+      'ShowErrorUiEvent carries the error message when sending email fails',
+      () async {
+        stubForgetPassword(failure<void>('Invalid email'));
 
-          cubit.onEvent(const SendEmailEvent('a@b.com'));
-          await pump();
+        cubit.onEvent(const SendEmailEvent('a@b.com'));
+        await pump();
 
-          expect(events, hasLength(1));
-          expect(
-            events.single,
-            isA<ShowErrorUiEvent>()
-                .having((e) => e.message, 'message', 'Invalid email'),
-          );
-        });
+        expect(events, hasLength(1));
+        expect(
+          events.single,
+          isA<ShowErrorUiEvent>().having(
+            (e) => e.message,
+            'message',
+            'Invalid email',
+          ),
+        );
+      },
+    );
 
     test('ShowErrorUiEvent is emitted when verifying the otp fails', () async {
       stubVerifyOtp(failure<VerifyOtpResponse>('Invalid OTP'));
@@ -319,24 +337,32 @@ void main() {
 
       expect(
         events.single,
-        isA<ShowErrorUiEvent>()
-            .having((e) => e.message, 'message', 'Invalid OTP'),
+        isA<ShowErrorUiEvent>().having(
+          (e) => e.message,
+          'message',
+          'Invalid OTP',
+        ),
       );
     });
 
-    test('ShowErrorUiEvent is emitted when verify succeeds without a token',
-        () async {
-      stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(null));
+    test(
+      'ShowErrorUiEvent is emitted when verify succeeds without a token',
+      () async {
+        stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(null));
 
-      cubit.onEvent(const VerifyOtpEvent('123456'));
-      await pump();
+        cubit.onEvent(const VerifyOtpEvent('123456'));
+        await pump();
 
-      expect(
-        events.single,
-        isA<ShowErrorUiEvent>()
-            .having((e) => e.message, 'message', LocaleKeys.commonError),
-      );
-    });
+        expect(
+          events.single,
+          isA<ShowErrorUiEvent>().having(
+            (e) => e.message,
+            'message',
+            LocaleKeys.commonError,
+          ),
+        );
+      },
+    );
 
     test('OtpResentUiEvent is emitted after a successful resend', () async {
       stubForgetPassword(const SuccessResponse<void>(null));
@@ -347,18 +373,22 @@ void main() {
       expect(events.single, isA<OtpResentUiEvent>());
     });
 
-    test('NavigateToLoginUiEvent is emitted after a successful reset',
-            () async {
-          stubResetPassword(const SuccessResponse<void>(null));
+    test(
+      'NavigateToLoginUiEvent is emitted after a successful reset',
+      () async {
+        stubResetPassword(const SuccessResponse<void>(null));
 
-          cubit.onEvent(const ResetPasswordEvent(
+        cubit.onEvent(
+          const ResetPasswordEvent(
             password: 'Abcdef1',
             confirmPassword: 'Abcdef1',
-          ));
-          await pump();
+          ),
+        );
+        await pump();
 
-          expect(events.single, isA<NavigateToLoginUiEvent>());
-        });
+        expect(events.single, isA<NavigateToLoginUiEvent>());
+      },
+    );
 
     test('no ui event is emitted when sending email succeeds', () async {
       stubForgetPassword(const SuccessResponse<void>(null));

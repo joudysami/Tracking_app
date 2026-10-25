@@ -1,4 +1,3 @@
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
@@ -6,11 +5,13 @@ import 'package:tracking_app/core/localization/local_key.dart';
 class AcceptButton extends StatelessWidget {
   final VoidCallback onPressed;
   final bool isLoading;
+  final bool isDisabled;
 
   const AcceptButton({
     super.key,
     required this.onPressed,
     this.isLoading = false,
+    this.isDisabled = false,
   });
 
   @override
@@ -18,9 +19,9 @@ class AcceptButton extends StatelessWidget {
     return SizedBox(
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-         padding: const EdgeInsets.symmetric(horizontal: 16),
+          padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
-        onPressed: isLoading ? null : onPressed,
+        onPressed: (isLoading || isDisabled) ? null : onPressed,
         child: isLoading
             ? const SizedBox(
                 width: 14,

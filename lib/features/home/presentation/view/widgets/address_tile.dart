@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 
@@ -27,19 +26,12 @@ class AddressTile extends StatelessWidget {
         children: [
           CircleAvatar(
             radius: 18,
-            backgroundColor:
-                isStore ? context.colors.pink : context.colors.white,
+            backgroundColor: isStore
+                ? context.colors.pink
+                : context.colors.white,
             child: isStore
-                ? const Icon(
-                    Icons.local_florist,
-                    color: Colors.white,
-                    size: 20,
-                  )
-                : const Icon(
-                    Icons.person,
-                    color: Colors.brown,
-                    size: 20,
-                  ),
+                ? const Icon(Icons.local_florist, color: Colors.white, size: 20)
+                : const Icon(Icons.person, color: Colors.brown, size: 20),
           ),
           const SizedBox(width: 8),
           Expanded(
@@ -59,7 +51,7 @@ class AddressTile extends StatelessWidget {
                 const SizedBox(height: 3),
                 Row(
                   children: [
-                     Icon(
+                    Icon(
                       Icons.location_on_outlined,
                       size: 16,
                       color: context.colors.black,

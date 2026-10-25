@@ -15,10 +15,10 @@ import 'auth_remote_data_source.dart';
 
 @Injectable(as: AuthRemoteDataSource)
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
-   final AuthApiClient apiClient;
+  final AuthApiClient apiClient;
 
   AuthRemoteDataSourceImpl({required this.apiClient});
-@override
+  @override
   Future<LoginResponse> login(LoginRequest request) {
     return apiClient.login(request);
   }

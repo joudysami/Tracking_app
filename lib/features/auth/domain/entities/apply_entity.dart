@@ -36,19 +36,19 @@ class ApplyParams extends Equatable {
 
   @override
   List<Object?> get props => [
-        firstName,
-        lastName,
-        email,
-        phone,
-        nid,
-        nidImage,
-        vehicleTypeId,
-        vehiclePlateNumber,
-        vehicleCapacity,
-        licenceImage,
-        gender,
-        password,
-        confirmPassword,
-        fcmToken,
-      ];
+    firstName,
+    lastName,
+    email,
+    phone,
+    nid,
+    nidImage,
+    vehicleTypeId,
+    vehiclePlateNumber,
+    vehicleCapacity,
+    licenceImage,
+    gender,
+    password,
+    confirmPassword,
+    fcmToken,
+  ];
 }
