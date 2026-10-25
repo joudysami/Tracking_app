@@ -1,6 +1,6 @@
 sealed class AppError {
- final Exception? exception;
- final String message;
+  final Exception? exception;
+  final String message;
   AppError(this.exception, this.message);
 }
 
@@ -25,9 +25,9 @@ class UnauthorizedError extends AppError {
 class IgnoreError extends AppError {
   IgnoreError() : super(null, "Something went wrong.");
 }
+
 class ForceLogin extends AppError {
-  ForceLogin()
-      : super(null, "Your session has expired. Please login again.");
+  ForceLogin() : super(null, "Your session has expired. Please login again.");
 }
 
 class BadResponseError extends AppError {

@@ -5,19 +5,19 @@ import 'package:tracking_app/features/home/data/models/available_orders_response
 import 'package:tracking_app/features/home/data/models/claim_order_response.dart';
 
 @Injectable(as: OrdersRemoteDataSource)
-class OrdersRemoteDataSourceImpl extends OrdersRemoteDataSource {
-  final OrderApiClient orderApiClient;
-  OrdersRemoteDataSourceImpl({required this.orderApiClient});
+class OrdersRemoteDataSourceImpl implements OrdersRemoteDataSource {
+  final HomeApiClient homeApiClient;
+  OrdersRemoteDataSourceImpl({required this.homeApiClient});
   @override
   Future<AvailableOrdersResponse> getAvailableOrders({
     required int page,
     required int pageSize,
   }) {
-    return orderApiClient.getAvailableOrders(page: page, pageSize: pageSize);
+    return homeApiClient.getAvailableOrders(page: page, pageSize: pageSize);
   }
 
   @override
   Future<ClaimOrderResponse> claimOrder({required String orderId}) {
-    return orderApiClient.claimOrder(orderId: orderId);
+    return homeApiClient.claimOrder(orderId: orderId);
   }
 }

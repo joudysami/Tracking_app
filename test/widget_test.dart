@@ -8,11 +8,7 @@ void main() {
     WidgetTester tester,
   ) async {
     await tester.pumpWidget(
-      ScreenUtilInit(
-        child: const MaterialApp(
-          home: OnBordingPage(),
-        ),
-      ),
+      ScreenUtilInit(child: const MaterialApp(home: OnBordingPage())),
     );
     expect(find.byType(OnBordingPage), findsOneWidget);
   });

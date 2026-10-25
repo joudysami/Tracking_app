@@ -2,17 +2,47 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
-
+import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/order_card.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_state.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final ScrollController _scrollController;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _scrollController = ScrollController()..addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (!_scrollController.hasClients) return;
+
+    if (_scrollController.position.extentAfter < 200) {
+      context.read<HomeCubit>().loadNextPage();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController
+      ..removeListener(_onScroll)
+      ..dispose();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -33,65 +63,67 @@ class HomeScreen extends StatelessWidget {
         return newClaimError || newClaimSuccess || newOrdersError;
       },
       listener: (context, state) {
+        final messenger = ScaffoldMessenger.of(context);
         final claimError = state.claimOrderState.errorMessage;
         final ordersError = state.ordersState.errorMessage;
+
         if (claimError.isNotEmpty) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(claimError)));
-        } else if (ordersError.isNotEmpty) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(ordersError)));
-        } else if (state.claimOrderState.data != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                LocaleKeys.homeOrderAccepted.tr(
-                  namedArgs: {'id': state.claimOrderState.data!.orderId},
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(claimError)));
+        }
+
+        if (ordersError.isNotEmpty) {
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(ordersError)));
+        }
+
+        if (claimError.isEmpty &&
+            ordersError.isEmpty &&
+            state.claimOrderState.data != null) {
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(
+                  LocaleKeys.homeOrderAccepted.tr(
+                    namedArgs: {'id': state.claimOrderState.data!.orderId},
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+
+          context.push(AppRoutes.order, extra: state.claimOrderState.data);
         }
       },
       child: Scaffold(
-        backgroundColor: const Color(0xFFF8F8F8),
         appBar: AppBar(
-          title: Text(
-            LocaleKeys.homeTitle.tr(),
-            style: const TextStyle(fontSize: 14),
+          title: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              LocaleKeys.homeTitle.tr(),
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.w600,
+                color: context.colors.pink,
+              ),
+            ),
           ),
-          backgroundColor: const Color(0xFFF8F8F8),
-          foregroundColor: const Color(0xFF555555),
-          elevation: 0,
-          scrolledUnderElevation: 0,
         ),
         body: SafeArea(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
-                child: Text(
-                  LocaleKeys.homeBrand.tr(),
-                  style: const TextStyle(
-                    color: Color(0xFFD51D72),
-                    fontSize: 18,
-                    fontWeight: FontWeight.w600,
-                    fontFamily: 'serif',
-                  ),
-                ),
-              ),
               Expanded(
                 child: BlocBuilder<HomeCubit, HomeState>(
                   builder: (context, state) {
                     final ordersState = state.ordersState;
 
                     if (ordersState.isLoading && ordersState.data == null) {
-                      return const Center(
+                      return Center(
                         child: CircularProgressIndicator(
-                          color: Color(0xFFD51D72),
+                          color: context.colors.pink,
                         ),
                       );
                     }
@@ -110,7 +142,7 @@ class HomeScreen extends StatelessWidget {
                                   const GetAvailableOrdersEvent(),
                                 );
                               },
-                              child: const Text('Retry'),
+                              child: Text(LocaleKeys.commonRetry.tr()),
                             ),
                           ],
                         ),
@@ -120,13 +152,14 @@ class HomeScreen extends StatelessWidget {
                     final orders = ordersState.data ?? [];
 
                     if (orders.isEmpty) {
-                      return const Center(child: Text('No available orders'));
+                      return Center(
+                        child: Text(LocaleKeys.homeNoPendingOrders.tr()),
+                      );
                     }
-
                     return RefreshIndicator(
-                      color: const Color(0xFFD51D72),
-                      onRefresh: () {
-                        return context.read<HomeCubit>().doEvent(
+                      color: context.colors.pink,
+                      onRefresh: () async {
+                        context.read<HomeCubit>().doEvent(
                           const GetAvailableOrdersEvent(),
                         );
                       },
@@ -135,28 +168,49 @@ class HomeScreen extends StatelessWidget {
                           horizontal: 16,
                           vertical: 2,
                         ),
-                        itemCount: orders.length,
+                        controller: _scrollController,
+                        itemCount:
+                            orders.length +
+                            (state.pagination?.hasNextPage == true ? 1 : 0),
                         separatorBuilder: (_, __) => const SizedBox(height: 14),
                         itemBuilder: (context, index) {
+                          if (index >= orders.length) {
+                            return const Padding(
+                              padding: EdgeInsets.all(16),
+                              child: Center(child: CircularProgressIndicator()),
+                            );
+                          }
                           final order = orders[index];
 
-                          return OrderCard(
-                            orderId: order.orderId,
-                            storeName: order.storeName,
-                            storeAddress: order.storeAddress,
-                            customerName: order.customerName,
-                            customerAddress: order.customerAddress,
-                            price: order.totalAmount.toStringAsFixed(2),
-                            isClaiming: state.claimingOrderId == order.orderId,
-                            onOpen: () {
-                              context.push(
-                                AppRoutes.orderDetails,
-                                extra: order,
+                          return BlocSelector<
+                            HomeCubit,
+                            HomeState,
+                            ({bool isClaiming, bool isDisabled})
+                          >(
+                            selector: (state) {
+                              return (
+                                isClaiming:
+                                    state.claimingOrderId == order.orderId,
+                                isDisabled: state.claimOrderState.isLoading,
                               );
                             },
-                            onAccept: () {
-                              context.read<HomeCubit>().doEvent(
-                                ClaimOrderEvent(orderId: order.orderId),
+                            builder: (context, claimStatus) {
+                              return OrderCard(
+                                orderId: order.orderId,
+                                storeName: order.storeName,
+                                storeAddress: order.storeAddress,
+                                customerName: order.customerName,
+                                customerAddress: order.customerAddress,
+                                price: order.totalAmount.toStringAsFixed(2),
+                                isClaiming: claimStatus.isClaiming,
+                                isAcceptDisabled: claimStatus.isDisabled,
+                                onAccept: () {
+                                  if (claimStatus.isDisabled) return;
+
+                                  context.read<HomeCubit>().doEvent(
+                                    ClaimOrderEvent(orderId: order.orderId),
+                                  );
+                                },
                               );
                             },
                           );

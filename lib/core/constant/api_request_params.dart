@@ -20,4 +20,8 @@ class ApiRequestParams {
   static const String nid = 'nid';
   static const String nidImage = 'nidImage';
   static const String licenceImage = 'licenceImage';
+  static const String page = 'page';
+  static const String pageSize = 'pageSize';
+
+  static const String orderId = 'orderId';
 }

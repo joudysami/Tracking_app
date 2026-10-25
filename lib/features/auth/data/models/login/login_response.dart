@@ -8,16 +8,13 @@ class LoginResponse {
   final bool status;
   final int code;
   final String message;
+  final LoginData data;
 
-  /// Null when login failed or the token payload is missing or malformed.
-  @JsonKey(fromJson: LoginData.fromNullableJson)
-  final LoginData? data;
-
-  LoginResponse({
+  const LoginResponse({
     required this.status,
     required this.code,
     required this.message,
-    this.data,
+    required this.data,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) =>
@@ -28,68 +25,55 @@ class LoginResponse {
 
 @JsonSerializable()
 class LoginData {
-  @JsonKey(name: 'token')
-  final String accessToken;
+  final UserModel user;
+  final String token;
   final String refreshToken;
-  final LoginUser? user;
 
-  LoginData({required this.accessToken, required this.refreshToken, this.user});
-
-  /// Reads a success payload. Returns null for `data: null`, a non-object,
-  /// or a payload whose token fields are missing or not non-empty strings.
-  static LoginData? fromNullableJson(Object? json) {
-    if (json is! Map) return null;
-    final token = json['token'];
-    final refreshToken = json['refreshToken'];
-    if (token is! String || token.isEmpty) return null;
-    if (refreshToken is! String || refreshToken.isEmpty) return null;
-    return LoginData(
-      accessToken: token,
-      refreshToken: refreshToken,
-      user: _userFromJson(json['user']),
-    );
-  }
-
-  static LoginUser? _userFromJson(Object? json) {
-    if (json is! Map) return null;
-    final roles = json['roles'];
-    if (roles is! List) return const LoginUser();
-    final values = <String>[];
-    for (final role in roles) {
-      if (role is! String) return const LoginUser();
-      values.add(role);
-    }
-    return LoginUser(roles: values);
-  }
-
-  LoginEntity toDomain() {
-    return LoginEntity(
-      accessToken: accessToken,
-      refreshToken: refreshToken,
-      role: user?.role ?? '',
-    );
-  }
+  const LoginData({
+    required this.user,
+    required this.token,
+    required this.refreshToken,
+  });
 
   factory LoginData.fromJson(Map<String, dynamic> json) =>
       _$LoginDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginDataToJson(this);
+  LoginEntity toDomain() {
+    return LoginEntity(
+      accessToken: token,
+      refreshToken: refreshToken,
+      role: user.roles.isNotEmpty ? user.roles.first : '',
+    );
+  }
 }
 
 @JsonSerializable()
-class LoginUser {
-  final List<String>? roles;
+class UserModel {
+  final String id;
+  final String email;
+  final String phone;
+  final String name;
+  final List<String> roles;
+  final DateTime createdAt;
+  final DateTime updatedAt;
+  final String gender;
+  final String notificationStatus;
 
-  const LoginUser({this.roles});
+  const UserModel({
+    required this.id,
+    required this.email,
+    required this.phone,
+    required this.name,
+    required this.roles,
+    required this.createdAt,
+    required this.updatedAt,
+    required this.gender,
+    required this.notificationStatus,
+  });
 
-  String get role {
-    final values = roles;
-    if (values == null || values.isEmpty) return '';
-    return values.first;
-  }
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
-  factory LoginUser.fromJson(Map<String, dynamic> json) =>
-      _$LoginUserFromJson(json);
-
-  Map<String, dynamic> toJson() => _$LoginUserToJson(this);
+  Map<String, dynamic> toJson() => _$UserModelToJson(this);
 }

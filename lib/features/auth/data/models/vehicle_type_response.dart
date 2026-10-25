@@ -8,14 +8,9 @@ class VehicleTypesResponse {
   final bool? status;
   final int? code;
   final String? message;
-  final List<VehicleTypeModel>? data; 
-  
-  VehicleTypesResponse({
-    this.status,
-    this.code,
-    this.message,
-    this.data,
-  });
+  final List<VehicleTypeModel>? data;
+
+  VehicleTypesResponse({this.status, this.code, this.message, this.data});
 
   factory VehicleTypesResponse.fromJson(Map<String, dynamic> json) =>
       _$VehicleTypesResponseFromJson(json);

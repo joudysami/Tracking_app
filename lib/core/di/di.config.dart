@@ -96,34 +96,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i361.Dio>(
       () => dioModule.provideDio(gh<_i466.AuthInterceptors>()),
     );
+    gh.lazySingleton<_i670.HomeApiClient>(
+      () => apiModule.provideHomeApiClient(gh<_i361.Dio>()),
+    );
     gh.singleton<_i710.AuthApiClient>(
       () => apiModule.provideAuthApiClient(gh<_i361.Dio>()),
-    );
-    gh.singleton<_i670.OrderApiClient>(
-      () => apiModule.provideOrderApiClient(gh<_i361.Dio>()),
-    );
-    gh.factory<_i717.OrdersRemoteDataSource>(
-      () => _i888.OrdersRemoteDataSourceImpl(
-        orderApiClient: gh<_i670.OrderApiClient>(),
-      ),
-    );
-    gh.factory<_i621.OrderRepo>(
-      () => _i50.OrdersRepoImpl(gh<_i717.OrdersRemoteDataSource>()),
     );
     gh.factory<_i25.AuthRemoteDataSource>(
       () =>
           _i182.AuthRemoteDataSourceImpl(apiClient: gh<_i710.AuthApiClient>()),
     );
-    gh.factory<_i610.ClaimOrderUseCase>(
-      () => _i610.ClaimOrderUseCase(gh<_i621.OrderRepo>()),
-    );
-    gh.factory<_i264.GetAvailableOrdersUseCase>(
-      () => _i264.GetAvailableOrdersUseCase(gh<_i621.OrderRepo>()),
-    );
-    gh.factory<_i77.HomeCubit>(
-      () => _i77.HomeCubit(
-        getAvailableOrdersUseCase: gh<_i264.GetAvailableOrdersUseCase>(),
-        claimOrderUseCase: gh<_i610.ClaimOrderUseCase>(),
+    gh.factory<_i717.OrdersRemoteDataSource>(
+      () => _i888.OrdersRemoteDataSourceImpl(
+        homeApiClient: gh<_i670.HomeApiClient>(),
       ),
     );
     gh.factory<_i877.AuthRepo>(
@@ -133,17 +118,35 @@ extension GetItInjectableX on _i174.GetIt {
         tokenStorage: gh<_i964.TokenStorage>(),
       ),
     );
+    gh.factory<_i621.OrderRepo>(
+      () => _i50.OrdersRepoImpl(
+        gh<_i717.OrdersRemoteDataSource>(),
+        gh<_i185.SafeCall>(),
+      ),
+    );
     gh.factory<_i1038.LoginUseCase>(
       () => _i1038.LoginUseCase(gh<_i877.AuthRepo>()),
     );
     gh.factory<_i725.LoginViewModel>(
       () => _i725.LoginViewModel(gh<_i1038.LoginUseCase>()),
     );
+    gh.factory<_i610.ClaimOrderUseCase>(
+      () => _i610.ClaimOrderUseCase(gh<_i621.OrderRepo>()),
+    );
+    gh.factory<_i264.GetAvailableOrdersUseCase>(
+      () => _i264.GetAvailableOrdersUseCase(gh<_i621.OrderRepo>()),
+    );
     gh.factory<_i743.ApplyUseCase>(
       () => _i743.ApplyUseCase(gh<_i877.AuthRepo>()),
     );
     gh.factory<_i311.GetVehicleTypesUseCase>(
       () => _i311.GetVehicleTypesUseCase(gh<_i877.AuthRepo>()),
+    );
+    gh.factory<_i77.HomeCubit>(
+      () => _i77.HomeCubit(
+        getAvailableOrdersUseCase: gh<_i264.GetAvailableOrdersUseCase>(),
+        claimOrderUseCase: gh<_i610.ClaimOrderUseCase>(),
+      ),
     );
     gh.factory<_i483.ForgetPasswordUseCase>(
       () => _i483.ForgetPasswordUseCase(gh<_i877.AuthRepo>()),

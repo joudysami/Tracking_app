@@ -8,8 +8,6 @@ class HomeState extends Equatable {
   final BaseState<List<AvailableOrderEntity>> ordersState;
   final BaseState<ClaimedOrderEntity> claimOrderState;
   final PaginationEntity? pagination;
-
-  /// Order id whose Accept action is in flight. Null when no claim is running.
   final String? claimingOrderId;
 
   const HomeState({
@@ -32,7 +30,7 @@ class HomeState extends Equatable {
       pagination: pagination ?? this.pagination,
       claimingOrderId: clearClaimingOrderId
           ? null
-          : (claimingOrderId ?? this.claimingOrderId),
+          : claimingOrderId ?? this.claimingOrderId,
     );
   }
 

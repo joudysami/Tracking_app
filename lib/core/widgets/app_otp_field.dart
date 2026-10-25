@@ -52,7 +52,6 @@ class AppOtpField extends StatelessWidget {
       separatorBuilder: _separatorBuilder,
       cursor: _buildCursor(colors),
       errorTextStyle: _buildErrorTextStyle(colors),
-
     );
   }
 

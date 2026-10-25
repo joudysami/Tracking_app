@@ -9,15 +9,8 @@ class ApplyResponse {
   final int? code;
   final String? message;
   final ApplyData? data;
-  
 
-  ApplyResponse({
-    this.status,
-    this.code,
-    this.message,
-    this.data,
-  
-  });
+  ApplyResponse({this.status, this.code, this.message, this.data});
 
   factory ApplyResponse.fromJson(Map<String, dynamic> json) =>
       _$ApplyResponseFromJson(json);
@@ -33,9 +26,7 @@ class ApplyData {
   final String? role;
   final String? gender;
 
-  @JsonKey(
-    name: 'notifcationStatus',
-  ) 
+  @JsonKey(name: 'notifcationStatus')
   final String? notificationStatus;
 
   final DateTime? createdAt;

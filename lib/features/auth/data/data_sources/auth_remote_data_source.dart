@@ -10,7 +10,7 @@ import 'package:tracking_app/features/auth/data/models/login/login_request.dart'
 import 'package:tracking_app/features/auth/data/models/login/login_response.dart';
 
 abstract interface class AuthRemoteDataSource {
-    Future<LoginResponse> login(LoginRequest request);
+  Future<LoginResponse> login(LoginRequest request);
   Future<ForgetPasswordResponseDto> forgetPassword(
     ForgetPasswordRequestDto forgetPasswordRequest,
   );
@@ -18,7 +18,7 @@ abstract interface class AuthRemoteDataSource {
     ResetPasswordRequestDto resetPasswordRequest,
   );
   Future<VerifyOtpResponseDto> verifyOtp(VerifyOtpRequestDto verifyOtpRequest);
-   Future<ApplyResponse> apply(ApplyRequestModel applyrequestmodel);
+  Future<ApplyResponse> apply(ApplyRequestModel applyrequestmodel);
 
   Future<VehicleTypesResponse> getVehicleTypes();
 }

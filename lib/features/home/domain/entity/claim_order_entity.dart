@@ -15,5 +15,11 @@ class ClaimedOrderEntity extends Equatable {
     required this.assignedAt,
   });
   @override
- List<Object?> get props => [orderId,orderNumber,status,assignmentStatus,assignedAt];
+  List<Object?> get props => [
+    orderId,
+    orderNumber,
+    status,
+    assignmentStatus,
+    assignedAt,
+  ];
 }

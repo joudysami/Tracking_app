@@ -54,8 +54,9 @@ void main() {
     expect(button(tester).onPressed, isNotNull);
   });
 
-  testWidgets('tapping calls onResend and restarts the cooldown',
-      (tester) async {
+  testWidgets('tapping calls onResend and restarts the cooldown', (
+    tester,
+  ) async {
     var calls = 0;
     await pump(tester, onResend: () => calls++);
     await tester.pump(const Duration(seconds: 3));
@@ -71,8 +72,9 @@ void main() {
     expect(button(tester).onPressed, isNotNull);
   });
 
-  testWidgets('stays disabled after the cooldown when not enabled',
-      (tester) async {
+  testWidgets('stays disabled after the cooldown when not enabled', (
+    tester,
+  ) async {
     var calls = 0;
     await pump(tester, onResend: () => calls++, enabled: false);
     await tester.pump(const Duration(seconds: 3));

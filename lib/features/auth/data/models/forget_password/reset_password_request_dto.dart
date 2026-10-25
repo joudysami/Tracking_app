@@ -11,11 +11,7 @@ class ResetPasswordRequestDto {
   @JsonKey(name: "confirmPassword")
   final String? confirmPassword;
 
-  ResetPasswordRequestDto ({
-    this.otpToken,
-    this.password,
-    this.confirmPassword,
-  });
+  ResetPasswordRequestDto({this.otpToken, this.password, this.confirmPassword});
 
   factory ResetPasswordRequestDto.fromJson(Map<String, dynamic> json) {
     return _$ResetPasswordRequestDtoFromJson(json);
@@ -25,5 +21,3 @@ class ResetPasswordRequestDto {
     return _$ResetPasswordRequestDtoToJson(this);
   }
 }
-
-

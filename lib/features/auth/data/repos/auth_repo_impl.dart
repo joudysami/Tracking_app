@@ -106,21 +106,14 @@ class AuthRepoImpl implements AuthRepo {
   }
 
   @override
-  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) {
+  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) async {
     return safeCall.safeApiCall(() async {
       final response = await remoteDataSource.login(request);
-      final session = response.data;
-      if (!response.status || session == null) {
-        throw ApiException(
-          message: response.message,
-          statusCode: response.code,
-        );
-      }
       await tokenStorage.saveTokens(
-        accessToken: session.accessToken,
-        refreshToken: session.refreshToken,
+        accessToken: response.data.token,
+        refreshToken: response.data.refreshToken,
       );
-      return session.toDomain();
+      return response.data.toDomain();
     });
   }
 
