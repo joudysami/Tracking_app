@@ -315,6 +315,7 @@
         "locationPermissionDenied": "تم رفض صلاحية الموقع. من فضلك اسمحي بالوصول إلى الموقع للمتابعة.",
         "locationStreamFailed": "فشل استقبال تحديثات الموقع. من فضلك حاولي مرة أخرى.",
         "locationReportFailed": "فشل إرسال موقعك إلى الخادم.",
-        "locationOpenSettingsFailed": "تعذر فتح الإعدادات. من فضلك افتحيها يدويًا."
+        "locationOpenSettingsFailed": "تعذر فتح الإعدادات. من فضلك افتحيها يدويًا.",
+        "locationRouteLoadFailed": "تعذّر تحميل المسار. حاولي مرة أخرى."
     }
 }

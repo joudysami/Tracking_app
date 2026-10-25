@@ -1,12 +1,14 @@
-import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/domain/entities/geo_point.dart';
+import 'package:tracking_app/core/domain/entities/location_permission_status.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/core/services/location_service.dart';
 import 'package:tracking_app/features/location_tracking/data/data_sources/location_remote_data_source.dart';
 import 'package:tracking_app/features/location_tracking/data/models/location_report_request_model.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_report_entity.dart';
+import 'package:tracking_app/features/location_tracking/domain/entities/route_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/repos/location_repo.dart';
 
 @Injectable(as: LocationRepo)
@@ -21,10 +23,6 @@ class LocationRepoImpl implements LocationRepo {
   final SafeCall _safeCall;
   final LocationRemoteDataSource _remoteDataSource;
 
-  static const Duration _throttleDuration = Duration(seconds: 5);
-
-  DateTime? _lastReportAttemptAt;
-
   @override
   Future<BaseResponse<bool>> isLocationServiceEnabled() {
     return _safeCall.safeApiCall<bool>(
@@ -33,15 +31,15 @@ class LocationRepoImpl implements LocationRepo {
   }
 
   @override
-  Future<BaseResponse<LocationPermission>> checkPermission() {
-    return _safeCall.safeApiCall<LocationPermission>(
+  Future<BaseResponse<LocationPermissionStatus>> checkPermission() {
+    return _safeCall.safeApiCall<LocationPermissionStatus>(
       _locationService.checkPermission,
     );
   }
 
   @override
-  Future<BaseResponse<LocationPermission>> requestPermission() {
-    return _safeCall.safeApiCall<LocationPermission>(
+  Future<BaseResponse<LocationPermissionStatus>> requestPermission() {
+    return _safeCall.safeApiCall<LocationPermissionStatus>(
       _locationService.requestPermission,
     );
   }
@@ -59,32 +57,23 @@ class LocationRepoImpl implements LocationRepo {
   @override
   Stream<LocationEntity> getPositionStream() {
     return _locationService.getPositionStream().map(
-      (position) => LocationEntity(
-        lat: position.latitude,
-        lng: position.longitude,
-        recordedAt: position.timestamp,
+      (point) => LocationEntity(
+        lat: point.latitude,
+        lng: point.longitude,
+        recordedAt: DateTime.now(),
       ),
     );
   }
 
   @override
-  Future<BaseResponse<Position>> getCurrentPosition() {
-    return _safeCall.safeApiCall<Position>(_locationService.getCurrentPosition);
+  Future<BaseResponse<GeoPoint>> getCurrentPosition() {
+    return _safeCall.safeApiCall<GeoPoint>(_locationService.getCurrentPosition);
   }
 
   @override
-  Future<BaseResponse<LocationReportEntity>?> reportLocation(
+  Future<BaseResponse<LocationReportEntity>> reportLocation(
     LocationEntity location,
-  ) async {
-    final now = DateTime.now();
-
-    if (_lastReportAttemptAt != null &&
-        now.difference(_lastReportAttemptAt!) < _throttleDuration) {
-      return null;
-    }
-
-    _lastReportAttemptAt = now;
-
+  ) {
     return _safeCall.safeApiCall<LocationReportEntity>(() async {
       final request = LocationReportRequestModel(
         lat: location.lat,
@@ -97,21 +86,42 @@ class LocationRepoImpl implements LocationRepo {
       return response.toDomain();
     });
   }
+
   @override
-  Future<BaseResponse<LocationPermission>> checkAndRequestPermission() async {
+  Future<BaseResponse<LocationPermissionStatus>>
+  checkAndRequestPermission() async {
     final permissionResponse = await checkPermission();
 
-    if (permissionResponse is ErrorResponse<LocationPermission>) {
-      return permissionResponse;
+    switch (permissionResponse) {
+      case ErrorResponse<LocationPermissionStatus>():
+        return permissionResponse;
+
+      case SuccessResponse<LocationPermissionStatus>(:final data):
+        if (data == LocationPermissionStatus.denied) {
+          return requestPermission();
+        }
+
+        return permissionResponse;
     }
-
-    final permission =
-        (permissionResponse as SuccessResponse<LocationPermission>).data;
-
-    if (permission == LocationPermission.denied) {
-      return requestPermission();
-    }
-
-    return permissionResponse;
   }
+  
+@override
+  Future<BaseResponse<RouteEntity>> getRoute({
+    required double startLatitude,
+    required double startLongitude,
+    required double endLatitude,
+    required double endLongitude,
+  }) {
+    return _safeCall.safeApiCall<RouteEntity>(() async {
+      final response = await _remoteDataSource.getRoute(
+        startLatitude: startLatitude,
+        startLongitude: startLongitude,
+        endLatitude: endLatitude,
+        endLongitude: endLongitude,
+      );
+
+      return response.toDomain();
+    });
+  }
+
 }

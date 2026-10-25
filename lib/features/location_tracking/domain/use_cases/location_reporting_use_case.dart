@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_entity.dart';
@@ -10,7 +11,34 @@ class LocationReportingUseCase {
 
   final LocationRepo _locationRepo;
 
-  Future<BaseResponse<LocationReportEntity>?> call(LocationEntity location) {
-    return _locationRepo.reportLocation(location);
+  static const double _minimumDistanceInMeters = 30;
+
+  LocationEntity? _lastReportedLocation;
+
+  Future<BaseResponse<LocationReportEntity>?> call(
+    LocationEntity location,
+  ) async {
+    final lastLocation = _lastReportedLocation;
+
+    if (lastLocation != null) {
+      final distance = Geolocator.distanceBetween(
+        lastLocation.lat,
+        lastLocation.lng,
+        location.lat,
+        location.lng,
+      );
+
+      if (distance < _minimumDistanceInMeters) {
+        return null;
+      }
+    }
+
+    final response = await _locationRepo.reportLocation(location);
+
+    if (response is SuccessResponse<LocationReportEntity>) {
+      _lastReportedLocation = location;
+    }
+
+    return response;
   }
 }

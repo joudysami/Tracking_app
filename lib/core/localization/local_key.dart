@@ -370,5 +370,5 @@ static const locationPermissionDialogTitle = 'locationPermissionDialogTitle';
   static const locationStreamFailed = 'locationStreamFailed';
   static const locationReportFailed = 'locationReportFailed';
   static const locationOpenSettingsFailed = 'locationOpenSettingsFailed';
-    
+  static const String locationRouteLoadFailed = 'locationRouteLoadFailed';  
 }

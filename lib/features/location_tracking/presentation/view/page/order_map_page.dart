@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -17,24 +19,65 @@ import 'package:tracking_app/features/location_tracking/presentation/view/widget
 
 enum OrderMapStage { pickup, user }
 
-class OrderMapPage extends StatelessWidget {
+class OrderMapPage extends StatefulWidget {
   final OrderMapModel order;
   final OrderMapStage stage;
 
-  const OrderMapPage({super.key, required this.order, required this.stage});
+  const OrderMapPage({
+    super.key,
+    required this.order,
+    required this.stage,
+  });
 
-  bool get _isPickup => stage == OrderMapStage.pickup;
+  @override
+  State<OrderMapPage> createState() => _OrderMapPageState();
+}
+
+class _OrderMapPageState extends State<OrderMapPage> {
+  bool _initialRouteRequested = false;
+
+  bool get _isPickup => widget.stage == OrderMapStage.pickup;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    if (_initialRouteRequested) return;
+    _initialRouteRequested = true;
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+
+      final driver = widget.order.driverLocation;
+      final target = _isPickup
+          ? widget.order.store.location
+          : widget.order.user.location;
+
+      unawaited(
+        context.read<LocationTrackingViewModel>().loadRoute(
+          startLatitude: driver.latitude,
+          startLongitude: driver.longitude,
+          endLatitude: target.latitude,
+          endLongitude: target.longitude,
+        ),
+      );
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final colors = context.colors;
-    final target = _isPickup ? order.store : order.user;
-    final other = _isPickup ? order.user : order.store;
-    final route = _isPickup ? order.pickupRoute : order.userRoute;
+    final target = _isPickup ? widget.order.store : widget.order.user;
+    final other = _isPickup ? widget.order.user : widget.order.store;
 
     return BlocConsumer<LocationTrackingViewModel, LocationTrackingState>(
       listenWhen: (previous, current) {
-        return previous.shouldShowPermissionDialog !=
+        final locationChanged =
+            previous.currentLocation?.lat != current.currentLocation?.lat ||
+            previous.currentLocation?.lng != current.currentLocation?.lng;
+
+        return locationChanged ||
+            previous.shouldShowPermissionDialog !=
                 current.shouldShowPermissionDialog ||
             previous.shouldShowLocationSettingsDialog !=
                 current.shouldShowLocationSettingsDialog ||
@@ -42,6 +85,22 @@ class OrderMapPage extends StatelessWidget {
       },
       listener: (context, state) {
         final viewModel = context.read<LocationTrackingViewModel>();
+
+        if (state.currentLocation != null) {
+          final location = state.currentLocation!;
+          final destination = _isPickup
+              ? widget.order.store.location
+              : widget.order.user.location;
+
+          unawaited(
+            viewModel.loadRoute(
+              startLatitude: location.lat,
+              startLongitude: location.lng,
+              endLatitude: destination.latitude,
+              endLongitude: destination.longitude,
+            ),
+          );
+        }
 
         if (state.shouldShowPermissionDialog) {
           showDialog<void>(
@@ -53,7 +112,9 @@ class OrderMapPage extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(dialogContext);
-                    viewModel.doEvent(LocationPermissionDialogDismissed());
+                    viewModel.doEvent(
+                      LocationPermissionDialogDismissed(),
+                    );
                   },
                   child: Text(LocaleKeys.cancel.tr()),
                 ),
@@ -79,14 +140,18 @@ class OrderMapPage extends StatelessWidget {
                 TextButton(
                   onPressed: () {
                     Navigator.pop(dialogContext);
-                    viewModel.doEvent(LocationSettingsDialogDismissed());
+                    viewModel.doEvent(
+                      LocationSettingsDialogDismissed(),
+                    );
                   },
                   child: Text(LocaleKeys.cancel.tr()),
                 ),
                 TextButton(
                   onPressed: () {
                     Navigator.pop(dialogContext);
-                    viewModel.doEvent(OpenLocationSettingsRequested());
+                    viewModel.doEvent(
+                      OpenLocationSettingsRequested(),
+                    );
                   },
                   child: Text(LocaleKeys.locationOpenSettings.tr()),
                 ),
@@ -100,17 +165,34 @@ class OrderMapPage extends StatelessWidget {
 
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(message)));
+            ..showSnackBar(
+              SnackBar(content: Text(message)),
+            );
         }
       },
       builder: (context, state) {
-        // Use the real location after the first GPS update.
-        // Keep the mock location as the initial fallback.
         final currentLocation = state.currentLocation;
 
         final driverPoint = currentLocation == null
-            ? order.driverLocation
-            : LatLng(currentLocation.lat, currentLocation.lng);
+            ? widget.order.driverLocation
+            : LatLng(
+                currentLocation.lat,
+                currentLocation.lng,
+              );
+
+        final routePoints = state.routePoints
+            .map(
+              (point) => LatLng(
+                point.latitude,
+                point.longitude,
+              ),
+            )
+            .toList();
+
+        // Use the driver and destination while the actual route is unavailable.
+        final cameraPoints = routePoints.length >= 2
+            ? routePoints
+            : [driverPoint, target.location];
 
         return Scaffold(
           body: Stack(
@@ -118,8 +200,13 @@ class OrderMapPage extends StatelessWidget {
               FlutterMap(
                 options: MapOptions(
                   initialCameraFit: CameraFit.bounds(
-                    bounds: LatLngBounds.fromPoints(route),
-                    padding: EdgeInsets.fromLTRB(60.w, 100.h, 60.w, 320.h),
+                    bounds: LatLngBounds.fromPoints(cameraPoints),
+                    padding: EdgeInsets.fromLTRB(
+                      60.w,
+                      100.h,
+                      60.w,
+                      320.h,
+                    ),
                   ),
                   interactionOptions: const InteractionOptions(
                     flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
@@ -131,15 +218,16 @@ class OrderMapPage extends StatelessWidget {
                         'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: AppConstants.packageName,
                   ),
-                  PolylineLayer(
-                    polylines: [
-                      Polyline(
-                        points: route,
-                        strokeWidth: 3,
-                        color: colors.pink,
-                      ),
-                    ],
-                  ),
+                  if (routePoints.length >= 2)
+                    PolylineLayer(
+                      polylines: [
+                        Polyline(
+                          points: routePoints,
+                          strokeWidth: 3,
+                          color: colors.pink,
+                        ),
+                      ],
+                    ),
                   MarkerLayer(
                     markers: [
                       Marker(
@@ -162,7 +250,9 @@ class OrderMapPage extends StatelessWidget {
                             label: _isPickup
                                 ? target.name
                                 : LocaleKeys.orderMapUser.tr(),
-                            icon: _isPickup ? Icons.local_florist : Icons.home,
+                            icon: _isPickup
+                                ? Icons.local_florist
+                                : Icons.home,
                           ),
                         ),
                       ),
@@ -170,6 +260,12 @@ class OrderMapPage extends StatelessWidget {
                   ),
                 ],
               ),
+              if (state.isRouteLoading)
+                Positioned(
+                  top: 60.h,
+                  right: 16.w,
+                  child: const CircularProgressIndicator(),
+                ),
               SafeArea(
                 child: Padding(
                   padding: EdgeInsets.all(16.w),
@@ -253,6 +349,8 @@ class OrderMapPage extends StatelessWidget {
         return LocaleKeys.locationReportFailed.tr();
       case LocationTrackingError.openSettingsFailed:
         return LocaleKeys.locationOpenSettingsFailed.tr();
+      case LocationTrackingError.routeLoadFailed:
+        return LocaleKeys.locationRouteLoadFailed.tr();
     }
   }
 }
@@ -268,11 +366,7 @@ class _SectionLabel extends StatelessWidget {
       padding: EdgeInsets.only(bottom: 8.h),
       child: Text(
         text,
-        style: TextStyle(
-          color: context.colors.grey.shade800,
-          fontSize: 12.sp,
-          fontWeight: FontWeight.w500,
-        ),
+        style: Theme.of(context).textTheme.titleSmall,
       ),
     );
   }

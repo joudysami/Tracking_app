@@ -4,9 +4,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/domain/entities/location_permission_status.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_report_entity.dart';
+import 'package:tracking_app/features/location_tracking/domain/entities/route_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/check_and_request_location_permission_use_case.dart';
+import 'package:tracking_app/features/location_tracking/domain/use_cases/get_route_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/is_location_service_enabled_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_reporting_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_tracking_use_case.dart';
@@ -26,6 +29,7 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
     this._isLocationServiceEnabledUseCase,
     this._openAppSettingsUseCase,
     this._openLocationSettingsUseCase,
+    this._getRouteUseCase,
   ) : super(const LocationTrackingState());
 
   final LocationTrackingUseCase _locationTrackingUseCase;
@@ -35,9 +39,19 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
   final IsLocationServiceEnabledUseCase _isLocationServiceEnabledUseCase;
   final OpenAppSettingsUseCase _openAppSettingsUseCase;
   final OpenLocationSettingsUseCase _openLocationSettingsUseCase;
+  final GetRouteUseCase _getRouteUseCase;
 
   StreamSubscription<LocationEntity>? _locationSubscription;
+
   bool _isStarting = false;
+  bool _isLoadingRoute = false;
+
+  double? _lastRouteStartLatitude;
+  double? _lastRouteStartLongitude;
+  double? _lastRouteEndLatitude;
+  double? _lastRouteEndLongitude;
+
+  static const double _routeRefreshDistanceMeters = 100;
 
   Future<void> doEvent(LocationTrackingEvent event) async {
     switch (event) {
@@ -61,6 +75,102 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
     }
   }
 
+  Future<void> loadRoute({
+    required double startLatitude,
+    required double startLongitude,
+    required double endLatitude,
+    required double endLongitude,
+  }) async {
+    if (isClosed || _isLoadingRoute) return;
+
+    final destinationChanged =
+        _lastRouteEndLatitude != endLatitude ||
+        _lastRouteEndLongitude != endLongitude;
+
+    if (!destinationChanged &&
+        _lastRouteStartLatitude != null &&
+        _lastRouteStartLongitude != null &&
+        state.routePoints.isNotEmpty) {
+      final distance = Geolocator.distanceBetween(
+        _lastRouteStartLatitude!,
+        _lastRouteStartLongitude!,
+        startLatitude,
+        startLongitude,
+      );
+
+      if (distance < _routeRefreshDistanceMeters) return;
+    }
+
+    _isLoadingRoute = true;
+
+    _lastRouteStartLatitude = startLatitude;
+    _lastRouteStartLongitude = startLongitude;
+    _lastRouteEndLatitude = endLatitude;
+    _lastRouteEndLongitude = endLongitude;
+
+    emit(state.copyWith(isRouteLoading: true, error: null));
+
+    try {
+      final response = await _getRouteUseCase(
+        startLatitude: startLatitude,
+        startLongitude: startLongitude,
+        endLatitude: endLatitude,
+        endLongitude: endLongitude,
+      );
+
+      if (isClosed) return;
+
+      switch (response) {
+        case ErrorResponse<RouteEntity>():
+          _lastRouteStartLatitude = null;
+          _lastRouteStartLongitude = null;
+
+          emit(
+            state.copyWith(
+              isRouteLoading: false,
+              error: LocationTrackingError.routeLoadFailed,
+            ),
+          );
+
+        case SuccessResponse<RouteEntity>(:final data):
+          if (data == null || data.points.length < 2) {
+            _lastRouteStartLatitude = null;
+            _lastRouteStartLongitude = null;
+
+            emit(
+              state.copyWith(
+                isRouteLoading: false,
+                error: LocationTrackingError.routeLoadFailed,
+              ),
+            );
+            return;
+          }
+
+          emit(
+            state.copyWith(
+              isRouteLoading: false,
+              routePoints: data.points,
+              error: null,
+            ),
+          );
+      }
+    } catch (_) {
+      _lastRouteStartLatitude = null;
+      _lastRouteStartLongitude = null;
+
+      if (!isClosed) {
+        emit(
+          state.copyWith(
+            isRouteLoading: false,
+            error: LocationTrackingError.routeLoadFailed,
+          ),
+        );
+      }
+    } finally {
+      _isLoadingRoute = false;
+    }
+  }
+
   Future<void> _startTracking() async {
     if (_locationSubscription != null || _isStarting) return;
 
@@ -75,52 +185,51 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
     );
 
     try {
-      // 1. Check whether GPS is enabled.
       final serviceResponse = await _isLocationServiceEnabledUseCase();
 
-      if (serviceResponse is ErrorResponse<bool>) {
-        emit(state.copyWith(error: LocationTrackingError.serviceCheckFailed));
-        return;
+      switch (serviceResponse) {
+        case ErrorResponse<bool>():
+          emit(state.copyWith(error: LocationTrackingError.serviceCheckFailed));
+          return;
+
+        case SuccessResponse<bool>(:final data):
+          if (data != true) {
+            emit(state.copyWith(shouldShowLocationSettingsDialog: true));
+            return;
+          }
       }
 
-      final isServiceEnabled = (serviceResponse as SuccessResponse<bool>).data;
-
-      if (isServiceEnabled != true) {
-        emit(state.copyWith(shouldShowLocationSettingsDialog: true));
-        return;
-      }
-
-      // 2. Check/request location permission.
       final permissionResponse = await _checkAndRequestPermissionUseCase();
 
-      if (permissionResponse is ErrorResponse<LocationPermission>) {
-        emit(
-          state.copyWith(error: LocationTrackingError.permissionCheckFailed),
-        );
-        return;
+      switch (permissionResponse) {
+        case ErrorResponse<LocationPermissionStatus>():
+          emit(
+            state.copyWith(error: LocationTrackingError.permissionCheckFailed),
+          );
+          return;
+
+        case SuccessResponse<LocationPermissionStatus>(:final data):
+          if (data == null) {
+            emit(
+              state.copyWith(
+                error: LocationTrackingError.permissionCheckFailed,
+              ),
+            );
+            return;
+          }
+
+          if (data == LocationPermissionStatus.deniedForever) {
+            emit(state.copyWith(shouldShowPermissionDialog: true));
+            return;
+          }
+
+          if (data == LocationPermissionStatus.denied ||
+              data == LocationPermissionStatus.unableToDetermine) {
+            emit(state.copyWith(error: LocationTrackingError.permissionDenied));
+            return;
+          }
       }
 
-      final permission =
-          (permissionResponse as SuccessResponse<LocationPermission>).data;
-
-      if (permission == null) {
-        emit(
-          state.copyWith(error: LocationTrackingError.permissionCheckFailed),
-        );
-        return;
-      }
-
-      if (permission == LocationPermission.deniedForever) {
-        emit(state.copyWith(shouldShowPermissionDialog: true));
-        return;
-      }
-
-      if (permission == LocationPermission.denied) {
-        emit(state.copyWith(error: LocationTrackingError.permissionDenied));
-        return;
-      }
-
-      // 3. Start listening to location updates.
       _listenToLocation();
     } finally {
       _isStarting = false;
@@ -165,11 +274,25 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
   }
 
   Future<void> _reportLocation(LocationEntity location) async {
-    final response = await _locationReportingUseCase(location);
+    try {
+      final response = await _locationReportingUseCase(location);
 
-    if (isClosed) return;
+      if (isClosed) return;
 
-    if (response is ErrorResponse<LocationReportEntity>) {
+      switch (response) {
+        case ErrorResponse<LocationReportEntity>():
+          emit(state.copyWith(error: LocationTrackingError.reportFailed));
+
+        case SuccessResponse<LocationReportEntity>():
+          break;
+
+        case null:
+          // Reporting was skipped because of the distance threshold.
+          break;
+      }
+    } catch (_) {
+      if (isClosed) return;
+
       emit(state.copyWith(error: LocationTrackingError.reportFailed));
     }
   }
@@ -181,8 +304,12 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
 
     if (isClosed) return;
 
-    if (response is ErrorResponse<bool>) {
-      emit(state.copyWith(error: LocationTrackingError.openSettingsFailed));
+    switch (response) {
+      case ErrorResponse<bool>():
+        emit(state.copyWith(error: LocationTrackingError.openSettingsFailed));
+
+      case SuccessResponse<bool>():
+        break;
     }
   }
 
@@ -193,8 +320,12 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
 
     if (isClosed) return;
 
-    if (response is ErrorResponse<bool>) {
-      emit(state.copyWith(error: LocationTrackingError.openSettingsFailed));
+    switch (response) {
+      case ErrorResponse<bool>():
+        emit(state.copyWith(error: LocationTrackingError.openSettingsFailed));
+
+      case SuccessResponse<bool>():
+        break;
     }
   }
 

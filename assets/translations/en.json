@@ -315,6 +315,7 @@
         "locationPermissionDenied": "Location permission was denied. Please allow location access to continue.",
         "locationStreamFailed": "Failed to receive location updates. Please try again.",
         "locationReportFailed": "Failed to send your location to the server.",
+        "locationRouteLoadFailed": "Failed to load route. Please try again.",
         "locationOpenSettingsFailed": "Failed to open settings. Please open them manually."
     }
 }

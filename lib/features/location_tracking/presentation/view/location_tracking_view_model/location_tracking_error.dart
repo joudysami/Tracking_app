@@ -5,4 +5,5 @@ enum LocationTrackingError {
   locationStreamFailed,
   reportFailed,
   openSettingsFailed,
+  routeLoadFailed,
 }
