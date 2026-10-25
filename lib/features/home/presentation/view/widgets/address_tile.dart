@@ -20,7 +20,7 @@ class AddressTile extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: const Color(0xFFEEEEEE)),
+        border: Border.all(color: context.colors.white),
       ),
       child: Row(
         children: [
@@ -42,10 +42,10 @@ class AddressTile extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style:  TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color: Color(0xFF555555),
+                    color:context.colors.pink.shade900,
                   ),
                 ),
                 const SizedBox(height: 3),

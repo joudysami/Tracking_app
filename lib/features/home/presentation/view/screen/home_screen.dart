@@ -48,26 +48,37 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
       listener: (context, state) {
+        final messenger = ScaffoldMessenger.of(context);
         final claimError = state.claimOrderState.errorMessage;
         final ordersError = state.ordersState.errorMessage;
+
         if (claimError.isNotEmpty) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(claimError)));
-        } else if (ordersError.isNotEmpty) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(ordersError)));
-        } else if (state.claimOrderState.data != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(
-                LocaleKeys.homeOrderAccepted.tr(
-                  namedArgs: {'id': state.claimOrderState.data!.orderId},
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(claimError)));
+        }
+
+        if (ordersError.isNotEmpty) {
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(SnackBar(content: Text(ordersError)));
+        }
+
+        if (claimError.isEmpty &&
+            ordersError.isEmpty &&
+            state.claimOrderState.data != null) {
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(
+                  LocaleKeys.homeOrderAccepted.tr(
+                    namedArgs: {'id': state.claimOrderState.data!.orderId},
+                  ),
                 ),
               ),
-            ),
-          );
+            );
+
           context.push(AppRoutes.order, extra: state.claimOrderState.data);
         }
       },
