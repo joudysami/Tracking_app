@@ -16,6 +16,7 @@ import 'package:tracking_app/features/home/presentation/view/widgets/button_navi
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
 import 'package:tracking_app/features/order/order_screen.dart';
+import 'package:tracking_app/features/order/presentation/order_details_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 import 'package:tracking_app/features/profile/profile.dart';
 
@@ -35,6 +36,7 @@ class AppRouter {
         _homeRoute(),
         _profileRoute(),
         _orderRoute(),
+        _orderDetailsRoute(),
       ],
     );
   }
@@ -126,6 +128,13 @@ class AppRouter {
       builder: (context, state) {
         return OrderScreen();
       },
+    );
+  }
+
+  static GoRoute _orderDetailsRoute() {
+    return GoRoute(
+      path: AppRoutes.orderDetails,
+      builder: (context, state) => buildOrderDetailsPage(state.extra),
     );
   }
 }

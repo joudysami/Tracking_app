@@ -112,11 +112,8 @@ class AuthInterceptors extends Interceptor {
       final tokens = await _refreshTokens(refreshToken);
 
       if (tokens == null) {
-        // Backend reported failure (or refresher not configured)
-        // without a transport-level error.
-        //
-        // Do not clear the session here because the refresh failure
-        // has already been handled by the single-flight refresh flow.
+        // HTTP 200 with status false, or a malformed success envelope.
+        // This is not an authentication rejection, so the stored tokens stay.
         _log('Token refresh skipped: no tokens returned');
         return handler.next(err);
       }
@@ -128,26 +125,21 @@ class AuthInterceptors extends Interceptor {
       try {
         final response = await _retryRequest(options, tokens.accessToken);
 
-        return handler.resolve(response);
+        handler.resolve(response);
+      } on DioException catch (retryError) {
+        await _rejectRetriedRequest(retryError, handler);
       } catch (_) {
-        // The refresh succeeded, but the retry request failed.
-        //
-        // Unlike the refresh flow, there is no shared completer here
-        // that can guarantee this happens only once.
         _log('Retry request failed after token refresh');
-
-        await _expireSession();
-
-        return handler.reject(_sessionExpiredException(err));
+        handler.next(err);
       }
+      return;
     } on DioException catch (refreshError) {
       final refreshStatus = refreshError.response?.statusCode;
 
-      if (refreshStatus == 401 || refreshStatus == 400) {
+      if (_isAuthenticationFailure(refreshStatus)) {
         _log('Token refresh failed: refresh token invalid or expired');
 
-        // Session expiration is already handled once inside
-        // _refreshTokens() by the first caller.
+        // Tokens were cleared once inside the single-flight refresh.
         return handler.reject(_sessionExpiredException(err));
       }
 
@@ -157,10 +149,28 @@ class AuthInterceptors extends Interceptor {
     } catch (_) {
       _log('Token refresh failed: unexpected error');
 
-      // Session expiration is already handled once inside
-      // _refreshTokens() by the first caller.
-      return handler.reject(_sessionExpiredException(err));
+      return handler.next(err);
     }
+  }
+
+  /// 400 and 401 mean the credentials were rejected.
+  /// Other failures leave the stored tokens unchanged.
+  bool _isAuthenticationFailure(int? statusCode) {
+    return statusCode == 400 || statusCode == 401;
+  }
+
+  Future<void> _rejectRetriedRequest(
+    DioException retryError,
+    ErrorInterceptorHandler handler,
+  ) async {
+    _log('Retry request failed after token refresh');
+
+    if (_isAuthenticationFailure(retryError.response?.statusCode)) {
+      await _expireSession();
+      return handler.reject(_sessionExpiredException(retryError));
+    }
+
+    return handler.next(retryError);
   }
 
   /// Single-flight refresh:
@@ -185,10 +195,11 @@ class AuthInterceptors extends Interceptor {
         }
       } catch (error, stackTrace) {
         if (!completer.isCompleted) {
-          // Only the first caller that owns this completer
-          // is allowed to expire the session and notify listeners.
-          await _expireSession();
-          _authSessionNotifier.notifySessionExpired();
+          if (error is DioException &&
+              _isAuthenticationFailure(error.response?.statusCode)) {
+            await _expireSession();
+            _authSessionNotifier.notifySessionExpired();
+          }
 
           completer.completeError(error, stackTrace);
         }

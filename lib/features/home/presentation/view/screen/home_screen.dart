@@ -47,6 +47,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return BlocListener<HomeCubit, HomeState>(
+      listenWhen: (previous, current) {
+        final claimError = current.claimOrderState.errorMessage;
+        final claimSuccess = current.claimOrderState.data;
+        final ordersError = current.ordersState.errorMessage;
+        final newClaimError =
+            claimError.isNotEmpty &&
+            claimError != previous.claimOrderState.errorMessage;
+        final newClaimSuccess =
+            claimSuccess != null &&
+            claimSuccess.orderId != previous.claimOrderState.data?.orderId;
+        final newOrdersError =
+            ordersError.isNotEmpty &&
+            ordersError != previous.ordersState.errorMessage;
+        return newClaimError || newClaimSuccess || newOrdersError;
+      },
       listener: (context, state) {
         final messenger = ScaffoldMessenger.of(context);
         final claimError = state.claimOrderState.errorMessage;

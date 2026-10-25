@@ -31,7 +31,11 @@ class LoginViewModel extends Cubit<LoginState> {
       ),
     );
 
-    final request = LoginRequest(email: email, password: password);
+    final request = LoginRequest(
+      email: email,
+      password: password,
+      fcmToken: '',
+    );
 
     final response = await _loginUseCase(request);
 

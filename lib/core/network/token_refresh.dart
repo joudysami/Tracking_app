@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:tracking_app/core/constant/api_endpoints.dart';
 
 /// Pair of tokens returned by a successful refresh (or login) operation.
 class AuthTokens {
@@ -22,47 +24,64 @@ abstract interface class TokenRefresher {
   Future<AuthTokens?> refresh(String refreshToken);
 }
 
-/// Real implementation calling `POST /api/v1/identity/auth/refresh`.
+/// Real implementation calling `POST /api/identity/auth/refresh-token`.
 ///
 /// Uses its own [Dio] instance (no [AuthInterceptors] attached) so the
 /// refresh call can never trigger another refresh or get stuck in a loop.
+/// The base URL is read when the call is made, after [ApiEndpoints.loadBaseUrl].
 @LazySingleton(as: TokenRefresher)
 class ApiTokenRefresher implements TokenRefresher {
   ApiTokenRefresher()
-    : _dio = Dio(
-        BaseOptions(
-          connectTimeout: const Duration(seconds: 30),
-          sendTimeout: const Duration(seconds: 30),
-          receiveTimeout: const Duration(seconds: 30),
-          headers: const {'Content-Type': 'application/json'},
-        ),
-      );
+    : this._(Dio(_options), () => ApiEndpoints.resolvedBaseUrl);
+
+  @visibleForTesting
+  ApiTokenRefresher.testing({required Dio dio, String Function()? baseUrl})
+    : this._(dio, baseUrl ?? (() => ApiEndpoints.resolvedBaseUrl));
+
+  ApiTokenRefresher._(this._dio, this._baseUrl);
+
+  static final BaseOptions _options = BaseOptions(
+    connectTimeout: const Duration(seconds: 30),
+    sendTimeout: const Duration(seconds: 30),
+    receiveTimeout: const Duration(seconds: 30),
+    headers: const {
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
+  );
 
   final Dio _dio;
-
-  static const _refreshPath = '/identity/auth/refresh';
+  final String Function() _baseUrl;
 
   @override
   Future<AuthTokens?> refresh(String refreshToken) async {
-    // Let DioException propagate as-is (network/400/401/etc.) so
-    // AuthInterceptors can tell an expired refresh token apart from a
-    // transient network/server error.
-    final response = await _dio.post<Map<String, dynamic>>(
-      _refreshPath,
+    final configured = _baseUrl().trim();
+    final baseUrl = configured.isNotEmpty ? configured : _dio.options.baseUrl;
+    final origin = baseUrl.endsWith('/')
+        ? baseUrl.substring(0, baseUrl.length - 1)
+        : baseUrl;
+    final response = await _dio.post<dynamic>(
+      '$origin${ApiEndpoints.refreshToken}',
       data: {'refreshToken': refreshToken},
+      options: Options(
+        headers: const {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ),
     );
 
     final body = response.data;
-    if (body == null || body['isSuccess'] != true) {
+    if (body is! Map || body['status'] != true) {
       return null;
     }
 
     final data = body['data'];
-    if (data is! Map<String, dynamic>) {
+    if (data is! Map) {
       return null;
     }
 
-    final accessToken = data['accessToken'];
+    final accessToken = data['token'];
     if (accessToken is! String || accessToken.isEmpty) {
       return null;
     }
@@ -70,7 +89,9 @@ class ApiTokenRefresher implements TokenRefresher {
     final newRefreshToken = data['refreshToken'];
     return AuthTokens(
       accessToken: accessToken,
-      refreshToken: newRefreshToken is String ? newRefreshToken : null,
+      refreshToken: newRefreshToken is String && newRefreshToken.isNotEmpty
+          ? newRefreshToken
+          : null,
     );
   }
 }

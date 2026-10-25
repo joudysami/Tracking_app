@@ -15,6 +15,8 @@ import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_pa
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
+import '../../../../support/register_login_view_model.dart';
+
 class MockApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {
   MockApplyViewModel() : super(const ApplyState());
   @override
@@ -26,6 +28,7 @@ void main() {
     if (!getIt.isRegistered<ApplyViewModel>()) {
       getIt.registerFactory<ApplyViewModel>(() => MockApplyViewModel());
     }
+    registerLoginViewModelForTests();
   });
 
   testWidgets('Verify onboarding screen structure', (

@@ -9,7 +9,11 @@ import 'package:tracking_app/core/widgets/app_button.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 
+import '../../../../../../support/register_login_view_model.dart';
+
 void main() {
+  setUpAll(registerLoginViewModelForTests);
+
   Widget buildTestWidget({Widget? home, String? initialLocation}) {
     return ScreenUtilInit(
       designSize: const Size(375, 812),

@@ -89,6 +89,7 @@ Map<String, dynamic>? _toStringDynamicMap(dynamic raw) {
 Map<String, dynamic>? _validationFieldErrors(dynamic raw) {
   if (raw is! Map) return null;
   if (raw.containsKey('userId') ||
+      raw.containsKey('token') ||
       raw.containsKey('accessToken') ||
       raw.containsKey('refreshToken')) {
     return null;

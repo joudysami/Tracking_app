@@ -62,13 +62,14 @@ class ApiEndpoints {
   static const String verifyOtp = '/api/identity/auth/otp-verification';
   static const String resetPassword = '/api/identity/auth/reset-password';
   static const String login = "/api/identity/auth/login";
+  static const String refreshToken = '/api/identity/auth/refresh-token';
   //// Apply (Driver) ////
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
 
   /// home ///
   static const String availableOrders = "/api/orders/drivers/available-orders";
-  static const String claim = 'api/orders/{orderId}/claim';
+  static const String claim = '/api/orders/{orderId}/claim';
 }
 
 Future<void> _ensureDotEnv() async {
