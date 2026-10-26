@@ -29,7 +29,7 @@ class ProfileScaffold extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: ProfileAppBar(
-        title: LocaleKeys.profileScreenTitle.tr(),
+        title: LocaleKeys.navProfile.tr(),
         showBell: true,
       ),
       body: const ProfileStateView(),

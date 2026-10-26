@@ -23,8 +23,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   late final TextEditingController _emailController;
   late final TextEditingController _passwordController;
+
   bool isChecked = false;
+
   final _formKey = GlobalKey<FormState>();
+
   late final LoginViewModel loginViewModel;
 
   @override
@@ -49,14 +52,18 @@ class _LoginPageState extends State<LoginPage> {
         appBar: AppBar(
           title: Text(LocaleKeys.authLogin.tr()),
           leading: IconButton(
-            onPressed: () {},
+            onPressed: () => context.pop(),
             icon: const Icon(Icons.arrow_back_ios),
           ),
         ),
         body: BlocConsumer<LoginViewModel, LoginState>(
+          listenWhen: (previous, current) =>
+              previous.loginState.isLoading != current.loginState.isLoading ||
+              previous.loginState.data != current.loginState.data,
           listener: (context, state) {
-            if (!state.loginState.isLoading && state.loginState.data != null) {
-              context.go(AppRoutes.orderMap);
+            if (!state.loginState.isLoading &&
+                state.loginState.data != null) {
+              context.go(AppRoutes.profile);
             }
           },
           builder: (context, state) {
@@ -90,7 +97,9 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(height: 12.h),
                         Text(
                           errorMessage,
-                          style: TextStyle(color: context.colors.pink),
+                          style: TextStyle(
+                            color: context.colors.pink,
+                          ),
                         ),
                       ],
                       Row(
@@ -98,7 +107,8 @@ class _LoginPageState extends State<LoginPage> {
                           Checkbox(
                             activeColor: context.colors.pink,
                             side: BorderSide(
-                              color: context.colors.grey[900] ?? Colors.grey,
+                              color: context.colors.grey[900] ??
+                                  Colors.grey,
                               width: 1.5.w,
                             ),
                             shape: RoundedRectangleBorder(
@@ -106,7 +116,9 @@ class _LoginPageState extends State<LoginPage> {
                             ),
                             value: isChecked,
                             onChanged: (value) {
-                              setState(() => isChecked = value ?? false);
+                              setState(() {
+                                isChecked = value ?? false;
+                              });
                             },
                           ),
                           Text(

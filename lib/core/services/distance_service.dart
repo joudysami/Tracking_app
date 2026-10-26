@@ -1,7 +1,5 @@
 import 'package:geolocator/geolocator.dart';
-import 'package:injectable/injectable.dart';
 
-@injectable
 class DistanceService {
   double calculateDistance({
     required double startLatitude,
