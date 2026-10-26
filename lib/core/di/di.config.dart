@@ -12,6 +12,7 @@
 
 import 'package:dio/dio.dart' as _i361;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
+import 'package:geolocator/geolocator.dart' as _i699;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:image_picker/image_picker.dart' as _i183;
 import 'package:injectable/injectable.dart' as _i526;
@@ -39,6 +40,32 @@ import '../../features/auth/presentation/forget_password/view_model/forget_passw
     as _i346;
 import '../../features/auth/presentation/login/view/page/view_model/login_viewmodel.dart'
     as _i725;
+import '../../features/location_tracking/api/location_api_client.dart' as _i692;
+import '../../features/location_tracking/api/routing_api_client.dart' as _i821;
+import '../../features/location_tracking/data/data_sources/location_remote_data_source.dart'
+    as _i405;
+import '../../features/location_tracking/data/data_sources/location_remote_data_source_impl.dart'
+    as _i981;
+import '../../features/location_tracking/data/repos/location_repo_impl.dart'
+    as _i1033;
+import '../../features/location_tracking/domain/repos/location_repo.dart'
+    as _i1053;
+import '../../features/location_tracking/domain/use_cases/check_and_request_location_permission_use_case.dart'
+    as _i553;
+import '../../features/location_tracking/domain/use_cases/get_route_use_case.dart'
+    as _i221;
+import '../../features/location_tracking/domain/use_cases/is_location_service_enabled_use_case.dart'
+    as _i521;
+import '../../features/location_tracking/domain/use_cases/location_reporting_use_case.dart'
+    as _i541;
+import '../../features/location_tracking/domain/use_cases/location_tracking_use_case.dart'
+    as _i258;
+import '../../features/location_tracking/domain/use_cases/open_app_settings_use_case.dart'
+    as _i536;
+import '../../features/location_tracking/domain/use_cases/open_location_settings_use_case.dart'
+    as _i528;
+import '../../features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart'
+    as _i783;
 import '../../features/profile/api/profile_api_client.dart' as _i211;
 import '../../features/profile/data/data_sources/profile_remote_data_source.dart'
     as _i1012;
@@ -73,7 +100,10 @@ import '../network/auth_interceptors.dart' as _i466;
 import '../network/safe_call.dart' as _i185;
 import '../network/token_refresh.dart' as _i36;
 import '../network/token_storage.dart' as _i964;
+import '../services/distance_service.dart' as _i666;
+import '../services/geolocator_distance_service.dart' as _i1055;
 import '../services/image_picker_service.dart' as _i644;
+import '../services/location_service.dart' as _i669;
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -92,12 +122,19 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i183.ImagePicker>(
       () => servicesModule.provideImagePicker(),
     );
+    gh.lazySingleton<_i699.GeolocatorPlatform>(
+      () => servicesModule.provideGeolocator(),
+    );
     gh.lazySingleton<_i466.AuthSessionNotifier>(
       () => _i466.AuthSessionNotifier(),
     );
+    gh.factory<_i666.DistanceService>(() => _i1055.GeolocatorDistanceService());
     gh.lazySingleton<_i36.TokenRefresher>(() => _i36.ApiTokenRefresher());
     gh.lazySingleton<_i644.ImagePickerService>(
       () => _i644.ImagePickerService(gh<_i183.ImagePicker>()),
+    );
+    gh.factory<_i669.LocationService>(
+      () => _i669.LocationService(gh<_i699.GeolocatorPlatform>()),
     );
     gh.lazySingleton<_i964.TokenStorage>(
       () => _i964.SecureTokenStorage(gh<_i558.FlutterSecureStorage>()),
@@ -118,6 +155,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i211.ProfileApiClient>(
       () => apiModule.provideProfileApiClient(gh<_i361.Dio>()),
     );
+    gh.singleton<_i692.LocationApiClient>(
+      () => apiModule.provideLocationApiClient(gh<_i361.Dio>()),
+    );
+    gh.singleton<_i821.RoutingApiClient>(
+      () => apiModule.provideRoutingApiClient(gh<_i361.Dio>()),
+    );
     gh.factory<_i1012.ProfileRemoteDataSource>(
       () => _i491.ProfileRemoteDataSourceImpl(gh<_i211.ProfileApiClient>()),
     );
@@ -131,6 +174,25 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i25.AuthRemoteDataSource>(
       () =>
           _i182.AuthRemoteDataSourceImpl(apiClient: gh<_i710.AuthApiClient>()),
+    );
+    gh.factory<_i405.LocationRemoteDataSource>(
+      () => _i981.LocationRemoteDataSourceImpl(
+        apiClient: gh<_i692.LocationApiClient>(),
+        routingApiClient: gh<_i821.RoutingApiClient>(),
+      ),
+    );
+    gh.factory<_i1053.LocationRepo>(
+      () => _i1033.LocationRepoImpl(
+        gh<_i669.LocationService>(),
+        gh<_i185.SafeCall>(),
+        remoteDataSource: gh<_i405.LocationRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i541.LocationReportingUseCase>(
+      () => _i541.LocationReportingUseCase(
+        gh<_i1053.LocationRepo>(),
+        gh<_i666.DistanceService>(),
+      ),
     );
     gh.factory<_i877.AuthRepo>(
       () => _i152.AuthRepoImpl(
@@ -162,6 +224,36 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i725.LoginViewModel>(
       () => _i725.LoginViewModel(gh<_i1038.LoginUseCase>()),
+    );
+    gh.factory<_i553.CheckAndRequestLocationPermissionUseCase>(
+      () => _i553.CheckAndRequestLocationPermissionUseCase(
+        gh<_i1053.LocationRepo>(),
+      ),
+    );
+    gh.factory<_i221.GetRouteUseCase>(
+      () => _i221.GetRouteUseCase(gh<_i1053.LocationRepo>()),
+    );
+    gh.factory<_i521.IsLocationServiceEnabledUseCase>(
+      () => _i521.IsLocationServiceEnabledUseCase(gh<_i1053.LocationRepo>()),
+    );
+    gh.factory<_i258.LocationTrackingUseCase>(
+      () => _i258.LocationTrackingUseCase(gh<_i1053.LocationRepo>()),
+    );
+    gh.factory<_i536.OpenAppSettingsUseCase>(
+      () => _i536.OpenAppSettingsUseCase(gh<_i1053.LocationRepo>()),
+    );
+    gh.factory<_i528.OpenLocationSettingsUseCase>(
+      () => _i528.OpenLocationSettingsUseCase(gh<_i1053.LocationRepo>()),
+    );
+    gh.factory<_i783.LocationTrackingViewModel>(
+      () => _i783.LocationTrackingViewModel(
+        gh<_i258.LocationTrackingUseCase>(),
+        gh<_i553.CheckAndRequestLocationPermissionUseCase>(),
+        gh<_i521.IsLocationServiceEnabledUseCase>(),
+        gh<_i536.OpenAppSettingsUseCase>(),
+        gh<_i528.OpenLocationSettingsUseCase>(),
+        gh<_i221.GetRouteUseCase>(),
+      ),
     );
     gh.factory<_i743.ApplyUseCase>(
       () => _i743.ApplyUseCase(gh<_i877.AuthRepo>()),

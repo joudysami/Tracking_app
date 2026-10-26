@@ -364,4 +364,29 @@ abstract class LocaleKeys {
   static const String applySuccessBody = 'apply.success_body';
   static const String applyNoVehicleTypesAvailable =
       'apply.no_vehicle_types_available';
+    // Order Map
+  static const String orderMapYourLocation = 'order_map.your_location';
+  static const String orderMapPickupAddress = 'order_map.pickup_address';
+  static const String orderMapUserAddress = 'order_map.user_address';
+  static const String orderMapUser = 'order_map.user';  
+  static const unableToCheckLocationPermission =
+      'location_tracking.unable_to_check_permission';  
+  
+static const locationPermissionDialogTitle = 'locationPermissionDialogTitle';
+  static const locationPermissionDialogMessage =
+      'locationPermissionDialogMessage';
+  static const cancel = 'cancel';
+  static const locationOpenSettings = 'locationOpenSettings';
+
+  static const locationServiceDisabledTitle = 'locationServiceDisabledTitle';
+  static const locationServiceDisabledMessage =
+      'locationServiceDisabledMessage';
+
+  static const locationServiceCheckFailed = 'locationServiceCheckFailed';
+  static const locationPermissionCheckFailed = 'locationPermissionCheckFailed';
+  static const locationPermissionDenied = 'locationPermissionDenied';
+  static const locationStreamFailed = 'locationStreamFailed';
+  static const locationReportFailed = 'locationReportFailed';
+  static const locationOpenSettingsFailed = 'locationOpenSettingsFailed';
+  static const String locationRouteLoadFailed = 'locationRouteLoadFailed';  
 }

@@ -70,6 +70,8 @@ class ApiEndpoints {
   static const String vehicleInfo = '/api/identity/vehicles/info';
   static const String changePassword = '/api/identity/users/change-password';
   static const String logout = '/api/identity/auth/logout';
+  /// Location Tracking ////
+  static const String reportDriverLocation = '/api/orders/drivers/me/location';
 }
 
 Future<void> _ensureDotEnv() async {
