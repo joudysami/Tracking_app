@@ -315,6 +315,23 @@ abstract class LocaleKeys {
   static const String profileLogout = 'profile.logout';
   static const String profileLogoutConfirm = 'profile.logout_confirm';
   static const String profileDeleteAccount = 'profile.delete_account';
+  static const String profileScreenTitle = 'profile.screen_title';
+  static const String profileEditTitle = 'profile.edit_title';
+  static const String profileVehicleInfo = 'profile.vehicle_info';
+  static const String profileChange = 'profile.change';
+  static const String profileUpdate = 'profile.update';
+  static const String profileFirstName = 'profile.first_name';
+  static const String profileLastName = 'profile.last_name';
+  static const String profileCurrentPassword = 'profile.current_password';
+  static const String profileNewPassword = 'profile.new_password';
+  static const String profileConfirmPassword = 'profile.confirm_password';
+  static const String profileInvalidPassword = 'profile.invalid_password';
+  static const String profileLogoutTitle = 'profile.logout_title';
+  static const String profileLogoutMessage = 'profile.logout_message';
+  static const String profileLogoutAction = 'profile.logout_action';
+  static const String profileBike = 'profile.bike';
+  static const String profileVersion = 'profile.version';
+  static const String profileResetPassword = 'profile.reset_password';
   // Apply
   static const String applyTitle = 'apply.title';
   static const String applyWelcome = 'apply.welcome';
@@ -345,5 +362,6 @@ abstract class LocaleKeys {
   static const String applySubmittedSuccess = 'apply.submitted_success';
   static const String applySuccessTitle = 'apply.success_title';
   static const String applySuccessBody = 'apply.success_body';
-  static const String applyNoVehicleTypesAvailable = 'apply.no_vehicle_types_available';
+  static const String applyNoVehicleTypesAvailable =
+      'apply.no_vehicle_types_available';
 }

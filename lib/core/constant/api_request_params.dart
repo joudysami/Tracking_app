@@ -20,4 +20,10 @@ class ApiRequestParams {
   static const String nid = 'nid';
   static const String nidImage = 'nidImage';
   static const String licenceImage = 'licenceImage';
+
+  // Profile
+  static const String phoneNumber = 'phoneNumber';
+  static const String profilePicture = 'profilePicture';
+  static const String plateNumber = 'plateNumber';
+  static const String licenseDocument = 'licenseDocument';
 }

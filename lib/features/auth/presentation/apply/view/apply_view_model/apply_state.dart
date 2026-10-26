@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:tracking_app/core/base/base_state.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_result_entity.dart';

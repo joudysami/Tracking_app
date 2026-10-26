@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
@@ -73,7 +71,7 @@ class ApplyViewModel extends Cubit<ApplyState> {
       case PickIdImageRequested():
         final image = await _imagePickerService.pickImage();
         if (image != null) {
-          emit(state.copyWith(idImage:image.path));
+          emit(state.copyWith(idImage: image.path));
         }
 
       case ApplyRequested():
