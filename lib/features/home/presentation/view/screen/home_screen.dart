@@ -210,6 +210,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context.read<HomeCubit>().doEvent(
                                     ClaimOrderEvent(orderId: order.orderId),
                                   );
+                                  context.read<HomeCubit>().doEvent(
+                                    const GetAvailableOrdersEvent(),
+                                  );
+                                  context.push(
+                                    AppRoutes.order,
+                                    extra: order,
+                                  );
                                 },
                               );
                             },
