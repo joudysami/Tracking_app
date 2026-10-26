@@ -65,7 +65,7 @@
         "dont_have_account": "ليس لديك حساب؟ سجل الآن",
         "already_have_account": "لديك حساب بالفعل؟ تسجيل الدخول",
         "agree_terms": "بالمتابعة، أنت توافق على شروط الخدمة وسياسة الخصوصية الخاصة بنا.",
-        "remember_me":"تذكرني"
+        "remember_me": "تذكرني"
     },
     "validation": {
         "required": "هذا الحقل مطلوب",
@@ -265,6 +265,12 @@
         "logout_confirm": "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
         "delete_account": "حذف الحساب"
     },
+    "order_map": {
+        "your_location": "موقعك",
+        "pickup_address": "عنوان الاستلام",
+        "user_address": "عنوان العميل",
+        "user": "العميل"
+    },
     "apply": {
         "no_vehicle_types_available": "لا توجد أنواع مركبات متاحة",
         "title": "التقديم",
@@ -295,5 +301,21 @@
         "submitted_success": "تم إرسال طلبك بنجاح",
         "success_title": "تم تقديم طلبك بنجاح!",
         "success_body": "شكراً لتقديم طلبك، سنقوم بمراجعة طلبك والتواصل معك قريباً."
+    },
+    "location_tracking": {
+        "unable_to_check_permission": "تعذر التحقق من صلاحية الموقع",
+        "locationPermissionDialogTitle": "مطلوب إذن الموقع",
+        "locationPermissionDialogMessage": "نحتاج إلى الوصول إلى موقعك لتتبع موقع السائق. من فضلك اسمحي بالوصول إلى الموقع.",
+        "cancel": "إلغاء",
+        "locationOpenSettings": "فتح الإعدادات",
+        "locationServiceDisabledTitle": "خدمة الموقع غير مفعلة",
+        "locationServiceDisabledMessage": "من فضلك فعّلي خدمة الموقع على جهازك لبدء التتبع.",
+        "locationServiceCheckFailed": "فشل التحقق من حالة خدمة الموقع.",
+        "locationPermissionCheckFailed": "فشل التحقق من صلاحية الوصول إلى الموقع.",
+        "locationPermissionDenied": "تم رفض صلاحية الموقع. من فضلك اسمحي بالوصول إلى الموقع للمتابعة.",
+        "locationStreamFailed": "فشل استقبال تحديثات الموقع. من فضلك حاولي مرة أخرى.",
+        "locationReportFailed": "فشل إرسال موقعك إلى الخادم.",
+        "locationOpenSettingsFailed": "تعذر فتح الإعدادات. من فضلك افتحيها يدويًا.",
+        "locationRouteLoadFailed": "تعذّر تحميل المسار. حاولي مرة أخرى."
     }
 }

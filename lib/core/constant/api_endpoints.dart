@@ -65,6 +65,8 @@ static String _resolvedBaseUrl = '';
   //// Apply (Driver) ////
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
+  /// Location Tracking ////
+  static const String reportDriverLocation = '/api/orders/drivers/me/location';
 }
 Future<void> _ensureDotEnv() async {
   if (dotenv.isInitialized) return;
