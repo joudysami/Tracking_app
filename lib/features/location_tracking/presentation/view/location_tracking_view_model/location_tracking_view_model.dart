@@ -6,12 +6,10 @@ import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/domain/entities/location_permission_status.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_entity.dart';
-import 'package:tracking_app/features/location_tracking/domain/entities/location_report_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/route_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/check_and_request_location_permission_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/get_route_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/is_location_service_enabled_use_case.dart';
-import 'package:tracking_app/features/location_tracking/domain/use_cases/location_reporting_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_tracking_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/open_app_settings_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/open_location_settings_use_case.dart';
@@ -24,7 +22,6 @@ import 'location_tracking_state.dart';
 class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
   LocationTrackingViewModel(
     this._locationTrackingUseCase,
-    this._locationReportingUseCase,
     this._checkAndRequestPermissionUseCase,
     this._isLocationServiceEnabledUseCase,
     this._openAppSettingsUseCase,
@@ -33,7 +30,6 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
   ) : super(const LocationTrackingState());
 
   final LocationTrackingUseCase _locationTrackingUseCase;
-  final LocationReportingUseCase _locationReportingUseCase;
   final CheckAndRequestLocationPermissionUseCase
   _checkAndRequestPermissionUseCase;
   final IsLocationServiceEnabledUseCase _isLocationServiceEnabledUseCase;
@@ -44,12 +40,13 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
   StreamSubscription<LocationEntity>? _locationSubscription;
 
   bool _isStarting = false;
-  bool _isLoadingRoute = false;
 
+  double? _destinationLatitude;
+  double? _destinationLongitude;
+
+  // Last driver location used for a successfully loaded route.
   double? _lastRouteStartLatitude;
   double? _lastRouteStartLongitude;
-  double? _lastRouteEndLatitude;
-  double? _lastRouteEndLongitude;
 
   static const double _routeRefreshDistanceMeters = 100;
 
@@ -60,6 +57,17 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
 
       case LocationTrackingStopped():
         await _stopTracking();
+
+      case RouteRequested():
+        _destinationLatitude = event.endLatitude;
+        _destinationLongitude = event.endLongitude;
+
+        await _loadRoute(
+          startLatitude: event.startLatitude,
+          startLongitude: event.startLongitude,
+          endLatitude: event.endLatitude,
+          endLongitude: event.endLongitude,
+        );
 
       case LocationPermissionDialogDismissed():
         emit(state.copyWith(shouldShowPermissionDialog: false));
@@ -75,20 +83,17 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
     }
   }
 
-  Future<void> loadRoute({
+  Future<void> _loadRoute({
     required double startLatitude,
     required double startLongitude,
     required double endLatitude,
     required double endLongitude,
   }) async {
-    if (isClosed || _isLoadingRoute) return;
+    if (isClosed || state.isRouteLoading) return;
 
-    final destinationChanged =
-        _lastRouteEndLatitude != endLatitude ||
-        _lastRouteEndLongitude != endLongitude;
-
-    if (!destinationChanged &&
-        _lastRouteStartLatitude != null &&
+    // Refresh the route only after the driver moves far enough
+    // from the origin used for the last successful route request.
+    if (_lastRouteStartLatitude != null &&
         _lastRouteStartLongitude != null &&
         state.routePoints.isNotEmpty) {
       final distance = Geolocator.distanceBetween(
@@ -100,13 +105,6 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
 
       if (distance < _routeRefreshDistanceMeters) return;
     }
-
-    _isLoadingRoute = true;
-
-    _lastRouteStartLatitude = startLatitude;
-    _lastRouteStartLongitude = startLongitude;
-    _lastRouteEndLatitude = endLatitude;
-    _lastRouteEndLongitude = endLongitude;
 
     emit(state.copyWith(isRouteLoading: true, error: null));
 
@@ -122,52 +120,24 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
 
       switch (response) {
         case ErrorResponse<RouteEntity>():
-          _lastRouteStartLatitude = null;
-          _lastRouteStartLongitude = null;
-
-          emit(
-            state.copyWith(
-              isRouteLoading: false,
-              error: LocationTrackingError.routeLoadFailed,
-            ),
-          );
+          emit(state.copyWith(error: LocationTrackingError.routeLoadFailed));
 
         case SuccessResponse<RouteEntity>(:final data):
           if (data == null || data.points.length < 2) {
-            _lastRouteStartLatitude = null;
-            _lastRouteStartLongitude = null;
-
-            emit(
-              state.copyWith(
-                isRouteLoading: false,
-                error: LocationTrackingError.routeLoadFailed,
-              ),
-            );
+            emit(state.copyWith(error: LocationTrackingError.routeLoadFailed));
             return;
           }
 
-          emit(
-            state.copyWith(
-              isRouteLoading: false,
-              routePoints: data.points,
-              error: null,
-            ),
-          );
-      }
-    } catch (_) {
-      _lastRouteStartLatitude = null;
-      _lastRouteStartLongitude = null;
+          // Save the origin only after successfully receiving a route.
+          _lastRouteStartLatitude = startLatitude;
+          _lastRouteStartLongitude = startLongitude;
 
-      if (!isClosed) {
-        emit(
-          state.copyWith(
-            isRouteLoading: false,
-            error: LocationTrackingError.routeLoadFailed,
-          ),
-        );
+          emit(state.copyWith(routePoints: data.points, error: null));
       }
     } finally {
-      _isLoadingRoute = false;
+      if (!isClosed && state.isRouteLoading) {
+        emit(state.copyWith(isRouteLoading: false));
+      }
     }
   }
 
@@ -249,7 +219,19 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
           ),
         );
 
-        unawaited(_reportLocation(location));
+        final destinationLatitude = _destinationLatitude;
+        final destinationLongitude = _destinationLongitude;
+
+        if (destinationLatitude != null && destinationLongitude != null) {
+          unawaited(
+            _loadRoute(
+              startLatitude: location.lat,
+              startLongitude: location.lng,
+              endLatitude: destinationLatitude,
+              endLongitude: destinationLongitude,
+            ),
+          );
+        }
       },
       onError: (Object error) {
         _locationSubscription = null;
@@ -271,30 +253,6 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
         emit(state.copyWith(isTracking: false));
       },
     );
-  }
-
-  Future<void> _reportLocation(LocationEntity location) async {
-    try {
-      final response = await _locationReportingUseCase(location);
-
-      if (isClosed) return;
-
-      switch (response) {
-        case ErrorResponse<LocationReportEntity>():
-          emit(state.copyWith(error: LocationTrackingError.reportFailed));
-
-        case SuccessResponse<LocationReportEntity>():
-          break;
-
-        case null:
-          // Reporting was skipped because of the distance threshold.
-          break;
-      }
-    } catch (_) {
-      if (isClosed) return;
-
-      emit(state.copyWith(error: LocationTrackingError.reportFailed));
-    }
   }
 
   Future<void> _openAppSettings() async {
@@ -341,6 +299,8 @@ class LocationTrackingViewModel extends Cubit<LocationTrackingState> {
   @override
   Future<void> close() async {
     await _locationSubscription?.cancel();
+    _locationSubscription = null;
+
     await super.close();
   }
 }

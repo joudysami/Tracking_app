@@ -40,6 +40,6 @@ class LocationRemoteDataSourceImpl implements LocationRemoteDataSource {
       steps: true,
     );
 
-    return RouteResponseModel.fromJson(response);
+    return response;
   }
 }

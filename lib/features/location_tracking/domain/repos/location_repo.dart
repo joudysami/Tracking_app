@@ -17,7 +17,6 @@ abstract interface class LocationRepo {
   Future<BaseResponse<bool>> openAppSettings();
 
   Stream<LocationEntity> getPositionStream();
-
   Future<BaseResponse<GeoPoint>> getCurrentPosition();
 
   Future<BaseResponse<LocationReportEntity>> reportLocation(
