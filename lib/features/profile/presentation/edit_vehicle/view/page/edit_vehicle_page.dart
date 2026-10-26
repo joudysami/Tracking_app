@@ -9,7 +9,7 @@ import 'package:tracking_app/features/profile/presentation/edit_vehicle/view/wid
 import 'package:tracking_app/features/profile/presentation/edit_vehicle/view_model/edit_vehicle_event.dart';
 import 'package:tracking_app/features/profile/presentation/edit_vehicle/view_model/edit_vehicle_ui_event.dart';
 import 'package:tracking_app/features/profile/presentation/edit_vehicle/view_model/edit_vehicle_view_model.dart';
-import 'package:tracking_app/features/profile/presentation/widgets/profile_chrome.dart';
+import 'package:tracking_app/features/profile/presentation/widgets/profile_nav_Widgets.dart';
 import 'package:tracking_app/features/profile/presentation/widgets/profile_feedback.dart';
 
 class EditVehiclePage extends StatelessWidget {

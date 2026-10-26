@@ -10,7 +10,7 @@ import 'package:tracking_app/features/profile/presentation/profile/view/widgets/
 import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_ui_event.dart';
 import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_view_model.dart';
 import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_event.dart';
-import 'package:tracking_app/features/profile/presentation/widgets/profile_chrome.dart';
+import 'package:tracking_app/features/profile/presentation/widgets/profile_nav_Widgets.dart';
 import 'package:tracking_app/features/profile/presentation/widgets/profile_feedback.dart';
 
 class ProfilePage extends StatelessWidget {
