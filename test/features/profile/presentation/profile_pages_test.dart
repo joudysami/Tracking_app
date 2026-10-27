@@ -76,6 +76,39 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text(LocaleKeys.profileInvalidPassword.tr()), findsOneWidget);
   });
+
+  testWidgets('reset password update enables only for a valid form', (
+    tester,
+  ) async {
+    _useWideScreen(tester);
+    final viewModel = ChangePasswordViewModel(
+      ChangePasswordUseCase(ScriptedProfileRepo()),
+    );
+    await _show(
+      tester,
+      _screen(
+        BlocProvider.value(
+          value: viewModel,
+          child: const ChangePasswordPage(),
+        ),
+      ),
+    );
+
+    ElevatedButton update() =>
+        tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+
+    expect(update().onPressed, isNull);
+
+    await tester.enterText(find.byType(TextFormField).at(0), 'old-password');
+    await tester.enterText(find.byType(TextFormField).at(1), 'NewPass12');
+    await tester.enterText(find.byType(TextFormField).at(2), 'NewPass12');
+    await tester.pumpAndSettle();
+    expect(update().onPressed, isNotNull);
+
+    await tester.enterText(find.byType(TextFormField).at(2), 'different');
+    await tester.pumpAndSettle();
+    expect(update().onPressed, isNull);
+  });
 }
 
 class _FakeProfileViewModel extends ProfileViewModel {
@@ -227,7 +260,7 @@ void _expectProfile() {
   expect(find.text(LocaleKeys.profileBike.tr()), findsOneWidget);
   expect(find.text('UP16DL0007'), findsOneWidget);
   expect(find.text(LocaleKeys.profileLogoutAction.tr()), findsOneWidget);
-  expect(find.text(LocaleKeys.navProfile.tr()), findsNWidgets(2));
+  expect(find.text(LocaleKeys.navProfile.tr()), findsOneWidget);
   expect(find.textContaining('1.0.0'), findsOneWidget);
 }
 

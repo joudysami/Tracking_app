@@ -29,7 +29,6 @@ class EditProfileScaffold extends StatelessWidget {
     return Scaffold(
       appBar: ProfileAppBar(title: LocaleKeys.profileEditTitle.tr()),
       body: const EditProfileStateView(),
-      bottomNavigationBar: const ProfileBottomNav(),
     );
   }
 }

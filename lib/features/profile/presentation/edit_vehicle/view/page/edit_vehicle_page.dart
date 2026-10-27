@@ -32,7 +32,6 @@ class EditVehicleScaffold extends StatelessWidget {
         showBell: true,
       ),
       body: const EditVehicleStateView(),
-      bottomNavigationBar: const ProfileBottomNav(),
     );
   }
 }
