@@ -3,16 +3,16 @@ import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 
 void main() {
-  test('maps verified statuses onto the four screenshot segments', () {
+  test('maps verified statuses onto the five screenshot segments', () {
     expect(completedOrderProgressSegments('Accepted'), 1);
     expect(completedOrderProgressSegments('picked'), 2);
     expect(completedOrderProgressSegments('PICKED_UP'), 2);
     expect(completedOrderProgressSegments('Out for delivery'), 3);
     expect(completedOrderProgressSegments('OUT_FOR_DELIVERY'), 3);
-    expect(completedOrderProgressSegments('AWAITING_DELIVERY_CONFIRMATION'), 3);
+    expect(completedOrderProgressSegments('AWAITING_DELIVERY_CONFIRMATION'), 4);
     expect(completedOrderProgressSegments('arrived'), 4);
     expect(completedOrderProgressSegments('ARRIVED'), 4);
-    expect(completedOrderProgressSegments('Delivered'), 4);
+    expect(completedOrderProgressSegments('Delivered'), 5);
   });
 
   test('does not invent progress for unknown or empty statuses', () {
@@ -22,6 +22,33 @@ void main() {
     expect(completedOrderProgressSegments('Placed'), 0);
     expect(completedOrderProgressSegments('PLACED'), 0);
     expect(completedOrderProgressSegments('cancelled'), 0);
+  });
+
+  test('returns next status in delivery sequence', () {
+    expect(getNextOrderStatus('accepted'), 'picked');
+    expect(getNextOrderStatus('picked'), 'out_for_delivery');
+    expect(getNextOrderStatus('out_for_delivery'), 'arrived');
+    expect(getNextOrderStatus('arrived'), 'delivered');
+    expect(getNextOrderStatus('delivered'), isNull);
+  });
+
+  test('returns matching button action label keys', () {
+    expect(
+      getOrderActionLabelKey('accepted'),
+      LocaleKeys.orderDetailsArrivedAtPickup,
+    );
+    expect(
+      getOrderActionLabelKey('picked'),
+      LocaleKeys.orderDetailsStartDeliver,
+    );
+    expect(
+      getOrderActionLabelKey('out_for_delivery'),
+      LocaleKeys.orderDetailsArrivedToUser,
+    );
+    expect(
+      getOrderActionLabelKey('arrived'),
+      LocaleKeys.orderDetailsDeliveredToUser,
+    );
   });
 
   test('localizes only known status values', () {

@@ -15,9 +15,10 @@ import 'package:tracking_app/features/auth/presentation/login/view/page/view_mod
 import 'package:tracking_app/features/home/presentation/view/widgets/button_navigation_bar.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
-import 'package:tracking_app/features/order/order_screen.dart';
-import 'package:tracking_app/features/order/presentation/order_details_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
+import 'package:tracking_app/features/order/order_screen.dart';
+import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
+import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
 import 'package:tracking_app/features/profile/profile.dart';
 
 class AppRouter {
@@ -126,15 +127,22 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.order,
       builder: (context, state) {
-        return OrderScreen();
+        return OrderScreen(order: state.extra);
       },
     );
   }
 
-  static GoRoute _orderDetailsRoute() {
-    return GoRoute(
-      path: AppRoutes.orderDetails,
-      builder: (context, state) => buildOrderDetailsPage(state.extra),
-    );
-  }
+static GoRoute _orderDetailsRoute() {
+  return GoRoute(
+    path: AppRoutes.orderDetails,
+    builder: (context, state) {
+      return BlocProvider(
+        create: (_) => getIt<OrderViewModel>(),
+        child: OrderDetailsScreen(
+          order: state.extra,
+        ),
+      );
+    },
+  );
+}
 }

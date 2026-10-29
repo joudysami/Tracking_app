@@ -70,6 +70,10 @@ class ApiEndpoints {
   /// home ///
   static const String availableOrders = "/api/orders/drivers/available-orders";
   static const String claim = '/api/orders/{orderId}/claim';
+  
+   /// order details///
+    static const String status = '/api/orders/{orderId}/status';
+    static const String confirmDelivery= "/api/orders/{orderId}/confirm-delivery";
 }
 
 Future<void> _ensureDotEnv() async {

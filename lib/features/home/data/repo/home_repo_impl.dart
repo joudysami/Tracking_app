@@ -1,18 +1,18 @@
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
-import 'package:tracking_app/features/home/data/data_source/orders_data_source.dart';
+import 'package:tracking_app/features/home/data/data_source/home_data_source.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart';
-import 'package:tracking_app/features/home/domain/repo/order_repo.dart';
+import 'package:tracking_app/features/home/domain/repo/home_repo.dart';
 
-@Injectable(as: OrderRepo)
-class OrdersRepoImpl implements OrderRepo {
-  final OrdersRemoteDataSource remoteDataSource;
+@Injectable(as:HomeRepo)
+class HomeRepoImpl implements HomeRepo {
+  final HomeRemoteDataSource remoteDataSource;
   final SafeCall safeCall;
 
-  OrdersRepoImpl(this.remoteDataSource, this.safeCall);
+  HomeRepoImpl(this.remoteDataSource, this.safeCall);
   @override
   Future<
     BaseResponse<

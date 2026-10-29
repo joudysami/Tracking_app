@@ -16,12 +16,12 @@ void main() {
     EasyLocalization.logger.enableBuildModes = [];
   });
 
-  testWidgets('shows the selected order and hides unsupported sections', (
+  testWidgets('shows the selected order and all sections matching design', (
     tester,
   ) async {
     await _pumpDetails(tester, _order(status: 'Picked'));
 
-    expect(find.text(LocaleKeys.orderDetailsTitle.tr()), findsOneWidget);
+    expect(find.text(LocaleKeys.orderDetailsTitle.tr()), findsWidgets);
     expect(find.textContaining(LocaleKeys.statusPicked.tr()), findsOneWidget);
     expect(find.textContaining('order-42'), findsOneWidget);
     expect(find.text('Flowery store'), findsOneWidget);
@@ -34,16 +34,36 @@ void main() {
       2,
     );
 
-    expect(find.byIcon(Icons.phone), findsNothing);
-    expect(find.byIcon(Icons.phone_outlined), findsNothing);
-    expect(find.text(LocaleKeys.orderDetailsStartDeliver.tr()), findsNothing);
+    expect(find.byIcon(Icons.phone_outlined), findsNWidgets(2));
+    expect(find.byIcon(Icons.chat_bubble_outline), findsNWidgets(2));
+    expect(find.text(LocaleKeys.orderDetailsStartDeliver.tr()), findsOneWidget);
+    expect(find.text(LocaleKeys.orderDetailsPaymentMethod.tr()), findsOneWidget);
+    expect(find.text('Red roses,15 Pink Rose Bouquet'), findsWidgets);
+    expect(find.byType(ElevatedButton), findsOneWidget);
+  });
+
+  testWidgets('shows arrived at pickup button for accepted status', (
+    tester,
+  ) async {
+    await _pumpDetails(tester, _order(status: 'Accepted'));
+
+    expect(find.text(LocaleKeys.orderDetailsArrivedAtPickup.tr()), findsOneWidget);
     expect(
-      find.text(LocaleKeys.orderDetailsArrivedAtPickup.tr()),
-      findsNothing,
+      tester.widget<OrderProgressBar>(find.byType(OrderProgressBar)).completed,
+      1,
     );
-    expect(find.text(LocaleKeys.orderDetailsPaymentMethod.tr()), findsNothing);
-    expect(find.text('Red roses,15 Pink Rose Bouquet'), findsNothing);
-    expect(find.byType(ElevatedButton), findsNothing);
+  });
+
+  testWidgets('shows arrived to user button for out_for_delivery status', (
+    tester,
+  ) async {
+    await _pumpDetails(tester, _order(status: 'out_for_delivery'));
+
+    expect(find.text(LocaleKeys.orderDetailsArrivedToUser.tr()), findsOneWidget);
+    expect(
+      tester.widget<OrderProgressBar>(find.byType(OrderProgressBar)).completed,
+      3,
+    );
   });
 
   testWidgets('uses fallbacks for blank store and address fields', (
@@ -91,7 +111,7 @@ void main() {
     );
     expect(
       tester.widget<OrderProgressBar>(find.byType(OrderProgressBar)).completed,
-      3,
+      4,
     );
   });
 

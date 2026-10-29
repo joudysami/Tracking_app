@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 
-const orderProgressSegmentCount = 4;
+const orderProgressSegmentCount = 5;
 
 /// Read-only progress for the details header.
 ///
@@ -14,9 +14,10 @@ int completedOrderProgressSegments(String status) {
     case 'picked':
       return 2;
     case 'out_for_delivery':
-    case 'awaiting_delivery_confirmation':
       return 3;
     case 'arrived':
+    case 'awaiting_delivery_confirmation':
+      return 4;
     case 'delivered':
       return orderProgressSegmentCount;
     case 'placed':
@@ -25,6 +26,38 @@ int completedOrderProgressSegments(String status) {
       return 0;
     default:
       return 0;
+  }
+}
+
+String? getNextOrderStatus(String currentStatus) {
+  switch (normalizeOrderStatus(currentStatus)) {
+    case 'accepted':
+      return 'picked';
+    case 'picked':
+      return 'out_for_delivery';
+    case 'out_for_delivery':
+      return 'arrived';
+    case 'arrived':
+    case 'awaiting_delivery_confirmation':
+      return 'delivered';
+    default:
+      return null;
+  }
+}
+
+String? getOrderActionLabelKey(String currentStatus) {
+  switch (normalizeOrderStatus(currentStatus)) {
+    case 'accepted':
+      return LocaleKeys.orderDetailsArrivedAtPickup;
+    case 'picked':
+      return LocaleKeys.orderDetailsStartDeliver;
+    case 'out_for_delivery':
+      return LocaleKeys.orderDetailsArrivedToUser;
+    case 'arrived':
+    case 'awaiting_delivery_confirmation':
+      return LocaleKeys.orderDetailsDeliveredToUser;
+    default:
+      return null;
   }
 }
 

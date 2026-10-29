@@ -214,7 +214,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                     const GetAvailableOrdersEvent(),
                                   );
                                   context.push(
-                                    AppRoutes.order,
+                                    AppRoutes.orderDetails,
                                     extra: order,
                                   );
                                 },
