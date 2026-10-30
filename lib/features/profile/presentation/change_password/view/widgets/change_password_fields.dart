@@ -12,14 +12,12 @@ import 'package:tracking_app/features/profile/presentation/widgets/profile_feedb
 
 class ChangePasswordFields extends StatelessWidget {
   const ChangePasswordFields({
-    required this.formKey,
     required this.current,
     required this.next,
     required this.confirm,
     super.key,
   });
 
-  final GlobalKey<FormState> formKey;
   final TextEditingController current;
   final TextEditingController next;
   final TextEditingController confirm;
@@ -27,7 +25,7 @@ class ChangePasswordFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Form(
-      key: formKey,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
       child: ListView(
         padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
         children: [
@@ -58,7 +56,7 @@ class CurrentPasswordField extends StatelessWidget {
       isPassword: true,
       textInputAction: TextInputAction.next,
       onChanged: (value) => _current(context, value),
-      validator: (value) => _currentError(context, value),
+      validator: AppValidators.registrationPasswordValidator,
     );
   }
 }
@@ -101,7 +99,8 @@ class ConfirmPasswordField extends StatelessWidget {
       isPassword: true,
       textInputAction: TextInputAction.done,
       onChanged: (value) => _confirm(context, value),
-      validator: (value) => _match(value, original.text),
+      validator: (value) =>
+          AppValidators.confirmPasswordValidator(value, original.text),
     );
   }
 }
@@ -134,22 +133,6 @@ void _confirm(BuildContext context, String value) {
   context.read<ChangePasswordViewModel>().doEvent(
     ConfirmPasswordChanged(value),
   );
-}
-
-String? _currentError(BuildContext context, String? value) {
-  final invalid = context
-      .read<ChangePasswordViewModel>()
-      .state
-      .invalidCurrentPassword;
-  if (invalid) return LocaleKeys.profileInvalidPassword.tr();
-  return AppValidators.requiredField(
-    value,
-    field: LocaleKeys.profileCurrentPassword.tr(),
-  );
-}
-
-String? _match(String? value, String password) {
-  return AppValidators.confirmPasswordValidator(value, password);
 }
 
 void _submit(BuildContext context) {

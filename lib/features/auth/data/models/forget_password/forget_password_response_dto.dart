@@ -12,19 +12,8 @@ class ForgetPasswordResponseDto {
   final String? message;
   @JsonKey(name: "data")
   final bool? data;
-  @JsonKey(name: "pagination")
-  final dynamic pagination;
-  @JsonKey(name: "errors")
-  final dynamic errors;
 
-  ForgetPasswordResponseDto({
-    this.status,
-    this.code,
-    this.message,
-    this.data,
-    this.pagination,
-    this.errors,
-  });
+  ForgetPasswordResponseDto({this.status, this.code, this.message, this.data});
 
   factory ForgetPasswordResponseDto.fromJson(Map<String, dynamic> json) {
     return _$ForgetPasswordResponseDtoFromJson(json);

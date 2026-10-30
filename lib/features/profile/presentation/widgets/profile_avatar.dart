@@ -15,11 +15,25 @@ class ProfileCircleAvatar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final image = profileImageOf(path, url);
-    return CircleAvatar(
-      radius: radius.r,
-      backgroundColor: context.colors.grey.shade300,
-      backgroundImage: image,
-      child: image == null ? ProfilePersonIcon(radius: radius) : null,
+    final diameter = radius.r * 2;
+    final placeholder = Center(child: ProfilePersonIcon(radius: radius));
+    return ClipOval(
+      child: ColoredBox(
+        color: context.colors.grey.shade300,
+        child: SizedBox(
+          width: diameter,
+          height: diameter,
+          child: image == null
+              ? placeholder
+              : Image(
+                  image: image,
+                  width: diameter,
+                  height: diameter,
+                  fit: BoxFit.cover,
+                  errorBuilder: (_, _, _) => placeholder,
+                ),
+        ),
+      ),
     );
   }
 }

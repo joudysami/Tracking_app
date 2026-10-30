@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tracking_app/core/helpers/app_validation.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_text_field.dart';
 import 'package:tracking_app/features/profile/presentation/edit_profile/view_model/edit_profile_event.dart';
@@ -32,6 +33,10 @@ class ProfileFirstNameField extends StatelessWidget {
       label: LocaleKeys.profileFirstName.tr(),
       value: context.read<EditProfileViewModel>().state.firstName,
       onChanged: (value) => _send(context, FirstNameChanged(value)),
+      validator: (value) => AppValidators.requiredField(
+        value,
+        field: LocaleKeys.profileFirstName.tr(),
+      ),
     );
   }
 }
@@ -45,6 +50,10 @@ class ProfileLastNameField extends StatelessWidget {
       label: LocaleKeys.profileLastName.tr(),
       value: context.read<EditProfileViewModel>().state.lastName,
       onChanged: (value) => _send(context, LastNameChanged(value)),
+      validator: (value) => AppValidators.requiredField(
+        value,
+        field: LocaleKeys.profileLastName.tr(),
+      ),
     );
   }
 }
@@ -59,6 +68,7 @@ class ProfileEmailField extends StatelessWidget {
       value: context.read<EditProfileViewModel>().state.email,
       keyboardType: TextInputType.emailAddress,
       readOnly: true,
+      validator: AppValidators.emailValidator,
     );
   }
 }
@@ -73,6 +83,7 @@ class ProfilePhoneField extends StatelessWidget {
       value: context.read<EditProfileViewModel>().state.phone,
       keyboardType: TextInputType.phone,
       onChanged: (value) => _send(context, PhoneChanged(value)),
+      validator: AppValidators.phoneValidator,
     );
   }
 }
@@ -84,6 +95,7 @@ class ProfileBoundField extends StatelessWidget {
     this.onChanged,
     this.keyboardType,
     this.readOnly = false,
+    this.validator,
     super.key,
   });
 
@@ -92,6 +104,7 @@ class ProfileBoundField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final TextInputType? keyboardType;
   final bool readOnly;
+  final String? Function(String?)? validator;
 
   @override
   Widget build(BuildContext context) {
@@ -103,6 +116,7 @@ class ProfileBoundField extends StatelessWidget {
       textInputAction: TextInputAction.next,
       readOnly: readOnly,
       onChanged: onChanged,
+      validator: validator,
     );
   }
 }

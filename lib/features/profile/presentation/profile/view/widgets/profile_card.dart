@@ -8,15 +8,17 @@ import 'package:tracking_app/features/profile/presentation/profile/view_model/pr
 import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_view_model.dart';
 import 'package:tracking_app/features/profile/presentation/widgets/logout_dialog.dart';
 
-Future<void> openEditProfile(BuildContext context) async {
-  await context.push(AppRoutes.editProfile);
-  if (!context.mounted) return;
-  context.read<ProfileViewModel>().doEvent(const ProfileRequested());
+Future<void> openEditProfile(BuildContext context) {
+  return _openEditor(context, AppRoutes.editProfile);
 }
 
-Future<void> openEditVehicle(BuildContext context) async {
-  await context.push(AppRoutes.editVehicle);
-  if (!context.mounted) return;
+Future<void> openEditVehicle(BuildContext context) {
+  return _openEditor(context, AppRoutes.editVehicle);
+}
+
+Future<void> _openEditor(BuildContext context, String route) async {
+  final updated = await context.push<bool>(route);
+  if (updated != true || !context.mounted) return;
   context.read<ProfileViewModel>().doEvent(const ProfileRequested());
 }
 

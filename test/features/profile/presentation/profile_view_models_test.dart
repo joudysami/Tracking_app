@@ -102,7 +102,7 @@ void main() {
     await viewModel.close();
   });
 
-  test('wrong current password stays on the field', () async {
+  test('password errors are shown from the backend', () async {
     final repo = ScriptedProfileRepo()
       ..password = ErrorResponse(
         appError: BadResponseError('Current password is incorrect'),
@@ -116,8 +116,12 @@ void main() {
     viewModel.doEvent(const ConfirmPasswordChanged('NewPass12'));
     await viewModel.doEvent(const ChangePasswordSubmitted());
 
-    expect(viewModel.state.invalidCurrentPassword, isTrue);
-    expect(events, isEmpty);
+    expect(events, [isA<ShowChangePasswordError>()]);
+    expect(
+      (events.single as ShowChangePasswordError).message,
+      'Current password is incorrect',
+    );
+    expect(viewModel.state.isLoading, isFalse);
     await viewModel.close();
   });
 }

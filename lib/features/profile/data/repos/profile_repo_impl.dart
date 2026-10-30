@@ -5,10 +5,8 @@ import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/core/network/token_storage.dart';
 import 'package:tracking_app/features/profile/data/data_sources/profile_remote_data_source.dart';
 import 'package:tracking_app/features/profile/data/models/change_password_request_dto.dart';
-import 'package:tracking_app/features/profile/data/models/driver_profile_response.dart';
 import 'package:tracking_app/features/profile/data/models/operation_response.dart';
 import 'package:tracking_app/features/profile/data/models/profile_form_requests.dart';
-import 'package:tracking_app/features/profile/data/models/user_profile_response.dart';
 import 'package:tracking_app/features/profile/domain/entities/profile_params.dart';
 import 'package:tracking_app/features/profile/domain/entities/user_profile_entity.dart';
 import 'package:tracking_app/features/profile/domain/entities/vehicle_info_entity.dart';
@@ -31,7 +29,12 @@ class ProfileRepoImpl implements ProfileRepo {
   @override
   Future<BaseResponse<UserProfileEntity>> getProfile() async {
     final response = await safeCall.safeApiCall(remote.getProfile);
-    return _profileResult(response);
+    return _mapEnvelope(
+      response,
+      isSuccess: (body) => body.success,
+      messageOf: (body) => body.message,
+      read: (body) => body.data?.toEntity(),
+    );
   }
 
   @override
@@ -42,13 +45,23 @@ class ProfileRepoImpl implements ProfileRepo {
     final response = await safeCall.safeApiCall(
       () => remote.updateProfile(request),
     );
-    return _profileResult(response);
+    return _mapEnvelope(
+      response,
+      isSuccess: (body) => body.success,
+      messageOf: (body) => body.message,
+      read: (body) => body.data?.toEntity(),
+    );
   }
 
   @override
   Future<BaseResponse<VehicleInfoEntity>> getVehicleInfo() async {
     final response = await safeCall.safeApiCall(remote.getVehicle);
-    return _vehicleResult(response);
+    return _mapEnvelope(
+      response,
+      isSuccess: (body) => body.success,
+      messageOf: (body) => body.message,
+      read: (body) => body.data?.toEntity(),
+    );
   }
 
   @override
@@ -59,7 +72,12 @@ class ProfileRepoImpl implements ProfileRepo {
     final response = await safeCall.safeApiCall(
       () => remote.updateVehicle(request),
     );
-    return _vehicleResult(response);
+    return _mapEnvelope(
+      response,
+      isSuccess: (body) => body.success,
+      messageOf: (body) => body.message,
+      read: (body) => body.data?.toEntity(),
+    );
   }
 
   @override
@@ -87,59 +105,50 @@ class ProfileRepoImpl implements ProfileRepo {
   Future<BaseResponse<void>> _passwordResult(
     BaseResponse<OperationResponse> response,
   ) async {
-    final mapped = _voidResult(response);
+    final mapped = _mapEnvelope<OperationResponse, void>(
+      response,
+      isSuccess: (body) => body.success,
+      messageOf: (body) => body.message,
+    );
     if (mapped is! SuccessResponse<void>) return mapped;
     await tokenStorage.clearTokens();
     return mapped;
   }
 }
 
-BaseResponse<UserProfileEntity> _profileResult(
-  BaseResponse<UserProfileResponse> response,
-) {
+BaseResponse<R> _mapEnvelope<T, R>(
+  BaseResponse<T> response, {
+  required bool Function(T body) isSuccess,
+  required String? Function(T body) messageOf,
+  R? Function(T body)? read,
+}) {
   return switch (response) {
-    SuccessResponse(:final data) => _profileData(data),
     ErrorResponse(:final appError) => ErrorResponse(appError: appError),
+    SuccessResponse(:final data) => _readEnvelope(
+      data,
+      isSuccess: isSuccess,
+      messageOf: messageOf,
+      read: read,
+    ),
   };
 }
 
-BaseResponse<UserProfileEntity> _profileData(UserProfileResponse? response) {
-  final dto = response?.data;
-  if (response == null || !response.success || dto == null) {
-    return _failure(response?.message);
-  }
-  return SuccessResponse(dto.toEntity());
+BaseResponse<R> _readEnvelope<T, R>(
+  T? body, {
+  required bool Function(T body) isSuccess,
+  required String? Function(T body) messageOf,
+  required R? Function(T body)? read,
+}) {
+  if (body == null) return _failure();
+  if (!isSuccess(body)) return _failure(messageOf(body));
+  if (read == null) return SuccessResponse<R>(null);
+  final value = read(body);
+  if (value == null) return _failure();
+  return SuccessResponse(value);
 }
 
-BaseResponse<VehicleInfoEntity> _vehicleResult(
-  BaseResponse<DriverProfileResponse> response,
-) {
-  return switch (response) {
-    SuccessResponse(:final data) => _vehicleData(data),
-    ErrorResponse(:final appError) => ErrorResponse(appError: appError),
-  };
-}
-
-BaseResponse<VehicleInfoEntity> _vehicleData(DriverProfileResponse? response) {
-  final dto = response?.data;
-  if (response == null || !response.success || dto == null) {
-    return _failure(response?.message);
-  }
-  return SuccessResponse(dto.toEntity());
-}
-
-BaseResponse<void> _voidResult(BaseResponse<OperationResponse> response) {
-  return switch (response) {
-    SuccessResponse(:final data) => _operation(data),
-    ErrorResponse(:final appError) => ErrorResponse(appError: appError),
-  };
-}
-
-BaseResponse<void> _operation(OperationResponse? response) {
-  if (response == null || !response.success) return _failure(response?.message);
-  return const SuccessResponse(null);
-}
-
-ErrorResponse<T> _failure<T>(String? message) {
-  return ErrorResponse(appError: BadResponseError(message ?? _emptyResponse));
+ErrorResponse<T> _failure<T>([String? message]) {
+  final text = message?.trim();
+  final resolved = text == null || text.isEmpty ? _emptyResponse : text;
+  return ErrorResponse(appError: BadResponseError(resolved));
 }

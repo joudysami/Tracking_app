@@ -34,16 +34,15 @@ class EditProfileState extends Equatable {
     Gender? gender,
     String? photoPath,
   }) {
-    return _copied(
-      this,
-      profile,
-      submit,
-      firstName,
-      lastName,
-      email,
-      phone,
-      gender,
-      photoPath,
+    return EditProfileState(
+      profile: profile ?? this.profile,
+      submit: submit ?? this.submit,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+      gender: gender ?? this.gender,
+      photoPath: photoPath ?? this.photoPath,
     );
   }
 
@@ -58,27 +57,4 @@ class EditProfileState extends Equatable {
     gender,
     photoPath,
   ];
-}
-
-EditProfileState _copied(
-  EditProfileState state,
-  BaseState<UserProfileEntity>? profile,
-  BaseState<UserProfileEntity>? submit,
-  String? firstName,
-  String? lastName,
-  String? email,
-  String? phone,
-  Gender? gender,
-  String? photoPath,
-) {
-  return EditProfileState(
-    profile: profile ?? state.profile,
-    submit: submit ?? state.submit,
-    firstName: firstName ?? state.firstName,
-    lastName: lastName ?? state.lastName,
-    email: email ?? state.email,
-    phone: phone ?? state.phone,
-    gender: gender ?? state.gender,
-    photoPath: photoPath ?? state.photoPath,
-  );
 }

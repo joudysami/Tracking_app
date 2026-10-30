@@ -5,7 +5,6 @@ import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/features/profile/domain/entities/profile_params.dart';
 import 'package:tracking_app/features/profile/domain/use_cases/change_password_use_case.dart';
-import 'package:tracking_app/features/profile/presentation/change_password/change_password_rules.dart';
 
 import 'change_password_event.dart';
 import 'change_password_state.dart';
@@ -13,10 +12,10 @@ import 'change_password_ui_event.dart';
 
 @injectable
 class ChangePasswordViewModel extends Cubit<ChangePasswordState> {
-  ChangePasswordViewModel(this._changePassword)
+  ChangePasswordViewModel(this._changePasswordUseCase)
     : super(const ChangePasswordState());
 
-  final ChangePasswordUseCase _changePassword;
+  final ChangePasswordUseCase _changePasswordUseCase;
   final _ui = StreamController<ChangePasswordUiEvent>.broadcast(sync: true);
 
   Stream<ChangePasswordUiEvent> get uiEvents => _ui.stream;
@@ -24,9 +23,7 @@ class ChangePasswordViewModel extends Cubit<ChangePasswordState> {
   Future<void> doEvent(ChangePasswordEvent event) async {
     switch (event) {
       case CurrentPasswordChanged(:final value):
-        emit(
-          state.copyWith(currentPassword: value, invalidCurrentPassword: false),
-        );
+        emit(state.copyWith(currentPassword: value));
       case NewPasswordChanged(:final value):
         emit(state.copyWith(newPassword: value));
       case ConfirmPasswordChanged(:final value):
@@ -38,8 +35,8 @@ class ChangePasswordViewModel extends Cubit<ChangePasswordState> {
 
   Future<void> _submit() async {
     if (state.isLoading) return;
-    emit(state.copyWith(isLoading: true, invalidCurrentPassword: false));
-    _emitResult(await _changePassword(_params()));
+    emit(state.copyWith(isLoading: true));
+    _emitResult(await _changePasswordUseCase(_params()));
   }
 
   ChangePasswordParams _params() {
@@ -56,14 +53,9 @@ class ChangePasswordViewModel extends Cubit<ChangePasswordState> {
         emit(state.copyWith(isLoading: false));
         _ui.add(const PasswordChanged());
       case ErrorResponse(:final errorMessage):
-        _failed(errorMessage);
+        emit(state.copyWith(isLoading: false));
+        _ui.add(ShowChangePasswordError(errorMessage));
     }
-  }
-
-  void _failed(String message) {
-    final invalid = isCurrentPasswordError(message);
-    emit(state.copyWith(isLoading: false, invalidCurrentPassword: invalid));
-    if (!invalid) _ui.add(ShowChangePasswordError(message));
   }
 
   @override

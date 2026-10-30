@@ -12,19 +12,8 @@ class VerifyOtpResponseDto {
   final String? message;
   @JsonKey(name: "data")
   final VerifyOtpDataDto? data;
-  @JsonKey(name: "pagination")
-  final dynamic pagination;
-  @JsonKey(name: "errors")
-  final dynamic errors;
 
-  VerifyOtpResponseDto({
-    this.status,
-    this.code,
-    this.message,
-    this.data,
-    this.pagination,
-    this.errors,
-  });
+  VerifyOtpResponseDto({this.status, this.code, this.message, this.data});
 
   factory VerifyOtpResponseDto.fromJson(Map<String, dynamic> json) {
     return _$VerifyOtpResponseDtoFromJson(json);

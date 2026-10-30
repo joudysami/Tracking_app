@@ -151,12 +151,7 @@ class AuthRepoImpl implements AuthRepo {
         forgetPasswordRequest.toDto(),
       );
 
-      _checkStatus(
-        response.status,
-        response.code,
-        response.message,
-        response.errors,
-      );
+      _checkStatus(response.status, response.code, response.message);
     });
   }
 
@@ -169,12 +164,7 @@ class AuthRepoImpl implements AuthRepo {
         verifyOtpRequest.toDto(),
       );
 
-      _checkStatus(
-        response.status,
-        response.code,
-        response.message,
-        response.errors,
-      );
+      _checkStatus(response.status, response.code, response.message);
 
       final data = response.data;
 
@@ -195,29 +185,15 @@ class AuthRepoImpl implements AuthRepo {
         resetPasswordRequest.toDto(),
       );
 
-      _checkStatus(
-        response.status,
-        response.code,
-        response.message,
-        response.errors,
-      );
+      _checkStatus(response.status, response.code, response.message);
     });
   }
 
   static const _defaultError = 'Something went wrong.';
 
-  void _checkStatus(
-    bool? status,
-    int? code,
-    String? message,
-    dynamic errors,
-  ) {
+  void _checkStatus(bool? status, int? code, String? message) {
     if (status == true) return;
 
-    throw ApiException(
-      message: message ?? _defaultError,
-      statusCode: code,
-      errors: errors is Map<String, dynamic> ? errors : null,
-    );
+    throw ApiException(message: message ?? _defaultError, statusCode: code);
   }
 }

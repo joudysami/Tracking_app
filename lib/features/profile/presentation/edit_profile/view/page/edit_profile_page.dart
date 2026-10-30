@@ -91,7 +91,7 @@ class _EditProfileEffectListenerState extends State<EditProfileEffectListener> {
       case ShowEditProfileError(:final message):
         _snack(message);
       case EditProfileSaved():
-        context.pop();
+        context.pop(true);
     }
   }
 

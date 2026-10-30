@@ -40,6 +40,24 @@ void main() {
     expect(profile?.gender, Gender.male);
   });
 
+  test(
+    'ignores a success message when the profile payload is missing',
+    () async {
+      remote.profileResponse = const UserProfileResponse(
+        success: true,
+        message: 'Loaded',
+        data: null,
+      );
+
+      final result = await repo.getProfile();
+
+      expect(
+        (result as ErrorResponse).errorMessage,
+        'The profile response is empty.',
+      );
+    },
+  );
+
   test('returns the envelope message when profile status is false', () async {
     remote.profileResponse = const UserProfileResponse(
       success: false,

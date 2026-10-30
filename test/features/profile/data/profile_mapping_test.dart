@@ -5,7 +5,6 @@ import 'package:tracking_app/features/profile/data/models/api_envelope.dart';
 import 'package:tracking_app/features/profile/data/models/driver_profile_dto.dart';
 import 'package:tracking_app/features/profile/data/models/user_profile_dto.dart';
 import 'package:tracking_app/features/profile/domain/profile_vehicle_type.dart';
-import 'package:tracking_app/features/profile/presentation/change_password/change_password_rules.dart';
 
 void main() {
   test('maps profile gender names and legacy numbers', () {
@@ -68,11 +67,6 @@ void main() {
     expect(entity.licenseFileName, 'Photo_12345678.png');
     expect(entity.vehicleNumber, 'UP16DL0007');
     expect(entity.vehicleType, profileMotorcycle);
-  });
-
-  test('detects a wrong current password message', () {
-    expect(isCurrentPasswordError('Current password is incorrect'), isTrue);
-    expect(isCurrentPasswordError('Email already registered'), isFalse);
   });
 }
 

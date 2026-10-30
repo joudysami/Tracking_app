@@ -7,7 +7,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/base/base_state.dart';
+import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/services/image_picker_service.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
@@ -19,8 +21,6 @@ import 'package:tracking_app/features/profile/domain/use_cases/get_vehicle_info_
 import 'package:tracking_app/features/profile/domain/use_cases/logout_session_use_case.dart';
 import 'package:tracking_app/features/profile/domain/use_cases/update_profile_use_case.dart';
 import 'package:tracking_app/features/profile/presentation/change_password/view/page/change_password_page.dart';
-import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_event.dart';
-import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_state.dart';
 import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_view_model.dart';
 import 'package:tracking_app/features/profile/presentation/edit_profile/view/page/edit_profile_page.dart';
 import 'package:tracking_app/features/profile/presentation/edit_profile/view_model/edit_profile_event.dart';
@@ -65,16 +65,25 @@ void main() {
     expect(find.text(LocaleKeys.profileUpdate.tr()), findsOneWidget);
   });
 
-  testWidgets('reset password shows invalid password on the current field', (
-    tester,
-  ) async {
+  testWidgets('reset password shows the backend error', (tester) async {
     _useWideScreen(tester);
-    final viewModel = _password();
+    final repo = ScriptedProfileRepo()
+      ..password = ErrorResponse(
+        appError: BadResponseError('Current password is incorrect'),
+      );
+    final viewModel = ChangePasswordViewModel(ChangePasswordUseCase(repo));
+    addTearDown(viewModel.close);
     await _show(tester, _passwordApp(viewModel));
 
-    viewModel.setState(const ChangePasswordState(invalidCurrentPassword: true));
+    await tester.enterText(find.byType(TextFormField).at(0), 'OldPass1');
+    await tester.enterText(find.byType(TextFormField).at(1), 'NewPass12');
+    await tester.enterText(find.byType(TextFormField).at(2), 'NewPass12');
     await tester.pumpAndSettle();
-    expect(find.text(LocaleKeys.profileInvalidPassword.tr()), findsOneWidget);
+    await tester.tap(find.byType(ElevatedButton));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(find.text('Current password is incorrect'), findsOneWidget);
   });
 
   testWidgets('reset password update enables only for a valid form', (
@@ -87,10 +96,7 @@ void main() {
     await _show(
       tester,
       _screen(
-        BlocProvider.value(
-          value: viewModel,
-          child: const ChangePasswordPage(),
-        ),
+        BlocProvider.value(value: viewModel, child: const ChangePasswordPage()),
       ),
     );
 
@@ -99,7 +105,7 @@ void main() {
 
     expect(update().onPressed, isNull);
 
-    await tester.enterText(find.byType(TextFormField).at(0), 'old-password');
+    await tester.enterText(find.byType(TextFormField).at(0), 'OldPass1');
     await tester.enterText(find.byType(TextFormField).at(1), 'NewPass12');
     await tester.enterText(find.byType(TextFormField).at(2), 'NewPass12');
     await tester.pumpAndSettle();
@@ -139,16 +145,6 @@ class _FakeEditProfileViewModel extends EditProfileViewModel {
 
   @override
   Future<void> doEvent(EditProfileEvent event) async {}
-}
-
-class _FakeChangePasswordViewModel extends ChangePasswordViewModel {
-  _FakeChangePasswordViewModel()
-    : super(ChangePasswordUseCase(ScriptedProfileRepo()));
-
-  void setState(ChangePasswordState value) => emit(value);
-
-  @override
-  Future<void> doEvent(ChangePasswordEvent event) async {}
 }
 
 class _IdleImages extends ImagePickerService {
@@ -244,8 +240,6 @@ _FakeProfileViewModel _profile() {
     ),
   );
 }
-
-_FakeChangePasswordViewModel _password() => _FakeChangePasswordViewModel();
 
 void _useWideScreen(WidgetTester tester) {
   tester.view.physicalSize = const Size(1200, 2400);

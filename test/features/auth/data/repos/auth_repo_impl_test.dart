@@ -224,13 +224,11 @@ void main() {
     data: true,
   );
 
-  ForgetPasswordResponseDto failedResponse({dynamic errors}) =>
-      ForgetPasswordResponseDto(
-        status: false,
-        code: 400,
-        message: 'Invalid email',
-        errors: errors,
-      );
+  ForgetPasswordResponseDto failedResponse() => ForgetPasswordResponseDto(
+    status: false,
+    code: 400,
+    message: 'Invalid email',
+  );
 
   DioException dioError(DioExceptionType type) => DioException(
     requestOptions: RequestOptions(path: '/'),
@@ -266,25 +264,6 @@ void main() {
         expect(result, isA<ErrorResponse>());
         expect(errorOf(result), isA<BadResponseError>());
         expect(errorOf(result).message, 'Invalid email');
-      },
-    );
-
-    test(
-      'uses the field errors as the message when the server sends them',
-      () async {
-        when(remote.forgetPassword(any)).thenAnswer(
-          (_) async => failedResponse(
-            errors: {
-              'email': ['Not found'],
-            },
-          ),
-        );
-
-        final result = await repo.forgetPassword(
-          forgetPasswordRequest: request,
-        );
-
-        expect(errorOf(result).message, 'Not found');
       },
     );
 
