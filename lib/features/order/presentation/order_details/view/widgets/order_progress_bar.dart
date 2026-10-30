@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
-import 'package:tracking_app/features/order/domain/order_status_progress.dart';
+import 'package:tracking_app/features/order/core/order_status_progress.dart';
 
 class OrderProgressBar extends StatelessWidget {
   final int completed;

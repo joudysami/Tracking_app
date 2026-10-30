@@ -28,6 +28,7 @@ abstract class LocaleKeys {
   static const String commonUnauthorized = 'common.unauthorized';
   static const String commonServerError = 'common.server_error';
   static const String commonSessionExpired = 'common.session_expired';
+  static const String commonLoadMore = 'common.load_more';
 
   static const String validationRequired = 'validation.required';
   static const String validationInvalidEmail = 'validation.invalid_email';
@@ -128,6 +129,7 @@ abstract class LocaleKeys {
   static const String ordersCancelledTab = 'orders.cancelled_tab';
   static const String ordersNoOrders = 'orders.no_orders';
   static const String ordersOrderNumber = 'orders.order_number';
+  static const String recentOrders = 'orders.recent';
 
   static const String orderDetailsTitle = 'order_details.title';
   static const String orderDetailsStatus = 'order_details.status';

@@ -1,7 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
-import 'package:tracking_app/features/order/domain/order_status_progress.dart';
+import 'package:tracking_app/features/order/core/order_status_progress.dart';
 
 class OrderTotalCard extends StatelessWidget {
   final double amount;

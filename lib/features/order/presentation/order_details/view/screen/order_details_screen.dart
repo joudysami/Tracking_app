@@ -3,11 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
-import 'package:tracking_app/features/order/domain/order_status_progress.dart';
-import 'package:tracking_app/features/order/presentation/widgets/order_party_card.dart';
-import 'package:tracking_app/features/order/presentation/widgets/order_progress_bar.dart';
-import 'package:tracking_app/features/order/presentation/widgets/order_status_card.dart';
-import 'package:tracking_app/features/order/presentation/widgets/order_total_card.dart';
+import 'package:tracking_app/features/order/core/order_status_progress.dart';
+
+import '../widgets/order_party_card.dart';
+import '../widgets/order_progress_bar.dart';
+import '../widgets/order_status_card.dart';
+import '../widgets/order_total_card.dart';
 
 class OrderDetailsScreen extends StatelessWidget {
   final AvailableOrderEntity? order;

@@ -8,8 +8,8 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
-import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
-import 'package:tracking_app/features/order/presentation/widgets/order_progress_bar.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/screen/order_details_screen.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/widgets/order_progress_bar.dart';
 
 void main() {
   setUpAll(() {

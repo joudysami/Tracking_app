@@ -27,7 +27,8 @@
         "no_internet": "لا يوجد اتصال بالإنترنت، يرجى المحاولة مرة أخرى.",
         "unauthorized": "غير مصرح، يرجى تسجيل الدخول مرة أخرى.",
         "server_error": "حدث خطأ في الخادم، يرجى المحاولة لاحقاً.",
-        "session_expired": "انتهت جلستك، يرجى تسجيل الدخول مرة أخرى."
+        "session_expired": "انتهت جلستك، يرجى تسجيل الدخول مرة أخرى.",
+        "load_more": "عرض المزيد"
     },
     "validation": {
         "required": "هذا الحقل مطلوب",
@@ -115,7 +116,8 @@
         "completed_tab": "المكتملة",
         "cancelled_tab": "الملغاة",
         "no_orders": "لا توجد طلبات حتى الآن",
-        "order_number": "طلب رقم #{id}"
+        "order_number": "طلب رقم #{id}",
+        "recent": "أحدث الطلبات"
     },
     "order_details": {
         "title": "تفاصيل الطلب",
@@ -135,15 +137,6 @@
         "no_address": "لا يوجد عنوان",
         "unavailable": "تفاصيل الطلب غير متاحة.",
         "currency": "ج.م"
-    },
-    "status": {
-        "pending": "قيد الانتظار",
-        "accepted": "تم القبول",
-        "picked": "تم الاستلام",
-        "out_for_delivery": "خرج للتوصيل",
-        "arrived": "تم الوصول",
-        "delivered": "تم التسليم",
-        "cancelled": "ملغي"
     },
     "profile": {
         "title": "الملف الشخصي",
@@ -194,18 +187,6 @@
         "submitted_success": "تم إرسال طلبك بنجاح",
         "success_title": "تم تقديم طلبك بنجاح!",
         "success_body": "شكراً لتقديم طلبك، سنقوم بمراجعة طلبك والتواصل معك قريباً."
-    },
-     "order_details": {
-        "title": "تفاصيل الطلب",
-        "status": "الحالة",
-        "order_id": "رقم الطلب",
-        "pickup_address": "عنوان الاستلام",
-        "user_address": "عنوان المستخدم",
-        "total": "الإجمالي",
-        "currency": "ج.م",
-        "unavailable": "تفاصيل الطلب غير متاحة.",
-        "unknown_store": "متجر غير معروف",
-        "no_address": "لا يوجد عنوان"
     },
     "status": {
         "pending": "قيد الانتظار",
