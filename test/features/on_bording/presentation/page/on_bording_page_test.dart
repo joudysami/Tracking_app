@@ -8,12 +8,16 @@ import 'package:tracking_app/app/router/app_router.dart';
 import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
+import 'package:tracking_app/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_state.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
+
+import '../../../profile/presentation/auth_repo_stub.dart';
 
 class MockApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {
   MockApplyViewModel() : super(const ApplyState());
@@ -21,10 +25,17 @@ class MockApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {
   Future<void> doEvent(ApplyEvent event) async {}
 }
 
+LoginViewModel _loginViewModel() {
+  return LoginViewModel(LoginUseCase(UnusedAuthRepo()));
+}
+
 void main() {
   setUpAll(() {
     if (!getIt.isRegistered<ApplyViewModel>()) {
       getIt.registerFactory<ApplyViewModel>(() => MockApplyViewModel());
+    }
+    if (!getIt.isRegistered<LoginViewModel>()) {
+      getIt.registerFactory<LoginViewModel>(_loginViewModel);
     }
   });
 
@@ -34,21 +45,14 @@ void main() {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
     await tester.pumpWidget(
-      ScreenUtilInit(
-        child: const MaterialApp(
-          home: OnBordingPage(),
-        ),
-      ),
+      ScreenUtilInit(child: const MaterialApp(home: OnBordingPage())),
     );
 
     expect(find.byType(Scaffold), findsOneWidget);
     expect(find.byType(Lottie), findsOneWidget);
     expect(find.byType(AppButton), findsNWidgets(2));
 
-    expect(
-      find.text(LocaleKeys.onboardingWelcome.tr()),
-      findsOneWidget,
-    );
+    expect(find.text(LocaleKeys.onboardingWelcome.tr()), findsOneWidget);
 
     expect(find.text(LocaleKeys.authLogin.tr()), findsOneWidget);
     expect(find.text(LocaleKeys.commonApply.tr()), findsOneWidget);
@@ -57,7 +61,7 @@ void main() {
   });
 
   testWidgets('Verify navigation to login page', (WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(const Size(400, 800));
+    await tester.binding.setSurfaceSize(const Size(1800, 1200));
 
     await tester.pumpWidget(
       ScreenUtilInit(

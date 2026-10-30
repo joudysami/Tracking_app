@@ -4,64 +4,46 @@ import 'package:tracking_app/core/localization/local_key.dart';
 class AppValidators {
   AppValidators._();
 
-  static final RegExp _passwordPattern =
-      RegExp(r'^(?=.*[A-Z]).{8,}$');
+  static final RegExp _passwordPattern = RegExp(r'^(?=.*[A-Z]).{8,}$');
 
-  static final RegExp _registrationPasswordPattern =
-      RegExp(r'^(?=.*[A-Z])(?=.*\d).{6,}$');
+  static final RegExp _registrationPasswordPattern = RegExp(
+    r'^(?=.*[A-Z])(?=.*\d).{6,}$',
+  );
 
-  static final RegExp _usernamePattern =
-      RegExp(r'^[a-zA-Z0-9_]+$');
+  static final RegExp _usernamePattern = RegExp(r'^[a-zA-Z0-9_]+$');
 
-  static final RegExp _emailPattern =
-      RegExp(r'^[^@]+@[^@]+\.[^@]+$');
+  static final RegExp _emailPattern = RegExp(r'^[^@]+@[^@]+\.[^@]+$');
 
-  static final RegExp _phonePattern =
-      RegExp(r'^01[0125][0-9]{8}$');
+  static final RegExp _phonePattern = RegExp(r'^01[0125][0-9]{8}$');
 
-  static String? requiredField(
-    String? value, {
-    required String field,
-  }) {
+  static String? requiredField(String? value, {required String field}) {
     if (value == null || value.trim().isEmpty) {
       return LocaleKeys.validationFieldIsRequired.tr(
-        namedArgs: {
-          'field': field,
-        },
+        namedArgs: {'field': field},
       );
     }
 
     return null;
   }
 
-  static String? usernameValidator(
-    String? value, {
-    String? field,
-  }) {
+  static String? usernameValidator(String? value, {String? field}) {
     final fieldName = field ?? LocaleKeys.name.tr();
 
     if (value == null || value.trim().isEmpty) {
       return LocaleKeys.validationFieldIsRequired.tr(
-        namedArgs: {
-          'field': fieldName,
-        },
+        namedArgs: {'field': fieldName},
       );
     }
 
     if (value.trim().length < 4) {
       return LocaleKeys.validationFieldMinLength.tr(
-        namedArgs: {
-          'field': fieldName,
-          'length': '4',
-        },
+        namedArgs: {'field': fieldName, 'length': '4'},
       );
     }
 
     if (value.contains(' ')) {
       return LocaleKeys.validationFieldNoSpaces.tr(
-        namedArgs: {
-          'field': fieldName,
-        },
+        namedArgs: {'field': fieldName},
       );
     }
 
@@ -108,10 +90,7 @@ class AppValidators {
     return null;
   }
 
-  static String? confirmPasswordValidator(
-    String? value,
-    String password,
-  ) {
+  static String? confirmPasswordValidator(String? value, String password) {
     if (value == null || value.isEmpty) {
       return LocaleKeys.validationConfirmPasswordIsRequired.tr();
     }
@@ -166,10 +145,7 @@ class AppValidators {
 
     if (value.trim().length < 5) {
       return LocaleKeys.validationFieldMinLength.tr(
-        namedArgs: {
-          'field': LocaleKeys.address.tr(),
-          'length': '5',
-        },
+        namedArgs: {'field': LocaleKeys.address.tr(), 'length': '5'},
       );
     }
 
@@ -183,10 +159,7 @@ class AppValidators {
 
     if (value.trim().length < 2) {
       return LocaleKeys.validationFieldMinLength.tr(
-        namedArgs: {
-          'field': LocaleKeys.name.tr(),
-          'length': '2',
-        },
+        namedArgs: {'field': LocaleKeys.name.tr(), 'length': '2'},
       );
     }
 
@@ -214,8 +187,7 @@ class AppValidators {
       return LocaleKeys.validationRequired.tr();
     }
 
-    final vehicleNumberRegex =
-        RegExp(r'^[A-Za-z0-9\u0621-\u064A]+$');
+    final vehicleNumberRegex = RegExp(r'^[A-Za-z0-9\u0621-\u064A-]+$');
 
     if (!vehicleNumberRegex.hasMatch(value.trim())) {
       return LocaleKeys.validationValidVehicleNumber.tr();

@@ -4,20 +4,30 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/app/router/app_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
+import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
+import 'package:tracking_app/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
+
+import '../../../../../profile/presentation/auth_repo_stub.dart';
 
 void main() {
+  setUpAll(() {
+    if (getIt.isRegistered<LoginViewModel>()) return;
+    getIt.registerFactory<LoginViewModel>(
+      () => LoginViewModel(LoginUseCase(UnusedAuthRepo())),
+    );
+  });
+
   Widget buildTestWidget({Widget? home, String? initialLocation}) {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       builder: (context, child) {
         if (home != null) {
-          return MaterialApp(
-            home: home,
-          );
+          return MaterialApp(home: home);
         }
         return MaterialApp.router(
           routerConfig: AppRouter.createRouter(
@@ -33,9 +43,7 @@ void main() {
   ) async {
     await tester.binding.setSurfaceSize(const Size(400, 800));
 
-    await tester.pumpWidget(
-      buildTestWidget(home: const SuccessApplyPage()),
-    );
+    await tester.pumpWidget(buildTestWidget(home: const SuccessApplyPage()));
     await tester.pump();
 
     // Verify Scaffold and AppButton presence
@@ -53,7 +61,7 @@ void main() {
   testWidgets('Verify navigation to LoginPage when tapping Login', (
     WidgetTester tester,
   ) async {
-    await tester.binding.setSurfaceSize(const Size(400, 800));
+    await tester.binding.setSurfaceSize(const Size(1800, 1200));
 
     await tester.pumpWidget(
       buildTestWidget(initialLocation: AppRoutes.successApply),

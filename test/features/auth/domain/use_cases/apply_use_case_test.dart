@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
+import 'package:tracking_app/features/auth/data/models/login/login_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_result_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/gender.dart';
@@ -8,6 +9,7 @@ import 'package:tracking_app/features/auth/domain/entities/forget_password/forge
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_response.dart';
+import 'package:tracking_app/features/auth/domain/entities/login/login_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/vehicle_type_entity.dart';
 import 'package:tracking_app/features/auth/domain/repos/auth_repo.dart';
 import 'package:tracking_app/features/auth/domain/use_cases/apply_use_case.dart';
@@ -49,6 +51,14 @@ class FakeAuthRepo implements AuthRepo {
   }) async {
     throw UnimplementedError();
   }
+
+  @override
+  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request) {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<void> signOut() async {}
 }
 
 void main() {
