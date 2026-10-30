@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/data/mappers/order_history_mapper.dart';
 import 'package:tracking_app/features/order/data/models/order_history_response.dart';
 
@@ -8,7 +9,7 @@ void main() {
       const response = OrderHistoryResponse(
         id: '1',
         orderNumber: '#100',
-        status: 'DELIVERED',
+        status: OrderStatusApiValues.delivered,
         statusDisplay: 'Delivered',
         placedAt: '2024-09-03',
         assignedAt: '2024-09-04',
@@ -30,7 +31,7 @@ void main() {
 
       expect(entity.id, '1');
       expect(entity.orderNumber, '#100');
-      expect(entity.status, 'DELIVERED');
+      expect(entity.status, OrderStatusApiValues.delivered);
       expect(entity.statusDisplay, 'Delivered');
       expect(entity.placedAt, '2024-09-03');
       expect(entity.assignedAt, '2024-09-04');

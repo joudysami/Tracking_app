@@ -3,6 +3,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:tracking_app/core/base/api_response.dart';
 import 'package:tracking_app/features/order/data/api/order_api_client.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/data/data_sources/order_remote_data_source_impl.dart';
 import 'package:tracking_app/features/order/data/models/order_history_response.dart';
 
@@ -28,18 +29,26 @@ void main() {
   group('OrderRemoteDataSourceImpl.getOrderHistory', () {
     test('stringifies page params and returns the api response', () async {
       when(
-        apiClient.getOrders(page: '2', pageSize: '10', status: 'DELIVERED'),
+        apiClient.getOrders(
+          page: '2',
+          pageSize: '10',
+          status: OrderStatusApiValues.delivered,
+        ),
       ).thenAnswer((_) async => response);
 
       final result = await dataSource.getOrderHistory(
         page: 2,
         pageSize: 10,
-        status: 'DELIVERED',
+        status: OrderStatusApiValues.delivered,
       );
 
       expect(result, same(response));
       verify(
-        apiClient.getOrders(page: '2', pageSize: '10', status: 'DELIVERED'),
+        apiClient.getOrders(
+          page: '2',
+          pageSize: '10',
+          status: OrderStatusApiValues.delivered,
+        ),
       ).called(1);
     });
 

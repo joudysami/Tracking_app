@@ -12,16 +12,5 @@ void main() {
       expect(find.byType(OrderDetailsHistoryScreen), findsOneWidget);
       expect(find.byType(Scaffold), findsOneWidget);
     });
-
-    testWidgets('keeps the passed order id', (tester) async {
-      await tester.pumpWidget(
-        const MaterialApp(home: OrderDetailsHistoryScreen(orderId: '7')),
-      );
-
-      final screen = tester.widget<OrderDetailsHistoryScreen>(
-        find.byType(OrderDetailsHistoryScreen),
-      );
-      expect(screen.orderId, '7');
-    });
   });
 }

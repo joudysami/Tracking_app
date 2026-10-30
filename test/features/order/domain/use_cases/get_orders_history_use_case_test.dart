@@ -4,6 +4,7 @@ import 'package:mockito/mockito.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/utils/pagination/paginated_result.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/domain/entities/order_history_entity.dart';
 import 'package:tracking_app/features/order/domain/entities/pagination_params.dart';
 import 'package:tracking_app/features/order/domain/repos/order_repo.dart';
@@ -41,8 +42,8 @@ void main() {
               const OrderHistoryEntity(
                 status: 'AWAITING_DELIVERY_CONFIRMATION',
               ),
-              const OrderHistoryEntity(status: 'DELIVERED'),
-              const OrderHistoryEntity(status: 'CANCELLED'),
+              const OrderHistoryEntity(status: OrderStatusApiValues.delivered),
+              const OrderHistoryEntity(status: OrderStatusApiValues.cancelled),
             ],
             pagination: const PaginationParams(hasNextPage: true),
           ),
@@ -55,7 +56,13 @@ void main() {
           (result as SuccessResponse<PaginatedResult<OrderHistoryEntity>>)
               .data!;
       expect(data.items.length, 2);
-      expect(data.items.map((e) => e.status), ['DELIVERED', 'CANCELLED']);
+      expect(
+        data.items.map((e) => e.status),
+        [
+          OrderStatusApiValues.delivered,
+          OrderStatusApiValues.cancelled,
+        ],
+      );
     });
 
     test('keeps server pagination while filtering history items', () async {
@@ -64,7 +71,7 @@ void main() {
           PaginatedResult(
             items: [
               const OrderHistoryEntity(status: 'PLACED'),
-              const OrderHistoryEntity(status: 'CANCELLED'),
+              const OrderHistoryEntity(status: OrderStatusApiValues.cancelled),
             ],
             pagination: const PaginationParams(
               hasNextPage: true,
@@ -79,7 +86,7 @@ void main() {
       final data =
           (result as SuccessResponse<PaginatedResult<OrderHistoryEntity>>)
               .data!;
-      expect(data.items.map((e) => e.status), ['CANCELLED']);
+      expect(data.items.map((e) => e.status), [OrderStatusApiValues.cancelled]);
       expect(data.pagination.hasNextPage, isTrue);
       expect(data.pagination.totalCount, 42);
     });

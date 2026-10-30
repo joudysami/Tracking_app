@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/domain/entities/order_history_entity.dart';
 import 'package:tracking_app/features/order/presentation/order_history/view/widgets/complete_or_cancelled_text.dart';
 import 'package:tracking_app/features/order/presentation/order_history/view/widgets/order_address_card.dart';
@@ -40,7 +41,7 @@ void main() {
         const OrderHistoryEntity(
           id: '1',
           orderNumber: '#1',
-          status: 'DELIVERED',
+          status: OrderStatusApiValues.delivered,
         ),
       );
 
@@ -58,7 +59,7 @@ void main() {
         const OrderHistoryEntity(
           id: '1',
           orderNumber: '#1',
-          status: 'CANCELLED',
+          status: OrderStatusApiValues.cancelled,
         ),
         onTap: () => called++,
       );
@@ -76,7 +77,7 @@ void main() {
         const OrderHistoryEntity(
           id: '1',
           orderNumber: '#1',
-          status: 'DELIVERED',
+          status: OrderStatusApiValues.delivered,
         ),
       );
 

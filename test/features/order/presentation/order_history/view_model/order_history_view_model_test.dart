@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -63,7 +65,7 @@ void main() {
   group('OrderHistoryViewModel', () {
     test('loads the first page and fills counts', () async {
       stubHistoryPage(1, const [
-        OrderHistoryEntity(id: '1', status: 'DELIVERED'),
+        OrderHistoryEntity(id: '1', status: OrderStatusApiValues.delivered),
       ], false);
 
       await viewModel.onEvent(const LoadOrderHistory());
@@ -153,6 +155,29 @@ void main() {
       expect(viewModel.state.orders.map((e) => e.id), ['9', '8']);
       expect(viewModel.state.currentPage, 1);
       expect(viewModel.state.hasMore, isFalse);
+    });
+
+    test('runs a refresh requested while a load is in flight', () async {
+      final gate =
+          Completer<BaseResponse<PaginatedResult<OrderHistoryEntity>>>();
+      when(history.call(page: 1, pageSize: 10)).thenAnswer((_) => gate.future);
+
+      final loading = viewModel.onEvent(const LoadOrderHistory());
+      await viewModel.onEvent(const RefreshOrderHistory());
+
+      gate.complete(
+        SuccessResponse(
+          PaginatedResult(
+            items: const [OrderHistoryEntity(id: '7')],
+            pagination: PaginationParams(hasNextPage: false),
+          ),
+        ),
+      );
+      await loading;
+
+      verify(history.call(page: 1, pageSize: 10)).called(2);
+      expect(viewModel.state.orders.map((e) => e.id), ['7']);
+      expect(viewModel.state.status, PaginationStatus.success);
     });
 
     test('does not request when hasMore is false', () async {

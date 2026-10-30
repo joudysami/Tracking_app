@@ -22,6 +22,7 @@ class OrderHistoryViewModel
   static const int _maxEmptyPageSkips = 10;
   int _emptyPageSkips = 0;
   bool _isRequestInProgress = false;
+  bool _refreshQueued = false;
 
   OrderHistoryViewModel(this._getOrdersHistory, this._getOrdersCount)
     : super(const OrderHistoryState());
@@ -29,13 +30,21 @@ class OrderHistoryViewModel
   Future<void> onEvent(OrderHistoryEvent event) {
     return switch (event) {
       LoadOrderHistory() => Future.wait([_load(), _loadCounts()]),
-      RefreshOrderHistory() => Future.wait([
-        _load(refresh: true),
-        _loadCounts(),
-      ]),
+      RefreshOrderHistory() => _refresh(),
       LoadMoreOrderHistory() || RetryOrderHistory() => _load(),
       OpenOrderDetails(:final orderId) => _openDetails(orderId),
     };
+  }
+
+  Future<void> _refresh() async {
+    if (_isRequestInProgress) {
+      _refreshQueued = true;
+      return;
+    }
+    await Future.wait([
+      _load(refresh: true),
+      _loadCounts(),
+    ]);
   }
 
   Future<void> _openDetails(String orderId) async {
@@ -100,6 +109,11 @@ class OrderHistoryViewModel
           ),
         );
         emitError(appError);
+    }
+
+    if (_refreshQueued && !_isRequestInProgress) {
+      _refreshQueued = false;
+      await _refresh();
     }
   }
 

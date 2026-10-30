@@ -15,7 +15,7 @@ import 'package:tracking_app/features/home/presentation/view/screen/home_screen.
 import 'package:tracking_app/features/home/presentation/view/widgets/accept_button.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
-import 'package:tracking_app/features/order/presentation/order_details_page.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/screen/order_details_page.dart';
 import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
 
 void main() {

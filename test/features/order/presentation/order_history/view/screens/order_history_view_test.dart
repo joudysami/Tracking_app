@@ -9,6 +9,7 @@ import 'package:tracking_app/core/constant/widget_keys.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/utils/pagination/paginated_result.dart';
 import 'package:tracking_app/core/widgets/app_shimmer/order_history_shimmer.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/domain/entities/order_history_entity.dart';
 import 'package:tracking_app/features/order/domain/entities/pagination_params.dart';
 import 'package:tracking_app/features/order/domain/use_cases/get_order_count_use_case.dart';
@@ -25,7 +26,7 @@ import 'order_history_view_test.mocks.dart';
 
 @GenerateMocks([GetOrdersHistoryUseCase, GetOrdersCountUseCase])
 void main() {
-  provideDummy<String>('DELIVERED');
+  provideDummy<String>(OrderStatusApiValues.delivered);
   provideDummy<BaseResponse<int?>>(const SuccessResponse<int?>(0));
   provideDummy<BaseResponse<PaginatedResult<OrderHistoryEntity>>>(
     const SuccessResponse<PaginatedResult<OrderHistoryEntity>>(null),
@@ -119,8 +120,16 @@ void main() {
     tester,
   ) async {
     stubFirstPage(const [
-      OrderHistoryEntity(id: '1', orderNumber: '#1', status: 'DELIVERED'),
-      OrderHistoryEntity(id: '2', orderNumber: '#2', status: 'CANCELLED'),
+      OrderHistoryEntity(
+        id: '1',
+        orderNumber: '#1',
+        status: OrderStatusApiValues.delivered,
+      ),
+      OrderHistoryEntity(
+        id: '2',
+        orderNumber: '#2',
+        status: OrderStatusApiValues.cancelled,
+      ),
     ], false);
     final viewModel = buildViewModel();
     addTearDown(viewModel.close);
@@ -140,7 +149,7 @@ void main() {
     tester,
   ) async {
     stubFirstPage(const [
-      OrderHistoryEntity(id: '1', status: 'DELIVERED'),
+      OrderHistoryEntity(id: '1', status: OrderStatusApiValues.delivered),
     ], true);
     final viewModel = buildViewModel();
     addTearDown(viewModel.close);

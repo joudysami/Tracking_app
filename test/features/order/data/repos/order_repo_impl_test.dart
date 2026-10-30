@@ -5,6 +5,7 @@ import 'package:tracking_app/core/base/api_response.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/core/utils/pagination/paginated_result.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/data/data_sources/order_remote_data_source.dart';
 import 'package:tracking_app/features/order/data/models/order_history_response.dart';
 import 'package:tracking_app/features/order/data/repos/order_repo_impl.dart';
@@ -25,7 +26,7 @@ void main() {
   ApiResponse<List<OrderHistoryResponse>> apiResponse({
     bool status = true,
     List<OrderHistoryResponse>? data = const [
-      OrderHistoryResponse(id: '1', status: 'DELIVERED'),
+      OrderHistoryResponse(id: '1', status: OrderStatusApiValues.delivered),
     ],
     Object? pagination,
   }) {

@@ -1,5 +1,6 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:tracking_app/features/order/data/api/order_api_client.dart';
+import 'package:tracking_app/features/order/data/api/order_status_api_values.dart';
 import 'package:tracking_app/features/order/data/models/order_history_response.dart';
 
 import '../../../../support/recording_dio.dart';
@@ -23,7 +24,11 @@ void main() {
           'code': 200,
           'message': 'ok',
           'data': <Map<String, dynamic>>[
-            {'id': '1', 'orderNumber': '#100', 'status': 'DELIVERED'},
+            {
+              'id': '1',
+              'orderNumber': '#100',
+              'status': OrderStatusApiValues.delivered,
+            },
           ],
           'pagination': <String, dynamic>{
             'page': 1,
@@ -37,20 +42,20 @@ void main() {
       final response = await client.getOrders(
         page: '1',
         pageSize: '10',
-        status: 'DELIVERED',
+        status: OrderStatusApiValues.delivered,
       );
 
       expect(calls.single.method, 'GET');
       expect(calls.single.uri.path, '/api/orders/drivers/me/orders');
       expect(calls.single.query['page'], '1');
       expect(calls.single.query['pageSize'], '10');
-      expect(calls.single.query['status'], 'DELIVERED');
+      expect(calls.single.query['status'], OrderStatusApiValues.delivered);
 
       expect(response.status, isTrue);
       final data = response.data!;
       expect(data.single, isA<OrderHistoryResponse>());
       expect(data.single.id, '1');
-      expect(data.single.status, 'DELIVERED');
+      expect(data.single.status, OrderStatusApiValues.delivered);
       expect(response.pagination, isA<Map>());
     });
 
