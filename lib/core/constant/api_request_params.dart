@@ -22,6 +22,7 @@ class ApiRequestParams {
   static const String licenceImage = 'licenceImage';
   static const String page = 'page';
   static const String pageSize = 'pageSize';
+  static const String status = 'status';
 
   static const String orderId = 'orderId';
 }

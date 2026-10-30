@@ -4,21 +4,24 @@ import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
 import 'package:tracking_app/core/di/di.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
-import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
-import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/button_navigation_bar.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
-import 'package:tracking_app/features/order/order_screen.dart';
-import 'package:tracking_app/features/order/presentation/order_details_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
+import 'package:tracking_app/features/order/order_screen.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/screen/order_details_page.dart';
 import 'package:tracking_app/features/profile/profile.dart';
+
+import '../../features/order/presentation/order_details_history/view/screen/order_details_history_screen.dart';
+import '../../features/order/presentation/order_history/view/screens/order_history_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -37,6 +40,8 @@ class AppRouter {
         _profileRoute(),
         _orderRoute(),
         _orderDetailsRoute(),
+        _orderDetailsHistoryRoute(),
+        _orderHistoryRoute(),
       ],
     );
   }
@@ -135,6 +140,22 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.orderDetails,
       builder: (context, state) => buildOrderDetailsPage(state.extra),
+    );
+  }
+
+  static GoRoute _orderDetailsHistoryRoute() {
+    return GoRoute(
+      path: AppRoutes.orderDetailsHistory,
+      builder: (context, state) => OrderDetailsHistoryScreen(
+        orderId: state.extra is String ? state.extra as String : null,
+      ),
+    );
+  }
+
+  static GoRoute _orderHistoryRoute() {
+    return GoRoute(
+      path: AppRoutes.orderHistory,
+      builder: (context, state) => const OrderHistoryScreen(),
     );
   }
 }
