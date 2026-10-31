@@ -4,6 +4,8 @@ import 'package:tracking_app/features/home/data/api/home_api_client.dart';
 import 'package:tracking_app/features/order/data/api/order_api_client.dart';
 
 import '../../features/auth/api/auth_api_client.dart';
+import '../../features/location_tracking/api/location_api_client.dart';
+import '../../features/location_tracking/api/routing_api_client.dart';
 
 @module
 abstract class ApiModule {
@@ -14,4 +16,10 @@ abstract class ApiModule {
   @singleton
   OrderApiClient provideOrderApiClient(Dio dio) => OrderApiClient(dio);
 
+
+  @singleton
+  LocationApiClient provideLocationApiClient(Dio dio) => LocationApiClient(dio);
+
+  @singleton
+  RoutingApiClient provideRoutingApiClient(Dio dio) => RoutingApiClient(dio);
 }

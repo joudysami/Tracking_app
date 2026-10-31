@@ -9,18 +9,21 @@ import 'package:tracking_app/features/auth/presentation/apply/view/page/success_
 import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_event.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/home/presentation/view/widgets/button_navigation_bar.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
+import 'package:tracking_app/features/location_tracking/data/models/map_party_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/page/order_map_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 import 'package:tracking_app/features/order/order_screen.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
 import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
-import 'package:tracking_app/features/profile/profile.dart';
 
 class AppRouter {
   AppRouter._();
@@ -36,9 +39,10 @@ class AppRouter {
         _successApplyRoute(),
         _forgetPasswordRoute(),
         _homeRoute(),
-        _profileRoute(),
+      //  _profileRoute(),
         _orderRoute(),
         _orderDetailsRoute(),
+        _orderMapRoute(),
       ],
     );
   }
@@ -115,15 +119,15 @@ class AppRouter {
     );
   }
 
-  static GoRoute _profileRoute() {
+ /* static GoRoute _profileRoute() {
     return GoRoute(
       path: AppRoutes.profile,
       builder: (context, state) {
-        return ProfileScreen();
+       // return ProfileScreen();
       },
     );
   }
-
+*/
   static GoRoute _orderRoute() {
     return GoRoute(
       path: AppRoutes.order,
@@ -147,4 +151,17 @@ static GoRoute _orderDetailsRoute() {
     },
   );
 }
+  static GoRoute _orderMapRoute() {
+    return GoRoute(
+      path: AppRoutes.orderMap,
+      builder: (context, state) {
+      return BlocProvider(
+          create: (_) =>
+              getIt<LocationTrackingViewModel>()
+                ..doEvent(LocationTrackingStarted()),
+          child: OrderMapPage(order: orderMapMock, stage: OrderMapStage.pickup),
+        );
+      },
+    );
+  }
 }

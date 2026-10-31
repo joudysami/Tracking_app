@@ -66,6 +66,8 @@ class ApiEndpoints {
   //// Apply (Driver) ////
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
+  /// Location Tracking ////
+  static const String reportDriverLocation = '/api/orders/drivers/me/location';
 
   /// home ///
   static const String availableOrders = "/api/orders/drivers/available-orders";
