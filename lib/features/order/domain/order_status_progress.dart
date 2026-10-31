@@ -44,18 +44,25 @@ String? getNextOrderStatus(String currentStatus) {
       return null;
   }
 }
-
 String? getOrderActionLabelKey(String currentStatus) {
   switch (normalizeOrderStatus(currentStatus)) {
     case 'accepted':
       return LocaleKeys.orderDetailsArrivedAtPickup;
+
     case 'picked':
       return LocaleKeys.orderDetailsStartDeliver;
+
     case 'out_for_delivery':
       return LocaleKeys.orderDetailsArrivedToUser;
+
     case 'arrived':
     case 'awaiting_delivery_confirmation':
       return LocaleKeys.orderDetailsDeliveredToUser;
+
+    case 'placed':
+    case 'pending':
+    case 'delivered':
+    case 'cancelled':
     default:
       return null;
   }

@@ -17,6 +17,7 @@ import 'package:tracking_app/features/home/presentation/view_model/home_event.da
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 import 'package:tracking_app/features/order/order_screen.dart';
+import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
 import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
 import 'package:tracking_app/features/profile/profile.dart';
@@ -137,7 +138,8 @@ static GoRoute _orderDetailsRoute() {
     path: AppRoutes.orderDetails,
     builder: (context, state) {
       return BlocProvider(
-        create: (_) => getIt<OrderViewModel>(),
+        create: (_) => getIt<OrderViewModel>()
+          ..doEvent(InitializeOrderEvent(state.extra)),
         child: OrderDetailsScreen(
           order: state.extra,
         ),

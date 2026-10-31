@@ -1,7 +1,12 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
+import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
+import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
+import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
 
 class OrderScreen extends StatelessWidget {
   final Object? order;
@@ -40,6 +45,27 @@ class OrderScreen extends StatelessWidget {
                 color: Color(0xFF757575),
               ),
             ),
+            if (order != null) ...[
+              const SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                        create: (_) => getIt<OrderViewModel>()
+                          ..doEvent(InitializeOrderEvent(order)),
+                        child: OrderDetailsScreen(order: order),
+                      ),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: context.colors.pink,
+                  foregroundColor: Colors.white,
+                ),
+                child: Text(LocaleKeys.orderDetailsTitle.tr()),
+              ),
+            ],
           ],
         ),
       ),

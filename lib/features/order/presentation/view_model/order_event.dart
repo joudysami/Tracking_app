@@ -2,10 +2,10 @@ sealed class OrderEvent {
   const OrderEvent();
 }
 
-// class InitializeOrderEvent extends OrderEvent {
-//   final Object? order;
-//   const InitializeOrderEvent(this.order);
-// }
+class InitializeOrderEvent extends OrderEvent {
+  final Object? order;
+  const InitializeOrderEvent(this.order);
+}
 
 class UpdateOrderStatusEvent extends OrderEvent {
   final String orderId;

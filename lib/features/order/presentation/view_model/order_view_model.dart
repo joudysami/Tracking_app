@@ -1,6 +1,8 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
+import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
 import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 import 'package:tracking_app/features/order/domain/use_case/confirm_delivery_usecase.dart';
@@ -20,46 +22,52 @@ class OrderViewModel extends Cubit<OrderState> {
 
   void doEvent(OrderEvent event) {
     switch (event) {
-      // case InitializeOrderEvent():
-      //   _initializeOrder(event.order);
-      //   break;
+      case InitializeOrderEvent():
+        _initializeOrder(event.order);
       case UpdateOrderStatusEvent():
         _updateStatus(
           orderId: event.orderId,
           status: event.status,
           note: event.note,
         );
-        break;
       case ConfirmOrderDeliveryEvent():
         _confirmDelivery(event.orderId);
-        break;
       case NextStatus():
         _nextStatus();
-        break;
     }
   }
 
-  // void _initializeOrder(Object? raw) {
-  //   if (raw is OrderDetailsEntity) {
-  //     emit(state.copyWith(order: raw));
-  //   } else if (raw is AvailableOrderEntity) {
-  //     emit(state.copyWith(order: OrderDetailsEntity.fromAvailableOrder(raw)));
-  //   } else if (raw is ClaimedOrderEntity) {
-  //     emit(state.copyWith(order: OrderDetailsEntity.fromClaimedOrder(raw)));
-  //   }
-  // }
+  /// Converts the raw route extra (any order entity type) into
+  /// [OrderDetailsEntity] and stores it in [state.order] so that
+  /// [_nextStatus] always has a non-null order to work with.
+  void _initializeOrder(Object? raw) {
+    if (raw is OrderDetailsEntity) {
+      emit(state.copyWith(order: raw));
+    } else if (raw is AvailableOrderEntity) {
+      emit(
+        state.copyWith(order: OrderDetailsEntity.fromAvailableOrder(raw)),
+      );
+    } else if (raw is ClaimedOrderEntity) {
+      emit(
+        state.copyWith(order: OrderDetailsEntity.fromClaimedOrder(raw)),
+      );
+    }
+  }
 
   Future<void> _nextStatus() async {
     final currentOrder = state.order;
     if (currentOrder == null || state.isActionLoading) return;
 
     final normalized = normalizeOrderStatus(currentOrder.status);
+
+    // 'arrived' / 'awaiting_delivery_confirmation' → confirm delivery endpoint
     if (normalized == 'arrived' ||
         normalized == 'awaiting_delivery_confirmation') {
       await _confirmDelivery(currentOrder.orderId);
       return;
     }
 
+    // All other actionable statuses → update status endpoint
     final nextStatus = getNextOrderStatus(currentOrder.status);
     if (nextStatus != null) {
       await _updateStatus(

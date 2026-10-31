@@ -3,9 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
-import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
-import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
-import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_state.dart';
@@ -34,44 +31,30 @@ class OrderDetailsScreen extends StatelessWidget {
             : state.confirmDeliveryState.errorMessage;
 
         if (error.isNotEmpty) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error)),
-          );
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(error)));
         } else if (state.confirmDeliveryState.data != null) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text(
-                LocaleKeys.orderDetailsDeliveredToUser.tr(),
-              ),
+              content: Text(LocaleKeys.orderDetailsDeliveredToUser.tr()),
             ),
           );
         }
       },
       builder: (context, state) {
-        final orderDetails = state.order ??
-            (order is OrderDetailsEntity
-                ? order as OrderDetailsEntity
-                : order is AvailableOrderEntity
-                    ? OrderDetailsEntity.fromAvailableOrder(
-                        order as AvailableOrderEntity,
-                      )
-                    : order is ClaimedOrderEntity
-                        ? OrderDetailsEntity.fromClaimedOrder(
-                            order as ClaimedOrderEntity,
-                          )
-                        : null);
+        final orderDetails = state.order;
 
         final isLoading = state.isActionLoading;
 
         final actionKey = orderDetails == null
             ? null
             : getOrderActionLabelKey(orderDetails.status);
-
         return Scaffold(
           backgroundColor: context.colors.white,
-          appBar: AppBar(
-            title: Text(LocaleKeys.orderDetailsTitle.tr()),
-          ),
+
+          appBar: AppBar(title: Text(LocaleKeys.orderDetailsTitle.tr())),
+
           body: orderDetails == null
               ? Center(
                   child: Padding(
@@ -86,6 +69,7 @@ class OrderDetailsScreen extends StatelessWidget {
                   order: orderDetails,
                   scrollController: PrimaryScrollController.of(context),
                 ),
+
           bottomNavigationBar: actionKey == null
               ? null
               : SafeArea(
@@ -98,20 +82,20 @@ class OrderDetailsScreen extends StatelessWidget {
                         onPressed: isLoading
                             ? null
                             : () {
-                                context
-                                    .read<OrderViewModel>()
-                                    .doEvent(const NextStatus());
+                                context.read<OrderViewModel>().doEvent(
+                                  const NextStatus(),
+                                );
                               },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: context.colors.pink,
-                          // foregroundColor: Colors.white,
+                          foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(25),
                           ),
                         ),
                         child: isLoading
-                            ?  SizedBox(
+                            ? SizedBox(
                                 width: 24,
                                 height: 24,
                                 child: CircularProgressIndicator(
