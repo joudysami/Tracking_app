@@ -1,8 +1,13 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
+import 'package:tracking_app/features/location_tracking/domain/entities/location_report_entity.dart';
+import 'package:tracking_app/features/location_tracking/domain/use_cases/location_reporting_use_case.dart';
+import 'package:tracking_app/features/location_tracking/domain/use_cases/location_tracking_use_case.dart';
 import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 import 'package:tracking_app/features/order/domain/use_case/confirm_delivery_usecase.dart';
@@ -14,10 +19,14 @@ import 'package:tracking_app/features/order/presentation/view_model/order_state.
 class OrderViewModel extends Cubit<OrderState> {
   final UpdateOrderStatusUseCase updateOrderStatusUseCase;
   final ConfirmDeliveryUseCase confirmDeliveryUseCase;
+  final LocationReportingUseCase locationReportingUseCase;
+  final LocationTrackingUseCase locationTrackingUseCase;
 
   OrderViewModel({
     required this.updateOrderStatusUseCase,
     required this.confirmDeliveryUseCase,
+    required this.locationReportingUseCase,
+    required this.locationTrackingUseCase,
   }) : super(const OrderState());
 
   void doEvent(OrderEvent event) {
@@ -58,6 +67,9 @@ class OrderViewModel extends Cubit<OrderState> {
     final currentOrder = state.order;
     if (currentOrder == null || state.isActionLoading) return;
 
+    final reported = await _reportDriverLocation();
+    if (!reported) return;
+
     final normalized = normalizeOrderStatus(currentOrder.status);
 
     // 'arrived' / 'awaiting_delivery_confirmation' → confirm delivery endpoint
@@ -75,6 +87,60 @@ class OrderViewModel extends Cubit<OrderState> {
         status: nextStatus,
         note: 'Status updated to $nextStatus',
       );
+    }
+  }
+
+  /// Reports the driver's current location through LocationReportingUseCase.
+  /// Returns true when reporting succeeded (or was skipped because the
+  /// driver barely moved), so the stage can advance.
+  Future<bool> _reportDriverLocation() async {
+    emit(
+      state.copyWith(
+        locationReportState: state.locationReportState.copyWith(
+          isLoading: true,
+          errorMessage: '',
+        ),
+      ),
+    );
+
+    try {
+      final location = await locationTrackingUseCase().first;
+      final result = await locationReportingUseCase(location);
+
+      switch (result) {
+        case null:
+        case SuccessResponse<LocationReportEntity>():
+          emit(
+            state.copyWith(
+              locationReportState: state.locationReportState.copyWith(
+                isLoading: false,
+                errorMessage: '',
+              ),
+            ),
+          );
+          return true;
+
+        case ErrorResponse<LocationReportEntity>(:final appError):
+          emit(
+            state.copyWith(
+              locationReportState: state.locationReportState.copyWith(
+                isLoading: false,
+                errorMessage: appError.message,
+              ),
+            ),
+          );
+          return false;
+      }
+    } catch (_) {
+      emit(
+        state.copyWith(
+          locationReportState: state.locationReportState.copyWith(
+            isLoading: false,
+            errorMessage: LocaleKeys.locationReportFailed.tr(),
+          ),
+        ),
+      );
+      return false;
     }
   }
 

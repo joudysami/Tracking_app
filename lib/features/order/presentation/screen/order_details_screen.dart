@@ -22,12 +22,16 @@ class OrderDetailsScreen extends StatelessWidget {
                 current.updateStatusState.errorMessage ||
             previous.confirmDeliveryState.errorMessage !=
                 current.confirmDeliveryState.errorMessage ||
+            previous.locationReportState.errorMessage !=
+                current.locationReportState.errorMessage ||
             (previous.confirmDeliveryState.data == null &&
                 current.confirmDeliveryState.data != null);
       },
       listener: (context, state) {
         final error = state.updateStatusState.errorMessage.isNotEmpty
             ? state.updateStatusState.errorMessage
+            : state.locationReportState.errorMessage.isNotEmpty
+            ? state.locationReportState.errorMessage
             : state.confirmDeliveryState.errorMessage;
 
         if (error.isNotEmpty) {
@@ -50,6 +54,9 @@ class OrderDetailsScreen extends StatelessWidget {
         final actionKey = orderDetails == null
             ? null
             : getOrderActionLabelKey(orderDetails.status);
+        final canAdvance =
+            orderDetails != null &&
+            getNextOrderStatus(orderDetails.status) != null;
         return Scaffold(
           backgroundColor: context.colors.white,
 
@@ -79,7 +86,7 @@ class OrderDetailsScreen extends StatelessWidget {
                       height: 50,
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: isLoading
+                        onPressed: (isLoading || !canAdvance)
                             ? null
                             : () {
                                 context.read<OrderViewModel>().doEvent(
@@ -87,7 +94,9 @@ class OrderDetailsScreen extends StatelessWidget {
                                 );
                               },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: context.colors.pink,
+                          backgroundColor: canAdvance
+                              ? context.colors.pink
+                              : context.colors.disabledButton,
                           foregroundColor: Colors.white,
                           elevation: 0,
                           shape: RoundedRectangleBorder(

@@ -93,8 +93,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               ),
             );
-
-          context.push(AppRoutes.order, extra: state.claimOrderState.data);
         }
       },
       child: Scaffold(

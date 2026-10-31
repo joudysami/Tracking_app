@@ -9,6 +9,9 @@ const orderProgressSegmentCount = 5;
 /// the API did not report.
 int completedOrderProgressSegments(String status) {
   switch (normalizeOrderStatus(status)) {
+    // A claimed order stays 'placed' on the backend while the driver
+    // works stage 1 (assignment status is 'Accepted').
+    case 'placed':
     case 'accepted':
       return 1;
     case 'picked':
@@ -20,7 +23,6 @@ int completedOrderProgressSegments(String status) {
       return 4;
     case 'delivered':
       return orderProgressSegmentCount;
-    case 'placed':
     case 'pending':
     case 'cancelled':
       return 0;
@@ -31,6 +33,7 @@ int completedOrderProgressSegments(String status) {
 
 String? getNextOrderStatus(String currentStatus) {
   switch (normalizeOrderStatus(currentStatus)) {
+    case 'placed':
     case 'accepted':
       return 'picked';
     case 'picked':
@@ -46,6 +49,7 @@ String? getNextOrderStatus(String currentStatus) {
 }
 String? getOrderActionLabelKey(String currentStatus) {
   switch (normalizeOrderStatus(currentStatus)) {
+    case 'placed':
     case 'accepted':
       return LocaleKeys.orderDetailsArrivedAtPickup;
 
@@ -57,11 +61,10 @@ String? getOrderActionLabelKey(String currentStatus) {
 
     case 'arrived':
     case 'awaiting_delivery_confirmation':
+    case 'delivered':
       return LocaleKeys.orderDetailsDeliveredToUser;
 
-    case 'placed':
     case 'pending':
-    case 'delivered':
     case 'cancelled':
     default:
       return null;

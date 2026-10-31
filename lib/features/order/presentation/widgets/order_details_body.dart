@@ -1,6 +1,9 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/page/order_map_page.dart';
 import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 import 'package:tracking_app/features/order/presentation/widgets/order_item_card.dart';
@@ -54,13 +57,27 @@ class OrderDetailsBody extends StatelessWidget {
         const SizedBox(height: 20),
 
         OrderSectionTitle(title: LocaleKeys.orderDetailsPickupAddress.tr()),
-        OrderPartyCard(title: storeName, address: storeAddress, isStore: true),
+        GestureDetector(
+          onTap: () => context.push(
+            AppRoutes.orderMap,
+            extra: OrderMapStage.pickup,
+          ),
+          child: OrderPartyCard(
+            title: storeName,
+            address: storeAddress,
+            isStore: true,
+          ),
+        ),
         const SizedBox(height: 20),
 
         OrderSectionTitle(title: LocaleKeys.orderDetailsUserAddress.tr()),
-        OrderPartyCard(
-          title: order.customerName.trim(),
-          address: customerAddress,
+        GestureDetector(
+          onTap: () =>
+              context.push(AppRoutes.orderMap, extra: OrderMapStage.user),
+          child: OrderPartyCard(
+            title: order.customerName.trim(),
+            address: customerAddress,
+          ),
         ),
         const SizedBox(height: 20),
 

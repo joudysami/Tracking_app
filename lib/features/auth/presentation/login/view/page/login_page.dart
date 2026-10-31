@@ -56,7 +56,7 @@ class _LoginPageState extends State<LoginPage> {
         body: BlocConsumer<LoginViewModel, LoginState>(
           listener: (context, state) {
             if (!state.loginState.isLoading && state.loginState.data != null) {
-              context.go(AppRoutes.orderMap);
+              context.go(AppRoutes.home);
             }
           },
           builder: (context, state) {

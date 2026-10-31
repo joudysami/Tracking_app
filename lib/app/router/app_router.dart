@@ -155,11 +155,16 @@ static GoRoute _orderDetailsRoute() {
     return GoRoute(
       path: AppRoutes.orderMap,
       builder: (context, state) {
-      return BlocProvider(
+        // Which map opens is decided by the tapped address in order details:
+        // OrderMapStage.pickup or OrderMapStage.user comes through state.extra.
+        final stage = state.extra is OrderMapStage
+            ? state.extra as OrderMapStage
+            : OrderMapStage.pickup;
+        return BlocProvider(
           create: (_) =>
               getIt<LocationTrackingViewModel>()
                 ..doEvent(LocationTrackingStarted()),
-          child: OrderMapPage(order: orderMapMock, stage: OrderMapStage.pickup),
+          child: OrderMapPage(order: orderMapMock, stage: stage),
         );
       },
     );
