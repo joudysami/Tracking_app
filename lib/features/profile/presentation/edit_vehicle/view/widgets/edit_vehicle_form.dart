@@ -36,19 +36,16 @@ class VehicleTypeDropdown extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final types = context.select((EditVehicleViewModel vm) => vm.state.types);
-    final selectedType = context.select(
-      (EditVehicleViewModel vm) => vm.state.selectedType,
-    );
-    final options = types.data ?? const <VehicleTypeEntity>[];
-    if (options.isEmpty && types.errorMessage.isNotEmpty) {
-      return Text(types.errorMessage);
+    final state = context.select((EditVehicleViewModel vm) => vm.state);
+    final types = state.types.data ?? const <VehicleTypeEntity>[];
+    if (types.isEmpty && state.types.errorMessage.isNotEmpty) {
+      return Text(state.types.errorMessage);
     }
     return DropdownButtonFormField<VehicleTypeEntity>(
       isExpanded: true,
-      initialValue: selectedType,
+      initialValue: state.selectedType,
       decoration: InputDecoration(labelText: LocaleKeys.applyVehicleType.tr()),
-      items: vehicleTypeItems(options),
+      items: vehicleTypeItems(types),
       onChanged: (value) => _selectType(context, value),
     );
   }

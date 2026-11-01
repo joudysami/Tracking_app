@@ -13,9 +13,9 @@ class VerifyOtpResponseDto {
   @JsonKey(name: "data")
   final VerifyOtpDataDto? data;
   @JsonKey(name: "pagination")
-  final dynamic? pagination;
+  final dynamic pagination;
   @JsonKey(name: "errors")
-  final dynamic? errors;
+  final dynamic errors;
 
   VerifyOtpResponseDto({
     this.status,

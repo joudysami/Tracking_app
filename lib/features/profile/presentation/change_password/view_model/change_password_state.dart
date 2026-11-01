@@ -5,12 +5,14 @@ class ChangePasswordState extends Equatable {
   final String newPassword;
   final String confirmPassword;
   final bool isLoading;
+  final bool invalidCurrentPassword;
 
   const ChangePasswordState({
     this.currentPassword = '',
     this.newPassword = '',
     this.confirmPassword = '',
     this.isLoading = false,
+    this.invalidCurrentPassword = false,
   });
 
   ChangePasswordState copyWith({
@@ -18,12 +20,15 @@ class ChangePasswordState extends Equatable {
     String? newPassword,
     String? confirmPassword,
     bool? isLoading,
+    bool? invalidCurrentPassword,
   }) {
-    return ChangePasswordState(
-      currentPassword: currentPassword ?? this.currentPassword,
-      newPassword: newPassword ?? this.newPassword,
-      confirmPassword: confirmPassword ?? this.confirmPassword,
-      isLoading: isLoading ?? this.isLoading,
+    return _copied(
+      this,
+      currentPassword,
+      newPassword,
+      confirmPassword,
+      isLoading,
+      invalidCurrentPassword,
     );
   }
 
@@ -33,5 +38,24 @@ class ChangePasswordState extends Equatable {
     newPassword,
     confirmPassword,
     isLoading,
+    invalidCurrentPassword,
   ];
+}
+
+ChangePasswordState _copied(
+  ChangePasswordState state,
+  String? currentPassword,
+  String? newPassword,
+  String? confirmPassword,
+  bool? isLoading,
+  bool? invalidCurrentPassword,
+) {
+  return ChangePasswordState(
+    currentPassword: currentPassword ?? state.currentPassword,
+    newPassword: newPassword ?? state.newPassword,
+    confirmPassword: confirmPassword ?? state.confirmPassword,
+    isLoading: isLoading ?? state.isLoading,
+    invalidCurrentPassword:
+        invalidCurrentPassword ?? state.invalidCurrentPassword,
+  );
 }

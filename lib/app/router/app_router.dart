@@ -22,6 +22,11 @@ import 'package:tracking_app/features/location_tracking/data/models/map_party_mo
 import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_event.dart';
 import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
 import 'package:tracking_app/features/location_tracking/presentation/view/page/order_map_page.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
+import '../../features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
+import '../../features/auth/presentation/login/view/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 import 'package:tracking_app/features/order/order_screen.dart';
 import 'package:tracking_app/features/order/presentation/order_details/view/screen/order_details_screen.dart';
@@ -29,6 +34,17 @@ import 'package:tracking_app/features/order/presentation/view_model/order_event.
 import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
 
 import '../../features/order/presentation/order_details_history/view/screen/order_details_history_screen.dart';
+import 'package:tracking_app/features/profile/presentation/change_password/view/page/change_password_page.dart';
+import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_view_model.dart';
+import 'package:tracking_app/features/profile/presentation/edit_profile/view/page/edit_profile_page.dart';
+import 'package:tracking_app/features/profile/presentation/edit_profile/view_model/edit_profile_event.dart';
+import 'package:tracking_app/features/profile/presentation/edit_profile/view_model/edit_profile_view_model.dart';
+import 'package:tracking_app/features/profile/presentation/edit_vehicle/view/page/edit_vehicle_page.dart';
+import 'package:tracking_app/features/profile/presentation/edit_vehicle/view_model/edit_vehicle_event.dart';
+import 'package:tracking_app/features/profile/presentation/edit_vehicle/view_model/edit_vehicle_view_model.dart';
+import 'package:tracking_app/features/profile/presentation/profile/view/page/profile_page.dart';
+import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_event.dart';
+import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_view_model.dart';
 
 class AppRouter {
   AppRouter._();
@@ -49,7 +65,10 @@ class AppRouter {
         _orderRoute(),
         _orderDetailsRoute(),
         _orderSuccessRoute(),
-        _orderMapRoute(),
+        _profileRoute(),
+        _editProfileRoute(),
+        _editVehicleRoute(),
+        _changePasswordRoute(),
         _orderDetailsHistoryRoute(),
       ],
     );
@@ -132,6 +151,65 @@ class AppRouter {
       builder: (context, state) {
         return const SuccessApplyPage();
       },
+    );
+  }
+
+  static GoRoute _profileRoute() {
+    return GoRoute(
+      path: AppRoutes.profile,
+      builder: (context, state) => _profilePage(),
+    );
+  }
+
+  static Widget _profilePage() {
+    return BlocProvider(
+      create: (_) =>
+          getIt<ProfileViewModel>()..doEvent(const ProfileRequested()),
+      child: const ProfilePage(),
+    );
+  }
+
+  static GoRoute _editProfileRoute() {
+    return GoRoute(
+      path: AppRoutes.editProfile,
+      builder: (context, state) => _editProfilePage(),
+    );
+  }
+
+  static Widget _editProfilePage() {
+    return BlocProvider(
+      create: (_) =>
+          getIt<EditProfileViewModel>()..doEvent(const EditProfileStarted()),
+      child: const EditProfilePage(),
+    );
+  }
+
+  static GoRoute _editVehicleRoute() {
+    return GoRoute(
+      path: AppRoutes.editVehicle,
+      builder: (context, state) => _editVehiclePage(),
+    );
+  }
+
+  static Widget _editVehiclePage() {
+    return BlocProvider(
+      create: (_) =>
+          getIt<EditVehicleViewModel>()..doEvent(const EditVehicleStarted()),
+      child: const EditVehiclePage(),
+    );
+  }
+
+  static GoRoute _changePasswordRoute() {
+    return GoRoute(
+      path: AppRoutes.resetPassword,
+      builder: (context, state) => _changePasswordPage(),
+    );
+  }
+
+  static Widget _changePasswordPage() {
+    return BlocProvider(
+      create: (_) => getIt<ChangePasswordViewModel>(),
+      child: const ChangePasswordPage(),
     );
   }
 

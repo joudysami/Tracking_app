@@ -296,9 +296,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i185.SafeCall>(),
       ),
     );
-    gh.factory<_i441.ChangePasswordViewModel>(
-      () => _i441.ChangePasswordViewModel(gh<_i266.ChangePasswordUseCase>()),
-    );
     gh.factory<_i553.CheckAndRequestLocationPermissionUseCase>(
       () => _i553.CheckAndRequestLocationPermissionUseCase(
         gh<_i1053.LocationRepo>(),
@@ -349,6 +346,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i311.GetVehicleTypesUseCase>(
       () => _i311.GetVehicleTypesUseCase(gh<_i877.AuthRepo>()),
+    );
+    gh.factory<_i441.ChangePasswordViewModel>(
+      () => _i441.ChangePasswordViewModel(gh<_i266.ChangePasswordUseCase>()),
     );
     gh.factory<_i197.ProfileViewModel>(
       () => _i197.ProfileViewModel(

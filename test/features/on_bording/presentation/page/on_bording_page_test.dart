@@ -8,19 +8,27 @@ import 'package:tracking_app/app/router/app_router.dart';
 import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
+import 'package:tracking_app/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_state.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
+import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 
 import '../../../../support/register_login_view_model.dart';
+
+import '../../../profile/presentation/auth_repo_stub.dart';
 
 class MockApplyViewModel extends Cubit<ApplyState> implements ApplyViewModel {
   MockApplyViewModel() : super(const ApplyState());
   @override
   Future<void> doEvent(ApplyEvent event) async {}
+}
+
+LoginViewModel _loginViewModel() {
+  return LoginViewModel(LoginUseCase(UnusedAuthRepo()));
 }
 
 void main() {
@@ -29,6 +37,9 @@ void main() {
       getIt.registerFactory<ApplyViewModel>(() => MockApplyViewModel());
     }
     registerLoginViewModelForTests();
+    if (!getIt.isRegistered<LoginViewModel>()) {
+      getIt.registerFactory<LoginViewModel>(_loginViewModel);
+    }
   });
 
   testWidgets('Verify onboarding screen structure', (
@@ -53,7 +64,7 @@ void main() {
   });
 
   testWidgets('Verify navigation to login page', (WidgetTester tester) async {
-    await tester.binding.setSurfaceSize(const Size(400, 800));
+    await tester.binding.setSurfaceSize(const Size(1800, 1200));
 
     await tester.pumpWidget(
       ScreenUtilInit(

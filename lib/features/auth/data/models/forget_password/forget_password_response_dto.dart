@@ -13,9 +13,9 @@ class ForgetPasswordResponseDto {
   @JsonKey(name: "data")
   final bool? data;
   @JsonKey(name: "pagination")
-  final dynamic? pagination;
+  final dynamic pagination;
   @JsonKey(name: "errors")
-  final dynamic? errors;
+  final dynamic errors;
 
   ForgetPasswordResponseDto({
     this.status,

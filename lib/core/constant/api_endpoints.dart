@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+
 class ApiEndpoints {
   ApiEndpoints._();
   static String _resolvedBaseUrl = '';
@@ -60,16 +61,16 @@ class ApiEndpoints {
   static const String forgetPassword = '/api/identity/auth/forget-password';
   static const String verifyOtp = '/api/identity/auth/otp-verification';
   static const String resetPassword = '/api/identity/auth/reset-password';
-  static const String login = "/api/identity/auth/login";
+  static const String login =  "/api/identity/auth/login";
   static const String refreshToken = '/api/identity/auth/refresh-token';
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
-  static const String myProfile = '/api/identity/drivers/me';
-  static const String updateProfile = '/api/identity/drivers/me';
-  static const String vehicleInfo = '/api/identity/drivers/me/vehicle';
-  static const String changePassword = '/api/identity/auth/change-password';
+  static const String myProfile = '/api/identity/users/me';
+  static const String updateProfile = '/api/identity/users/profile';
+  static const String vehicleInfo = '/api/identity/vehicles/info';
+  static const String changePassword = '/api/identity/users/change-password';
   static const String logout = '/api/identity/auth/logout';
-
+  /// Location Tracking ////
   static const String reportDriverLocation = '/api/orders/drivers/me/location';
 
   static const String availableOrders = "/api/orders/drivers/available-orders";
@@ -81,6 +82,7 @@ class ApiEndpoints {
   static const String confirmDelivery =
       "/api/orders/{orderId}/confirm-delivery";
 }
+
 
 Future<void> _ensureDotEnv() async {
   if (dotenv.isInitialized) return;

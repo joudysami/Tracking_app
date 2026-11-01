@@ -221,21 +221,21 @@
         "help_center": "المساعدة والدعم",
         "privacy_policy": "سياسة الخصوصية",
         "terms_conditions": "الشروط والأحكام",
-        "delete_account": "حذف الحساب"
-        ,"reset_password": "إعادة تعيين كلمة المرور"
-        ,"current_password": "كلمة المرور الحالية"
-        ,"new_password": "كلمة المرور الجديدة"
-        ,"confirm_password": "تأكيد كلمة المرور"
-        ,"edit_title": "تعديل الملف الشخصي"
-        ,"change": "تغيير"
-        ,"first_name": "الاسم الأول"
-        ,"last_name": "اسم العائلة"
-        ,"logout_title": "تسجيل الخروج"
-        ,"logout_message": "هل أنت متأكد من رغبتك في تسجيل الخروج؟"
-        ,"logout_action": "تسجيل الخروج"
-        ,"vehicle_info": "بيانات المركبة"
-        ,"bike": "دراجة"
-        ,"version": "الإصدار {version} ({build})"
+        "delete_account": "حذف الحساب",
+        "reset_password": "إعادة تعيين كلمة المرور",
+        "current_password": "كلمة المرور الحالية",
+        "new_password": "كلمة المرور الجديدة",
+        "confirm_password": "تأكيد كلمة المرور",
+        "edit_title": "تعديل الملف الشخصي",
+        "change": "تغيير",
+        "first_name": "الاسم الأول",
+        "last_name": "اسم العائلة",
+        "logout_title": "تسجيل الخروج",
+        "logout_message": "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
+        "logout_action": "تسجيل الخروج",
+        "vehicle_info": "بيانات المركبة",
+        "bike": "دراجة",
+        "version": "الإصدار {version} ({build})"
     },
     "apply": {
         "no_vehicle_types_available": "لا توجد أنواع مركبات متاحة",
@@ -412,6 +412,52 @@
         "delivery_fee": "رسوم التوصيل",
         "free": "مجاني",
         "total": "المبلغ الإجمالي المدفوع"
+    },
+    "orders": {
+        "title": "طلباتي",
+        "active_tab": "الطلبات الحالية",
+        "completed_tab": "المكتملة",
+        "cancelled_tab": "الملغاة",
+        "track_order_btn": "تتبع الطلب",
+        "reorder_btn": "إعادة الطلب",
+        "view_receipt": "عرض الفاتورة",
+        "cancel_order": "إلغاء الطلب",
+        "no_orders": "لا توجد طلبات حتى الآن",
+        "no_orders_desc": "لم تقم بطلب أي باقة ورود بعد."
+    },
+    "profile": {
+        "title": "الملف الشخصي",
+        "my_orders": "سجل الطلبات",
+        "saved_addresses": "العناوين المحفوظة",
+        "payment_methods": "وسائل الدفع",
+        "favorites": "المفضلة",
+        "language": "اللغة",
+        "language_value": "العربية",
+        "notifications": "الإشعارات",
+        "dark_mode": "الوضع الداكن",
+        "help_center": "المساعدة والدعم",
+        "privacy_policy": "سياسة الخصوصية",
+        "terms_conditions": "الشروط والأحكام",
+        "logout": "تسجيل الخروج",
+        "logout_confirm": "هل أنت متأكد من رغبتك في تسجيل الخروج؟",
+        "delete_account": "حذف الحساب",
+        "screen_title": "الملف الشخصي",
+        "edit_title": "تعديل الملف الشخصي",
+        "vehicle_info": "بيانات المركبة",
+        "change": "تغيير",
+        "update": "تحديث",
+        "first_name": "الاسم الأول",
+        "last_name": "اسم العائلة",
+        "current_password": "كلمة المرور الحالية",
+        "new_password": "كلمة المرور الجديدة",
+        "confirm_password": "تأكيد كلمة المرور",
+        "invalid_password": "كلمة المرور غير صحيحة",
+        "logout_title": "تسجيل الخروج",
+        "logout_message": "تأكيد تسجيل الخروج!!",
+        "logout_action": "تسجيل الخروج",
+        "bike": "دراجة",
+        "version": "v {version} - ({build})",
+        "reset_password": "إعادة تعيين كلمة المرور"
     },
     "order_map": {
         "your_location": "موقعك",

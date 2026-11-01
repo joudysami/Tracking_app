@@ -9,7 +9,6 @@ import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/core/network/token_storage.dart';
 import 'package:tracking_app/features/auth/data/data_sources/auth_remote_data_source.dart';
-import 'package:tracking_app/features/auth/data/models/apply_request_model.dart';
 import 'package:tracking_app/features/auth/data/models/apply_response.dart';
 import 'package:tracking_app/features/auth/data/models/forget_password/forget_password_request_dto.dart';
 import 'package:tracking_app/features/auth/data/models/forget_password/forget_password_response_dto.dart';
@@ -75,7 +74,11 @@ void main() {
     repo = AuthRepoImpl(
       remoteDataSource: mockRemoteDataSource,
       safeCall: safeCall,
+<<<<<<< HEAD
       tokenStorage: _MemoryTokenStorage(),
+=======
+      tokenStorage: _IdleTokenStorage(),
+>>>>>>> origin/dev
     );
 
     tApplyParams = ApplyParams(
@@ -437,6 +440,7 @@ void main() {
   });
 }
 
+<<<<<<< HEAD
 class _MemoryTokenStorage implements TokenStorage {
   String? accessToken;
   String? refreshToken;
@@ -457,13 +461,31 @@ class _MemoryTokenStorage implements TokenStorage {
   Future<void> saveAccessToken(String accessToken) async {
     this.accessToken = accessToken;
   }
+=======
+class _IdleTokenStorage implements TokenStorage {
+  @override
+  Future<void> clearTokens() async {}
+
+  @override
+  Future<String?> getAccessToken() async => null;
+
+  @override
+  Future<String?> getRefreshToken() async => null;
+
+  @override
+  Future<void> saveAccessToken(String accessToken) async {}
+>>>>>>> origin/dev
 
   @override
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
+<<<<<<< HEAD
   }) async {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
   }
+=======
+  }) async {}
+>>>>>>> origin/dev
 }

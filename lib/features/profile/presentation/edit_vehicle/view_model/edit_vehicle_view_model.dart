@@ -67,13 +67,12 @@ class EditVehicleViewModel extends Cubit<EditVehicleState> {
     BaseResponse<VehicleInfoEntity> vehicle,
     BaseResponse<List<VehicleTypeEntity>> types,
   ) {
-    final vehicleState = _asState(vehicle);
-    final typeState = _asState(types);
-    final options = typeState.data ?? const <VehicleTypeEntity>[];
+    final vehicleState = _vehicleState(vehicle);
+    final options = _typeList(types) ?? const <VehicleTypeEntity>[];
     final info = vehicleState.data;
     return state.copyWith(
       vehicle: vehicleState,
-      types: typeState,
+      types: BaseState(data: options, errorMessage: _typeError(types)),
       selectedType: matchVehicleType(options, info),
       vehicleNumber: info?.vehicleNumber ?? '',
       licenseName: info?.licenseFileName,
@@ -123,9 +122,27 @@ class EditVehicleViewModel extends Cubit<EditVehicleState> {
   }
 }
 
-BaseState<T> _asState<T>(BaseResponse<T> result) {
+BaseState<VehicleInfoEntity> _vehicleState(
+  BaseResponse<VehicleInfoEntity> result,
+) {
   return switch (result) {
     SuccessResponse(:final data) => BaseState(data: data),
     ErrorResponse(:final errorMessage) => BaseState(errorMessage: errorMessage),
+  };
+}
+
+List<VehicleTypeEntity>? _typeList(
+  BaseResponse<List<VehicleTypeEntity>> result,
+) {
+  return switch (result) {
+    SuccessResponse(:final data) => data,
+    ErrorResponse() => null,
+  };
+}
+
+String _typeError(BaseResponse<List<VehicleTypeEntity>> result) {
+  return switch (result) {
+    SuccessResponse() => '',
+    ErrorResponse(:final errorMessage) => errorMessage,
   };
 }

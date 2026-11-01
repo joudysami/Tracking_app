@@ -14,18 +14,15 @@ class EditProfileForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Form(
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      child: ListView(
-        padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
-        children: const [
-          ProfilePhotoPicker(),
-          ProfileSectionGap(height: 24),
-          EditProfileFields(),
-          ProfileSectionGap(height: 32),
-          EditProfileUpdateButton(),
-        ],
-      ),
+    return ListView(
+      padding: EdgeInsets.fromLTRB(16.w, 8.h, 16.w, 24.h),
+      children: const [
+        ProfilePhotoPicker(),
+        ProfileSectionGap(height: 24),
+        EditProfileFields(),
+        ProfileSectionGap(height: 32),
+        EditProfileUpdateButton(),
+      ],
     );
   }
 }

@@ -18,8 +18,8 @@ class UserProfileEntity extends Equatable {
     required this.fullName,
     required this.email,
     required this.phoneNumber,
-    this.gender,
-    this.photoUrl,
+    required this.gender,
+    required this.photoUrl,
   });
 
   @override

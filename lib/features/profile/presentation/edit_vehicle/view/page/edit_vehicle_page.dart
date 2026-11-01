@@ -94,7 +94,7 @@ class _EditVehicleEffectListenerState extends State<EditVehicleEffectListener> {
       case ShowEditVehicleError(:final message):
         _snack(message);
       case VehicleSaved():
-        context.pop(true);
+        context.pop();
     }
   }
 

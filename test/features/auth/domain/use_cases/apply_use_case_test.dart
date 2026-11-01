@@ -10,6 +10,7 @@ import 'package:tracking_app/features/auth/domain/entities/forget_password/forge
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/verify_otp_response.dart';
+import 'package:tracking_app/features/auth/domain/entities/login/login_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/vehicle_type_entity.dart';
 import 'package:tracking_app/features/auth/domain/repos/auth_repo.dart';
 import 'package:tracking_app/features/auth/domain/use_cases/apply_use_case.dart';
@@ -58,9 +59,13 @@ class FakeAuthRepo implements AuthRepo {
   }
 
   @override
+<<<<<<< HEAD
   Future<void> signOut() {
     throw UnimplementedError();
   }
+=======
+  Future<void> signOut() async {}
+>>>>>>> origin/dev
 }
 
 void main() {
