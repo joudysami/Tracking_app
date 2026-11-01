@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/location_tracking/data/models/map_party_model.dart';
-import 'package:tracking_app/features/order/presentation/widgets/order_party_card.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/widgets/order_party_card.dart';
 
 class OrderMapBottomSheet extends StatelessWidget {
   final MapPartyModel target;

@@ -11,8 +11,8 @@ import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart
 import 'package:tracking_app/features/location_tracking/domain/entities/location_report_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_reporting_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_tracking_use_case.dart';
+import 'package:tracking_app/features/order/core/order_status_progress.dart';
 import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
-import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 import 'package:tracking_app/features/order/domain/use_case/confirm_delivery_usecase.dart';
 import 'package:tracking_app/features/order/domain/use_case/order_status_use_case.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';

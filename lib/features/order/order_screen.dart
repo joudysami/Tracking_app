@@ -4,7 +4,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
-import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/screen/order_details_screen.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
 

@@ -5,7 +5,7 @@ import 'package:tracking_app/core/base/base_state.dart';
 import 'package:tracking_app/features/home/domain/use_case/claim_order_usecase.dart';
 import 'package:tracking_app/features/home/domain/use_case/get_assigned_order_usecase.dart';
 import 'package:tracking_app/features/home/domain/use_case/get_available_order_usecase.dart';
-import 'package:tracking_app/features/order/domain/order_status_progress.dart';
+import 'package:tracking_app/features/order/core/order_status_progress.dart';
 
 import 'home_event.dart';
 import 'home_state.dart';

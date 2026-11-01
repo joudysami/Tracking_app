@@ -83,12 +83,24 @@ import '../../features/order/data/api/order_api_client.dart' as _i1026;
 import '../../features/order/data/data_source/order_data_source.dart' as _i173;
 import '../../features/order/data/data_source/order_data_source_impl.dart'
     as _i578;
+import '../../features/order/data/data_sources/order_remote_data_source.dart'
+    as _i701;
+import '../../features/order/data/data_sources/order_remote_data_source_impl.dart'
+    as _i352;
 import '../../features/order/data/repo/order_repo_impl.dart' as _i492;
+import '../../features/order/data/repos/order_repo_impl.dart' as _i906;
 import '../../features/order/domain/repo/order_repo.dart' as _i989;
+import '../../features/order/domain/repos/order_repo.dart' as _i527;
 import '../../features/order/domain/use_case/confirm_delivery_usecase.dart'
     as _i690;
 import '../../features/order/domain/use_case/order_status_use_case.dart'
     as _i571;
+import '../../features/order/domain/use_cases/get_order_count_use_case.dart'
+    as _i98;
+import '../../features/order/domain/use_cases/get_orders_history_use_case.dart'
+    as _i252;
+import '../../features/order/presentation/order_history/view_model/order_history_view_model.dart'
+    as _i477;
 import '../../features/order/presentation/view_model/order_view_model.dart'
     as _i124;
 import '../../features/profile/api/profile_api_client.dart' as _i211;
@@ -118,7 +130,7 @@ import '../../features/profile/presentation/edit_vehicle/view_model/edit_vehicle
     as _i360;
 import '../../features/profile/presentation/profile/view_model/profile_view_model.dart'
     as _i197;
-import '../modules/api_module.dart' as _i98;
+import '../modules/api_module.dart' as _i99;
 import '../modules/dio_module.dart' as _i948;
 import '../modules/services_module.dart' as _i120;
 import '../network/auth_interceptors.dart' as _i466;
@@ -195,6 +207,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i1012.ProfileRemoteDataSource>(
       () => _i491.ProfileRemoteDataSourceImpl(gh<_i211.ProfileApiClient>()),
     );
+    gh.factory<_i701.OrderRemoteDataSource>(
+      () => _i352.OrderRemoteDataSourceImpl(gh<_i1026.OrderApiClient>()),
+    );
     gh.factory<_i1007.ProfileRepo>(
       () => _i1072.ProfileRepoImpl(
         remote: gh<_i1012.ProfileRemoteDataSource>(),
@@ -224,6 +239,12 @@ extension GetItInjectableX on _i174.GetIt {
         remoteDataSource: gh<_i405.LocationRemoteDataSource>(),
       ),
     );
+    gh.factory<_i527.OrderRepo>(
+      () => _i906.OrderRepoImpl(
+        gh<_i701.OrderRemoteDataSource>(),
+        gh<_i185.SafeCall>(),
+      ),
+    );
     gh.factory<_i541.LocationReportingUseCase>(
       () => _i541.LocationReportingUseCase(
         gh<_i1053.LocationRepo>(),
@@ -241,6 +262,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i291.HomeRemoteDataSourceImpl(
         homeApiClient: gh<_i549.HomeApiClient>(),
       ),
+    );
+    gh.factory<_i252.GetOrdersHistoryUseCase>(
+      () => _i252.GetOrdersHistoryUseCase(gh<_i527.OrderRepo>()),
     );
     gh.factory<_i266.ChangePasswordUseCase>(
       () => _i266.ChangePasswordUseCase(gh<_i1007.ProfileRepo>()),
@@ -295,6 +319,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i528.OpenLocationSettingsUseCase>(
       () => _i528.OpenLocationSettingsUseCase(gh<_i1053.LocationRepo>()),
     );
+    gh.factory<_i98.GetOrdersCountUseCase>(
+      () => _i98.GetOrdersCountUseCase(gh<_i527.OrderRepo>()),
+    );
     gh.factory<_i783.LocationTrackingViewModel>(
       () => _i783.LocationTrackingViewModel(
         gh<_i258.LocationTrackingUseCase>(),
@@ -309,6 +336,12 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i1024.HomeRepoImpl(
         gh<_i68.HomeRemoteDataSource>(),
         gh<_i185.SafeCall>(),
+      ),
+    );
+    gh.factory<_i477.OrderHistoryViewModel>(
+      () => _i477.OrderHistoryViewModel(
+        gh<_i252.GetOrdersHistoryUseCase>(),
+        gh<_i98.GetOrdersCountUseCase>(),
       ),
     );
     gh.factory<_i743.ApplyUseCase>(
@@ -403,4 +436,4 @@ class _$ServicesModule extends _i120.ServicesModule {}
 
 class _$DioModule extends _i948.DioModule {}
 
-class _$ApiModule extends _i98.ApiModule {}
+class _$ApiModule extends _i99.ApiModule {}
