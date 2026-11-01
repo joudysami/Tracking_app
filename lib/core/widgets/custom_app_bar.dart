@@ -4,7 +4,7 @@ import 'package:tracking_app/core/theme/app_color.dart';
 
 class CustomAppBar extends StatelessWidget {
   final String title;
-  const CustomAppBar({super.key, required this.title, });
+  const CustomAppBar({super.key, required this.title});
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -14,10 +14,15 @@ class CustomAppBar extends StatelessWidget {
           title: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(title,style: TextStyle(fontSize: 20.sp,color: context.colors.black[100]),),
+              Text(
+                title,
+                style: TextStyle(
+                  fontSize: 20.sp,
+                  color: context.colors.black[100],
+                ),
+              ),
             ],
           ),
-      
         ),
       ),
     );

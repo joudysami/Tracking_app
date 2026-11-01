@@ -15,15 +15,20 @@ class ApiRequestParams {
   static const String vehicleTypeId = 'vehicleTypeId';
   static const String vehicleCapacity = 'vehicleCapacity';
   static const String vehiclePlateNumber = 'vehiclePlateNumber';
+  static const String phoneNumber = 'phoneNumber';
+  static const String profilePicture = 'profilePicture';
+  static const String plateNumber = 'plateNumber';
+  static const String licenseDocument = 'licenseDocument';
 
   // Identity
   static const String nid = 'nid';
   static const String nidImage = 'nidImage';
   static const String licenceImage = 'licenceImage';
+  static const String page = 'page';
+  static const String pageSize = 'pageSize';
+  static const String status = 'status';
 
-  // Profile
-  static const String phoneNumber = 'phoneNumber';
-  static const String profilePicture = 'profilePicture';
-  static const String plateNumber = 'plateNumber';
-  static const String licenseDocument = 'licenseDocument';
+  static const String orderId = 'orderId';
+
+ 
 }

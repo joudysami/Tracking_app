@@ -7,7 +7,15 @@ class LoginRequest {
   final String email;
   final String password;
 
-  LoginRequest({required this.email, required this.password});
+  /// Push token. This app has no FCM client, so login sends the same empty
+  /// value already used by driver apply.
+  final String fcmToken;
+
+  LoginRequest({
+    required this.email,
+    required this.password,
+    this.fcmToken = '',
+  });
 
   factory LoginRequest.fromJson(Map<String, dynamic> json) =>
       _$LoginRequestFromJson(json);

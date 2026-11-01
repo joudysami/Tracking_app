@@ -74,7 +74,11 @@ void main() {
     repo = AuthRepoImpl(
       remoteDataSource: mockRemoteDataSource,
       safeCall: safeCall,
+<<<<<<< HEAD
+      tokenStorage: _MemoryTokenStorage(),
+=======
       tokenStorage: _IdleTokenStorage(),
+>>>>>>> origin/dev
     );
 
     tApplyParams = ApplyParams(
@@ -436,6 +440,28 @@ void main() {
   });
 }
 
+<<<<<<< HEAD
+class _MemoryTokenStorage implements TokenStorage {
+  String? accessToken;
+  String? refreshToken;
+
+  @override
+  Future<void> clearTokens() async {
+    accessToken = null;
+    refreshToken = null;
+  }
+
+  @override
+  Future<String?> getAccessToken() async => accessToken;
+
+  @override
+  Future<String?> getRefreshToken() async => refreshToken;
+
+  @override
+  Future<void> saveAccessToken(String accessToken) async {
+    this.accessToken = accessToken;
+  }
+=======
 class _IdleTokenStorage implements TokenStorage {
   @override
   Future<void> clearTokens() async {}
@@ -448,10 +474,18 @@ class _IdleTokenStorage implements TokenStorage {
 
   @override
   Future<void> saveAccessToken(String accessToken) async {}
+>>>>>>> origin/dev
 
   @override
   Future<void> saveTokens({
     required String accessToken,
     required String refreshToken,
+<<<<<<< HEAD
+  }) async {
+    this.accessToken = accessToken;
+    this.refreshToken = refreshToken;
+  }
+=======
   }) async {}
+>>>>>>> origin/dev
 }

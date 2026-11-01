@@ -10,18 +10,8 @@ import 'package:tracking_app/core/widgets/app_button.dart';
 import 'package:tracking_app/features/auth/domain/use_cases/login_use_case.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
-import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
-
-import '../../../../../profile/presentation/auth_repo_stub.dart';
 
 void main() {
-  setUpAll(() {
-    if (getIt.isRegistered<LoginViewModel>()) return;
-    getIt.registerFactory<LoginViewModel>(
-      () => LoginViewModel(LoginUseCase(UnusedAuthRepo())),
-    );
-  });
-
   Widget buildTestWidget({Widget? home, String? initialLocation}) {
     return ScreenUtilInit(
       designSize: const Size(375, 812),

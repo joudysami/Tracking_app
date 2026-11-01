@@ -12,7 +12,14 @@ AppError errorParser(Exception exception) {
 AppError _parseApiException(ApiException exception) {
   final fieldErrors = fieldErrorsMessage(exception.errors);
   if (fieldErrors != null) return BadResponseError(fieldErrors);
-  return BadResponseError(exception.message);
+
+  // A blank message would leave the driver with no feedback at all.
+  final message = exception.message.trim().isEmpty
+      ? statusCodeToMessage(exception.statusCode)
+      : exception.message;
+
+  if (exception.statusCode == 404) return NotFoundError(message);
+  return BadResponseError(message);
 }
 
 AppError _parseDioException(DioException exception) {
@@ -47,19 +54,53 @@ AppError _connectionError(DioException exception) {
 
 AppError _parseBadResponse(DioException exception) {
   final data = exception.response?.data;
-  if (data is Map<String, dynamic>) {
-    final fieldErrors = fieldErrorsMessage(data['errors']) ??
-        fieldErrorsMessage(_validationFieldErrors(data['data']));
-    if (fieldErrors != null) return BadResponseError(fieldErrors);
-    if (data['message'] != null) {
-      return BadResponseError(data['message'].toString());
+  final statusCode = exception.response?.statusCode;
+  String? bodyMessage;
+
+  if (data is Map) {
+    final responseData = Map<String, dynamic>.from(data);
+
+    final rawErrors = responseData['errors'];
+    final rawValidationData = responseData['data'];
+
+    final fieldErrors =
+        fieldErrorsMessage(_toStringDynamicMap(rawErrors)) ??
+        fieldErrorsMessage(_validationFieldErrors(rawValidationData));
+
+    if (fieldErrors != null) {
+      return BadResponseError(fieldErrors);
     }
-    if (data['error'] != null) {
-      return BadResponseError(data['error'].toString());
-    }
+
+    bodyMessage =
+        responseData['message']?.toString() ??
+        responseData['error']?.toString();
   }
-  if (exception.response?.statusCode == 401) return UnauthorizedError();
-  return BadResponseError(statusCodeToMessage(exception.response?.statusCode));
+
+  if (statusCode == 401) {
+    return UnauthorizedError();
+  }
+
+  // 404 is not a retryable failure: the order the driver is holding is gone.
+  if (statusCode == 404) {
+    final message = bodyMessage;
+    return NotFoundError(
+      message == null || message.trim().isEmpty
+          ? statusCodeToMessage(statusCode)
+          : message,
+    );
+  }
+
+  if (bodyMessage != null) {
+    return BadResponseError(bodyMessage);
+  }
+
+  return BadResponseError(statusCodeToMessage(statusCode));
+}
+
+Map<String, dynamic>? _toStringDynamicMap(dynamic raw) {
+  if (raw is! Map) return null;
+
+  return Map<String, dynamic>.from(raw);
 }
 
 /// Docker identity validation failures put field errors in `data`
@@ -67,6 +108,7 @@ AppError _parseBadResponse(DioException exception) {
 Map<String, dynamic>? _validationFieldErrors(dynamic raw) {
   if (raw is! Map) return null;
   if (raw.containsKey('userId') ||
+      raw.containsKey('token') ||
       raw.containsKey('accessToken') ||
       raw.containsKey('refreshToken')) {
     return null;

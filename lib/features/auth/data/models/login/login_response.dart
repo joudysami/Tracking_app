@@ -14,7 +14,7 @@ class LoginResponse {
   final String message;
   final LoginData data;
 
-  LoginResponse({
+  const LoginResponse({
     required this.isSuccess,
     required this.statusCode,
     required this.message,
@@ -32,22 +32,23 @@ class LoginData {
   final LoginUser? user;
 
   @JsonKey(name: 'token')
-  final String accessToken;
+  final String token;
 
   final String refreshToken;
+
   @JsonKey(defaultValue: '')
   final String accessTokenExpiresAt;
 
-  LoginData({
+  const LoginData({
     this.user,
-    required this.accessToken,
+    required this.token,
     required this.refreshToken,
     required this.accessTokenExpiresAt,
   });
 
   LoginEntity toDomain() {
     return LoginEntity(
-      accessToken: accessToken,
+      accessToken: token,
       refreshToken: refreshToken,
       role: user?.roles.isNotEmpty == true ? user!.roles.first : '',
     );
@@ -65,11 +66,10 @@ class LoginUser {
   final String email;
   final List<String> roles;
 
-  // The Driver login response returns name instead of firstName/lastName.
   @JsonKey(name: 'name', defaultValue: '')
   final String name;
 
-  LoginUser({
+  const LoginUser({
     required this.id,
     required this.email,
     required this.roles,
@@ -87,9 +87,7 @@ LoginData loginDataFromJson(dynamic raw) {
     return LoginData.fromJson(raw);
   }
 
-  if (raw is List &&
-      raw.isNotEmpty &&
-      raw.first is Map<String, dynamic>) {
+  if (raw is List && raw.isNotEmpty && raw.first is Map<String, dynamic>) {
     return LoginData.fromJson(raw.first as Map<String, dynamic>);
   }
 

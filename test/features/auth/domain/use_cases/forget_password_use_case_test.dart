@@ -33,8 +33,9 @@ void main() {
 
     test('delegates to the repo and returns its success', () async {
       const response = SuccessResponse<void>(null);
-      when(repo.forgetPassword(forgetPasswordRequest: request))
-          .thenAnswer((_) async => response);
+      when(
+        repo.forgetPassword(forgetPasswordRequest: request),
+      ).thenAnswer((_) async => response);
 
       final result = await ForgetPasswordUseCase(repo)(request: request);
 
@@ -44,10 +45,12 @@ void main() {
     });
 
     test('returns the repo error unchanged', () async {
-      final response =
-      ErrorResponse<void>(appError: BadResponseError('Invalid email'));
-      when(repo.forgetPassword(forgetPasswordRequest: request))
-          .thenAnswer((_) async => response);
+      final response = ErrorResponse<void>(
+        appError: BadResponseError('Invalid email'),
+      );
+      when(
+        repo.forgetPassword(forgetPasswordRequest: request),
+      ).thenAnswer((_) async => response);
 
       final result = await ForgetPasswordUseCase(repo)(request: request);
 
@@ -62,8 +65,9 @@ void main() {
       const response = SuccessResponse<VerifyOtpResponse>(
         VerifyOtpResponse(otpToken: 'token-1', expiresInMinutes: 30),
       );
-      when(repo.verifyOtp(verifyOtpRequest: request))
-          .thenAnswer((_) async => response);
+      when(
+        repo.verifyOtp(verifyOtpRequest: request),
+      ).thenAnswer((_) async => response);
 
       final result = await VerifyOtpUseCase(repo)(request: request);
 
@@ -76,8 +80,9 @@ void main() {
       final response = ErrorResponse<VerifyOtpResponse>(
         appError: BadResponseError('Invalid OTP'),
       );
-      when(repo.verifyOtp(verifyOtpRequest: request))
-          .thenAnswer((_) async => response);
+      when(
+        repo.verifyOtp(verifyOtpRequest: request),
+      ).thenAnswer((_) async => response);
 
       final result = await VerifyOtpUseCase(repo)(request: request);
 
@@ -94,8 +99,9 @@ void main() {
 
     test('delegates to the repo and returns its success', () async {
       const response = SuccessResponse<void>(null);
-      when(repo.resetPassword(resetPasswordRequest: request))
-          .thenAnswer((_) async => response);
+      when(
+        repo.resetPassword(resetPasswordRequest: request),
+      ).thenAnswer((_) async => response);
 
       final result = await ResetPasswordUseCase(repo)(request: request);
 
@@ -105,10 +111,12 @@ void main() {
     });
 
     test('returns the repo error unchanged', () async {
-      final response =
-      ErrorResponse<void>(appError: BadResponseError('Token expired'));
-      when(repo.resetPassword(resetPasswordRequest: request))
-          .thenAnswer((_) async => response);
+      final response = ErrorResponse<void>(
+        appError: BadResponseError('Token expired'),
+      );
+      when(
+        repo.resetPassword(resetPasswordRequest: request),
+      ).thenAnswer((_) async => response);
 
       final result = await ResetPasswordUseCase(repo)(request: request);
 

@@ -11,7 +11,7 @@ import 'package:tracking_app/features/auth/domain/entities/vehicle_type_entity.d
 import '../../../../core/base/base_response.dart';
 
 abstract interface class AuthRepo {
-Future<BaseResponse<LoginEntity>> signIn(LoginRequest request);
+  Future<BaseResponse<LoginEntity>> signIn(LoginRequest request);
 
   Future<void> signOut();
   Future<BaseResponse<void>> forgetPassword({
@@ -28,5 +28,4 @@ Future<BaseResponse<LoginEntity>> signIn(LoginRequest request);
   Future<BaseResponse<ApplyResultEntity>> apply(ApplyParams entity);
 
   Future<BaseResponse<List<VehicleTypeEntity>>> getVehicleTypes();
-  
 }

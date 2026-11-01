@@ -187,7 +187,7 @@ class AppValidators {
       return LocaleKeys.validationRequired.tr();
     }
 
-    final vehicleNumberRegex = RegExp(r'^[A-Za-z0-9\u0621-\u064A-]+$');
+    final vehicleNumberRegex = RegExp(r'^[A-Za-z0-9\u0621-\u064A]+$');
 
     if (!vehicleNumberRegex.hasMatch(value.trim())) {
       return LocaleKeys.validationValidVehicleNumber.tr();

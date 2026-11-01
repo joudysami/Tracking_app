@@ -53,18 +53,21 @@ void main() {
       ErrorResponse<T>(appError: BadResponseError(message));
 
   void stubSendEmail(BaseResponse<void> response) {
-    when(forgetPasswordUseCase(request: anyNamed('request')))
-        .thenAnswer((_) async => response);
+    when(
+      forgetPasswordUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) async => response);
   }
 
   void stubVerifyOtp(BaseResponse<VerifyOtpResponse> response) {
-    when(verifyOtpUseCase(request: anyNamed('request')))
-        .thenAnswer((_) async => response);
+    when(
+      verifyOtpUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) async => response);
   }
 
   void stubResetPassword(BaseResponse<void> response) {
-    when(resetPasswordUseCase(request: anyNamed('request')))
-        .thenAnswer((_) async => response);
+    when(
+      resetPasswordUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) async => response);
   }
 
   const verifySuccess = SuccessResponse<VerifyOtpResponse>(
@@ -156,8 +159,9 @@ void main() {
     expect(find.byType(ResetPasswordStepView), findsNothing);
   });
 
-  testWidgets('completes the whole flow and lands on the login screen',
-      (tester) async {
+  testWidgets('completes the whole flow and lands on the login screen', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     stubVerifyOtp(verifySuccess);
     stubResetPassword(const SuccessResponse<void>(null));
@@ -165,34 +169,40 @@ void main() {
 
     await submitEmail(tester);
     expect(find.byType(OtpStepView), findsOneWidget);
-    verify(forgetPasswordUseCase(
-      request: const ForgetPasswordRequest(email: email),
-    )).called(1);
+    verify(
+      forgetPasswordUseCase(request: const ForgetPasswordRequest(email: email)),
+    ).called(1);
 
     await submitOtp(tester);
     expect(find.byType(ResetPasswordStepView), findsOneWidget);
-    verify(verifyOtpUseCase(
-      request: const VerifyOtpRequest(email: email, otp: otp),
-    )).called(1);
+    verify(
+      verifyOtpUseCase(
+        request: const VerifyOtpRequest(email: email, otp: otp),
+      ),
+    ).called(1);
 
     await submitNewPassword(tester);
-    verify(resetPasswordUseCase(
-      request: const ResetPasswordRequest(
-        otpToken: 'token-1',
-        password: password,
-        confirmPassword: password,
+    verify(
+      resetPasswordUseCase(
+        request: const ResetPasswordRequest(
+          otpToken: 'token-1',
+          password: password,
+          confirmPassword: password,
+        ),
       ),
-    )).called(1);
+    ).called(1);
 
     expect(find.text(loginScreenText), findsOneWidget);
     expect(find.byType(ForgetPasswordPage), findsNothing);
   });
 
-  testWidgets('shows the button loader while the email request is pending',
-      (tester) async {
+  testWidgets('shows the button loader while the email request is pending', (
+    tester,
+  ) async {
     final completer = Completer<BaseResponse<void>>();
-    when(forgetPasswordUseCase(request: anyNamed('request')))
-        .thenAnswer((_) => completer.future);
+    when(
+      forgetPasswordUseCase(request: anyNamed('request')),
+    ).thenAnswer((_) => completer.future);
     await pumpPage(tester);
 
     await tester.enterText(find.byType(TextFormField), email);
@@ -201,8 +211,10 @@ void main() {
     );
     await tester.pump();
 
-    final continueButton =
-        find.widgetWithText(ElevatedButton, LocaleKeys.commonContinue);
+    final continueButton = find.widgetWithText(
+      ElevatedButton,
+      LocaleKeys.commonContinue,
+    );
     expect(tester.widget<ElevatedButton>(continueButton).onPressed, isNull);
     expect(
       find.descendant(
@@ -217,8 +229,9 @@ void main() {
     expect(find.byType(OtpStepView), findsOneWidget);
   });
 
-  testWidgets('shows the error in a snackbar and stays on email on failure',
-      (tester) async {
+  testWidgets('shows the error in a snackbar and stays on email on failure', (
+    tester,
+  ) async {
     stubSendEmail(failure<void>('Email not found'));
     await pumpPage(tester);
 
@@ -229,8 +242,9 @@ void main() {
     expect(find.byType(OtpStepView), findsNothing);
   });
 
-  testWidgets('shows the error in a snackbar and stays on otp when invalid',
-      (tester) async {
+  testWidgets('shows the error in a snackbar and stays on otp when invalid', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     stubVerifyOtp(failure<VerifyOtpResponse>('Invalid OTP'));
     await pumpPage(tester);
@@ -243,8 +257,9 @@ void main() {
     expect(find.byType(ResetPasswordStepView), findsNothing);
   });
 
-  testWidgets('shows a generic error and stays on otp when no token returns',
-      (tester) async {
+  testWidgets('shows a generic error and stays on otp when no token returns', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     stubVerifyOtp(const SuccessResponse<VerifyOtpResponse>(null));
     await pumpPage(tester);
@@ -257,8 +272,9 @@ void main() {
     expect(find.byType(ResetPasswordStepView), findsNothing);
   });
 
-  testWidgets('shows the error in a snackbar when resetting fails',
-      (tester) async {
+  testWidgets('shows the error in a snackbar when resetting fails', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     stubVerifyOtp(verifySuccess);
     stubResetPassword(failure<void>('Token expired'));
@@ -273,8 +289,9 @@ void main() {
     expect(find.text(loginScreenText), findsNothing);
   });
 
-  testWidgets('resending the code shows a confirmation snackbar',
-      (tester) async {
+  testWidgets('resending the code shows a confirmation snackbar', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     await pumpPage(tester);
     await submitEmail(tester);
@@ -285,13 +302,14 @@ void main() {
 
     expect(snackBarWithText(LocaleKeys.authCodeResent), findsOneWidget);
     expect(find.byType(OtpStepView), findsOneWidget);
-    verify(forgetPasswordUseCase(
-      request: const ForgetPasswordRequest(email: email),
-    )).called(2);
+    verify(
+      forgetPasswordUseCase(request: const ForgetPasswordRequest(email: email)),
+    ).called(2);
   });
 
-  testWidgets('back on the otp step returns to email with the email kept',
-      (tester) async {
+  testWidgets('back on the otp step returns to email with the email kept', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     await pumpPage(tester);
     await submitEmail(tester);
@@ -303,8 +321,7 @@ void main() {
     expect(find.text(email), findsOneWidget);
   });
 
-  testWidgets('back on the reset step returns to the otp step',
-      (tester) async {
+  testWidgets('back on the reset step returns to the otp step', (tester) async {
     stubSendEmail(const SuccessResponse<void>(null));
     stubVerifyOtp(verifySuccess);
     await pumpPage(tester);
@@ -317,8 +334,9 @@ void main() {
     expect(find.byType(ResetPasswordStepView), findsNothing);
   });
 
-  testWidgets('back on the email step goes to login when nothing to pop',
-      (tester) async {
+  testWidgets('back on the email step goes to login when nothing to pop', (
+    tester,
+  ) async {
     await pumpPage(tester);
 
     await tester.tap(find.byType(BackButton));
@@ -327,8 +345,9 @@ void main() {
     expect(find.text(loginScreenText), findsOneWidget);
   });
 
-  testWidgets('system back on the otp step goes back a step, not a page',
-      (tester) async {
+  testWidgets('system back on the otp step goes back a step, not a page', (
+    tester,
+  ) async {
     stubSendEmail(const SuccessResponse<void>(null));
     await pumpPage(tester);
     await submitEmail(tester);

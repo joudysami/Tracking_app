@@ -32,8 +32,9 @@ void main() {
   Future<void> pump(WidgetTester tester) =>
       pumpStep(tester, viewModel: viewModel, step: const OtpStepView());
 
-  testWidgets('renders title, subtitle, otp field and resend countdown',
-      (tester) async {
+  testWidgets('renders title, subtitle, otp field and resend countdown', (
+    tester,
+  ) async {
     await pump(tester);
 
     expect(find.text(LocaleKeys.authOtpTitle), findsOneWidget);
@@ -44,8 +45,9 @@ void main() {
     expect(tester.widget<TextButton>(resendButton()).onPressed, isNull);
   });
 
-  testWidgets('dispatches VerifyOtpEvent once all 6 digits are entered',
-      (tester) async {
+  testWidgets('dispatches VerifyOtpEvent once all 6 digits are entered', (
+    tester,
+  ) async {
     await pump(tester);
 
     await tester.enterText(find.byType(Pinput), '123456');
@@ -58,8 +60,9 @@ void main() {
     );
   });
 
-  testWidgets('does not dispatch anything for an incomplete otp',
-      (tester) async {
+  testWidgets('does not dispatch anything for an incomplete otp', (
+    tester,
+  ) async {
     await pump(tester);
 
     await tester.enterText(find.byType(Pinput), '123');
@@ -68,37 +71,42 @@ void main() {
     expect(viewModel.events, isEmpty);
   });
 
-  testWidgets('enables resend after the cooldown and dispatches ResendOtpEvent',
-      (tester) async {
-    await pump(tester);
+  testWidgets(
+    'enables resend after the cooldown and dispatches ResendOtpEvent',
+    (tester) async {
+      await pump(tester);
 
-    await tester.pump(const Duration(seconds: 30));
+      await tester.pump(const Duration(seconds: 30));
 
-    expect(find.text(LocaleKeys.authResendCode), findsOneWidget);
-    expect(tester.widget<TextButton>(resendButton()).onPressed, isNotNull);
+      expect(find.text(LocaleKeys.authResendCode), findsOneWidget);
+      expect(tester.widget<TextButton>(resendButton()).onPressed, isNotNull);
 
-    await tester.tap(resendButton());
-    await tester.pump();
+      await tester.tap(resendButton());
+      await tester.pump();
 
-    expect(viewModel.events.single, isA<ResendOtpEvent>());
-    expect(find.text(LocaleKeys.authResendIn), findsOneWidget);
-  });
+      expect(viewModel.events.single, isA<ResendOtpEvent>());
+      expect(find.text(LocaleKeys.authResendIn), findsOneWidget);
+    },
+  );
 
-  testWidgets('shows the verifying indicator and disables input while loading',
-      (tester) async {
-    await pump(tester);
+  testWidgets(
+    'shows the verifying indicator and disables input while loading',
+    (tester) async {
+      await pump(tester);
 
-    viewModel.setState(otpState.copyWith(isLoading: true));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 250));
+      viewModel.setState(otpState.copyWith(isLoading: true));
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 250));
 
-    expect(find.byKey(const ValueKey('verifying')), findsOneWidget);
-    expect(find.text(LocaleKeys.commonLoading), findsOneWidget);
-    expect(tester.widget<Pinput>(find.byType(Pinput)).enabled, isFalse);
-  });
+      expect(find.byKey(const ValueKey('verifying')), findsOneWidget);
+      expect(find.text(LocaleKeys.commonLoading), findsOneWidget);
+      expect(tester.widget<Pinput>(find.byType(Pinput)).enabled, isFalse);
+    },
+  );
 
-  testWidgets('keeps resend disabled while loading even after the cooldown',
-      (tester) async {
+  testWidgets('keeps resend disabled while loading even after the cooldown', (
+    tester,
+  ) async {
     await pump(tester);
     await tester.pump(const Duration(seconds: 30));
 
@@ -108,8 +116,9 @@ void main() {
     expect(tester.widget<TextButton>(resendButton()).onPressed, isNull);
   });
 
-  testWidgets('hides the verifying indicator when loading finishes',
-      (tester) async {
+  testWidgets('hides the verifying indicator when loading finishes', (
+    tester,
+  ) async {
     viewModel.setState(otpState.copyWith(isLoading: true));
     await pump(tester);
 

@@ -127,8 +127,14 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text(LocaleKeys.locationPermissionDialogTitle.tr()), findsOneWidget);
-      expect(find.text(LocaleKeys.locationPermissionDialogMessage.tr()), findsOneWidget);
+      expect(
+        find.text(LocaleKeys.locationPermissionDialogTitle.tr()),
+        findsOneWidget,
+      );
+      expect(
+        find.text(LocaleKeys.locationPermissionDialogMessage.tr()),
+        findsOneWidget,
+      );
       expect(find.text(LocaleKeys.cancel.tr()), findsOneWidget);
       expect(find.text(LocaleKeys.locationOpenSettings.tr()), findsOneWidget);
 
@@ -137,7 +143,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        fakeViewModel.dispatchedEvents.any((e) => e is LocationPermissionDialogDismissed),
+        fakeViewModel.dispatchedEvents.any(
+          (e) => e is LocationPermissionDialogDismissed,
+        ),
         isTrue,
       );
 
@@ -164,7 +172,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        fakeViewModel.dispatchedEvents.any((e) => e is OpenAppSettingsRequested),
+        fakeViewModel.dispatchedEvents.any(
+          (e) => e is OpenAppSettingsRequested,
+        ),
         isTrue,
       );
 
@@ -186,15 +196,23 @@ void main() {
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
-      expect(find.text(LocaleKeys.locationServiceDisabledTitle.tr()), findsOneWidget);
-      expect(find.text(LocaleKeys.locationServiceDisabledMessage.tr()), findsOneWidget);
+      expect(
+        find.text(LocaleKeys.locationServiceDisabledTitle.tr()),
+        findsOneWidget,
+      );
+      expect(
+        find.text(LocaleKeys.locationServiceDisabledMessage.tr()),
+        findsOneWidget,
+      );
 
       await tester.tap(find.text(LocaleKeys.cancel.tr()));
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        fakeViewModel.dispatchedEvents.any((e) => e is LocationSettingsDialogDismissed),
+        fakeViewModel.dispatchedEvents.any(
+          (e) => e is LocationSettingsDialogDismissed,
+        ),
         isTrue,
       );
 
@@ -221,7 +239,9 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(
-        fakeViewModel.dispatchedEvents.any((e) => e is OpenLocationSettingsRequested),
+        fakeViewModel.dispatchedEvents.any(
+          (e) => e is OpenLocationSettingsRequested,
+        ),
         isTrue,
       );
 
@@ -238,57 +258,58 @@ void main() {
       await tester.pump();
 
       fakeViewModel.emitState(
-        const LocationTrackingState(error: LocationTrackingError.permissionDenied),
+        const LocationTrackingState(
+          error: LocationTrackingError.permissionDenied,
+        ),
       );
       await tester.pump();
       await tester.pump(const Duration(milliseconds: 300));
 
       expect(find.byType(SnackBar), findsOneWidget);
-      expect(find.text(LocaleKeys.locationPermissionDenied.tr()), findsOneWidget);
-
-      await tester.binding.setSurfaceSize(null);
-    },
-  );
-
-  testWidgets(
-    'Verify driver position updates when currentLocation changes',
-    (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(500, 1200));
-
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pump();
-
-      fakeViewModel.emitState(
-        LocationTrackingState(
-          isTracking: true,
-          currentLocation: LocationEntity(
-            lat: 30.0500,
-            lng: 31.2500,
-            recordedAt: DateTime.utc(2026, 10, 23, 12, 0, 0),
-          ),
-        ),
+      expect(
+        find.text(LocaleKeys.locationPermissionDenied.tr()),
+        findsOneWidget,
       );
-      await tester.pump();
-
-      expect(find.byType(FlutterMap), findsOneWidget);
-      expect(find.text(LocaleKeys.orderMapYourLocation.tr()), findsOneWidget);
 
       await tester.binding.setSurfaceSize(null);
     },
   );
 
-  testWidgets(
-    'Verify back button is displayed',
-    (WidgetTester tester) async {
-      await tester.binding.setSurfaceSize(const Size(500, 1200));
+  testWidgets('Verify driver position updates when currentLocation changes', (
+    WidgetTester tester,
+  ) async {
+    await tester.binding.setSurfaceSize(const Size(500, 1200));
 
-      await tester.pumpWidget(buildTestWidget());
-      await tester.pump();
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pump();
 
-      final backButton = find.byIcon(Icons.arrow_back_ios_new);
-      expect(backButton, findsOneWidget);
+    fakeViewModel.emitState(
+      LocationTrackingState(
+        isTracking: true,
+        currentLocation: LocationEntity(
+          lat: 30.0500,
+          lng: 31.2500,
+          recordedAt: DateTime.utc(2026, 10, 23, 12, 0, 0),
+        ),
+      ),
+    );
+    await tester.pump();
 
-      await tester.binding.setSurfaceSize(null);
-    },
-  );
+    expect(find.byType(FlutterMap), findsOneWidget);
+    expect(find.text(LocaleKeys.orderMapYourLocation.tr()), findsOneWidget);
+
+    await tester.binding.setSurfaceSize(null);
+  });
+
+  testWidgets('Verify back button is displayed', (WidgetTester tester) async {
+    await tester.binding.setSurfaceSize(const Size(500, 1200));
+
+    await tester.pumpWidget(buildTestWidget());
+    await tester.pump();
+
+    final backButton = find.byIcon(Icons.arrow_back_ios_new);
+    expect(backButton, findsOneWidget);
+
+    await tester.binding.setSurfaceSize(null);
+  });
 }

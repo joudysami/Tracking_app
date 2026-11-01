@@ -40,6 +40,19 @@ import '../../features/auth/presentation/forget_password/view_model/forget_passw
     as _i346;
 import '../../features/auth/presentation/login/view/page/view_model/login_viewmodel.dart'
     as _i725;
+import '../../features/home/data/api/home_api_client.dart' as _i549;
+import '../../features/home/data/data_source/home_data_source.dart' as _i68;
+import '../../features/home/data/data_source/home_data_source_impl.dart'
+    as _i291;
+import '../../features/home/data/repo/home_repo_impl.dart' as _i1024;
+import '../../features/home/domain/repo/home_repo.dart' as _i280;
+import '../../features/home/domain/use_case/claim_order_usecase.dart' as _i610;
+import '../../features/home/domain/use_case/get_assigned_order_usecase.dart'
+    as _i858;
+import '../../features/home/domain/use_case/get_available_order_usecase.dart'
+    as _i264;
+import '../../features/home/presentation/view_model/home_view_model.dart'
+    as _i77;
 import '../../features/location_tracking/api/location_api_client.dart' as _i692;
 import '../../features/location_tracking/api/routing_api_client.dart' as _i821;
 import '../../features/location_tracking/data/data_sources/location_remote_data_source.dart'
@@ -66,6 +79,30 @@ import '../../features/location_tracking/domain/use_cases/open_location_settings
     as _i528;
 import '../../features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart'
     as _i783;
+import '../../features/order/data/api/order_api_client.dart' as _i1026;
+import '../../features/order/data/data_source/order_data_source.dart' as _i173;
+import '../../features/order/data/data_source/order_data_source_impl.dart'
+    as _i578;
+import '../../features/order/data/data_sources/order_remote_data_source.dart'
+    as _i701;
+import '../../features/order/data/data_sources/order_remote_data_source_impl.dart'
+    as _i352;
+import '../../features/order/data/repo/order_repo_impl.dart' as _i492;
+import '../../features/order/data/repos/order_repo_impl.dart' as _i906;
+import '../../features/order/domain/repo/order_repo.dart' as _i989;
+import '../../features/order/domain/repos/order_repo.dart' as _i527;
+import '../../features/order/domain/use_case/confirm_delivery_usecase.dart'
+    as _i690;
+import '../../features/order/domain/use_case/order_status_use_case.dart'
+    as _i571;
+import '../../features/order/domain/use_cases/get_order_count_use_case.dart'
+    as _i98;
+import '../../features/order/domain/use_cases/get_orders_history_use_case.dart'
+    as _i252;
+import '../../features/order/presentation/order_history/view_model/order_history_view_model.dart'
+    as _i477;
+import '../../features/order/presentation/view_model/order_view_model.dart'
+    as _i124;
 import '../../features/profile/api/profile_api_client.dart' as _i211;
 import '../../features/profile/data/data_sources/profile_remote_data_source.dart'
     as _i1012;
@@ -93,7 +130,7 @@ import '../../features/profile/presentation/edit_vehicle/view_model/edit_vehicle
     as _i360;
 import '../../features/profile/presentation/profile/view_model/profile_view_model.dart'
     as _i197;
-import '../modules/api_module.dart' as _i98;
+import '../modules/api_module.dart' as _i99;
 import '../modules/dio_module.dart' as _i948;
 import '../modules/services_module.dart' as _i120;
 import '../network/auth_interceptors.dart' as _i466;
@@ -149,8 +186,14 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i361.Dio>(
       () => dioModule.provideDio(gh<_i466.AuthInterceptors>()),
     );
+    gh.lazySingleton<_i549.HomeApiClient>(
+      () => apiModule.provideHomeApiClient(gh<_i361.Dio>()),
+    );
     gh.singleton<_i710.AuthApiClient>(
       () => apiModule.provideAuthApiClient(gh<_i361.Dio>()),
+    );
+    gh.singleton<_i1026.OrderApiClient>(
+      () => apiModule.provideOrderApiClient(gh<_i361.Dio>()),
     );
     gh.singleton<_i211.ProfileApiClient>(
       () => apiModule.provideProfileApiClient(gh<_i361.Dio>()),
@@ -163,6 +206,9 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.factory<_i1012.ProfileRemoteDataSource>(
       () => _i491.ProfileRemoteDataSourceImpl(gh<_i211.ProfileApiClient>()),
+    );
+    gh.factory<_i701.OrderRemoteDataSource>(
+      () => _i352.OrderRemoteDataSourceImpl(gh<_i1026.OrderApiClient>()),
     );
     gh.factory<_i1007.ProfileRepo>(
       () => _i1072.ProfileRepoImpl(
@@ -181,11 +227,22 @@ extension GetItInjectableX on _i174.GetIt {
         routingApiClient: gh<_i821.RoutingApiClient>(),
       ),
     );
+    gh.factory<_i173.OrdersRemoteDataSource>(
+      () => _i578.OrdersRemoteDataSourceImpl(
+        orderApiClient: gh<_i1026.OrderApiClient>(),
+      ),
+    );
     gh.factory<_i1053.LocationRepo>(
       () => _i1033.LocationRepoImpl(
         gh<_i669.LocationService>(),
         gh<_i185.SafeCall>(),
         remoteDataSource: gh<_i405.LocationRemoteDataSource>(),
+      ),
+    );
+    gh.factory<_i527.OrderRepo>(
+      () => _i906.OrderRepoImpl(
+        gh<_i701.OrderRemoteDataSource>(),
+        gh<_i185.SafeCall>(),
       ),
     );
     gh.factory<_i541.LocationReportingUseCase>(
@@ -200,6 +257,14 @@ extension GetItInjectableX on _i174.GetIt {
         safeCall: gh<_i185.SafeCall>(),
         tokenStorage: gh<_i964.TokenStorage>(),
       ),
+    );
+    gh.factory<_i68.HomeRemoteDataSource>(
+      () => _i291.HomeRemoteDataSourceImpl(
+        homeApiClient: gh<_i549.HomeApiClient>(),
+      ),
+    );
+    gh.factory<_i252.GetOrdersHistoryUseCase>(
+      () => _i252.GetOrdersHistoryUseCase(gh<_i527.OrderRepo>()),
     );
     gh.factory<_i266.ChangePasswordUseCase>(
       () => _i266.ChangePasswordUseCase(gh<_i1007.ProfileRepo>()),
@@ -225,6 +290,12 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i725.LoginViewModel>(
       () => _i725.LoginViewModel(gh<_i1038.LoginUseCase>()),
     );
+    gh.factory<_i989.OrderRepo>(
+      () => _i492.OrdersRepoImpl(
+        gh<_i173.OrdersRemoteDataSource>(),
+        gh<_i185.SafeCall>(),
+      ),
+    );
     gh.factory<_i553.CheckAndRequestLocationPermissionUseCase>(
       () => _i553.CheckAndRequestLocationPermissionUseCase(
         gh<_i1053.LocationRepo>(),
@@ -245,6 +316,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i528.OpenLocationSettingsUseCase>(
       () => _i528.OpenLocationSettingsUseCase(gh<_i1053.LocationRepo>()),
     );
+    gh.factory<_i98.GetOrdersCountUseCase>(
+      () => _i98.GetOrdersCountUseCase(gh<_i527.OrderRepo>()),
+    );
     gh.factory<_i783.LocationTrackingViewModel>(
       () => _i783.LocationTrackingViewModel(
         gh<_i258.LocationTrackingUseCase>(),
@@ -253,6 +327,18 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i536.OpenAppSettingsUseCase>(),
         gh<_i528.OpenLocationSettingsUseCase>(),
         gh<_i221.GetRouteUseCase>(),
+      ),
+    );
+    gh.factory<_i280.HomeRepo>(
+      () => _i1024.HomeRepoImpl(
+        gh<_i68.HomeRemoteDataSource>(),
+        gh<_i185.SafeCall>(),
+      ),
+    );
+    gh.factory<_i477.OrderHistoryViewModel>(
+      () => _i477.OrderHistoryViewModel(
+        gh<_i252.GetOrdersHistoryUseCase>(),
+        gh<_i98.GetOrdersCountUseCase>(),
       ),
     );
     gh.factory<_i743.ApplyUseCase>(
@@ -283,6 +369,15 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i908.VerifyOtpUseCase>(
       () => _i908.VerifyOtpUseCase(gh<_i877.AuthRepo>()),
     );
+    gh.factory<_i610.ClaimOrderUseCase>(
+      () => _i610.ClaimOrderUseCase(gh<_i280.HomeRepo>()),
+    );
+    gh.factory<_i858.GetAssignedOrderUseCase>(
+      () => _i858.GetAssignedOrderUseCase(gh<_i280.HomeRepo>()),
+    );
+    gh.factory<_i264.GetAvailableOrdersUseCase>(
+      () => _i264.GetAvailableOrdersUseCase(gh<_i280.HomeRepo>()),
+    );
     gh.factory<_i346.ForgetPasswordViewModel>(
       () => _i346.ForgetPasswordViewModel(
         gh<_i483.ForgetPasswordUseCase>(),
@@ -297,11 +392,25 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i644.ImagePickerService>(),
       ),
     );
+    gh.lazySingleton<_i690.ConfirmDeliveryUseCase>(
+      () => _i690.ConfirmDeliveryUseCase(gh<_i989.OrderRepo>()),
+    );
+    gh.lazySingleton<_i571.UpdateOrderStatusUseCase>(
+      () => _i571.UpdateOrderStatusUseCase(gh<_i989.OrderRepo>()),
+    );
     gh.factory<_i678.ApplyViewModel>(
       () => _i678.ApplyViewModel(
         gh<_i743.ApplyUseCase>(),
         gh<_i311.GetVehicleTypesUseCase>(),
         gh<_i644.ImagePickerService>(),
+      ),
+    );
+    gh.factory<_i124.OrderViewModel>(
+      () => _i124.OrderViewModel(
+        updateOrderStatusUseCase: gh<_i571.UpdateOrderStatusUseCase>(),
+        confirmDeliveryUseCase: gh<_i690.ConfirmDeliveryUseCase>(),
+        locationReportingUseCase: gh<_i541.LocationReportingUseCase>(),
+        locationTrackingUseCase: gh<_i258.LocationTrackingUseCase>(),
       ),
     );
     gh.factory<_i360.EditVehicleViewModel>(
@@ -312,6 +421,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i644.ImagePickerService>(),
       ),
     );
+    gh.factory<_i77.HomeCubit>(
+      () => _i77.HomeCubit(
+        getAvailableOrdersUseCase: gh<_i264.GetAvailableOrdersUseCase>(),
+        claimOrderUseCase: gh<_i610.ClaimOrderUseCase>(),
+        getAssignedOrderUseCase: gh<_i858.GetAssignedOrderUseCase>(),
+      ),
+    );
     return this;
   }
 }
@@ -320,4 +436,4 @@ class _$ServicesModule extends _i120.ServicesModule {}
 
 class _$DioModule extends _i948.DioModule {}
 
-class _$ApiModule extends _i98.ApiModule {}
+class _$ApiModule extends _i99.ApiModule {}

@@ -24,8 +24,6 @@ extension VerifyOtpRequestMapper on VerifyOtpRequest {
 }
 
 extension VerifyOtpDataDtoMapper on VerifyOtpDataDto {
-  VerifyOtpResponse toEntity() => VerifyOtpResponse(
-    otpToken: otpToken,
-    expiresInMinutes: expiresInMinutes,
-  );
+  VerifyOtpResponse toEntity() =>
+      VerifyOtpResponse(otpToken: otpToken, expiresInMinutes: expiresInMinutes);
 }

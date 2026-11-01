@@ -5,7 +5,7 @@ class ResetPasswordRequest extends Equatable {
   final String? password;
   final String? confirmPassword;
 
-  const ResetPasswordRequest ({
+  const ResetPasswordRequest({
     this.otpToken,
     this.password,
     this.confirmPassword,
@@ -14,5 +14,3 @@ class ResetPasswordRequest extends Equatable {
   @override
   List<Object?> get props => [otpToken, password, confirmPassword];
 }
-
-

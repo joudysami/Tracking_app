@@ -1,7 +1,8 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 
 class ApiEndpoints {
   ApiEndpoints._();
@@ -22,7 +23,6 @@ class ApiEndpoints {
       androidEmulator: _isAndroidEmulator(),
       iosSimulator: _isIosSimulator(),
     );
-    // Ensure trailing slash so Dio can concatenate relative paths correctly
     if (!url.endsWith('/')) url = '$url/';
     return url;
   }
@@ -61,8 +61,8 @@ class ApiEndpoints {
   static const String forgetPassword = '/api/identity/auth/forget-password';
   static const String verifyOtp = '/api/identity/auth/otp-verification';
   static const String resetPassword = '/api/identity/auth/reset-password';
-  static const String login = "/api/identity/auth/login";
-  //// Apply (Driver) ////
+  static const String login =  "/api/identity/auth/login";
+  static const String refreshToken = '/api/identity/auth/refresh-token';
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
   static const String myProfile = '/api/identity/users/me';
@@ -72,7 +72,17 @@ class ApiEndpoints {
   static const String logout = '/api/identity/auth/logout';
   /// Location Tracking ////
   static const String reportDriverLocation = '/api/orders/drivers/me/location';
+
+  static const String availableOrders = "/api/orders/drivers/available-orders";
+  static const String assignedOrder = '/api/orders/drivers/me/assigned-order';
+  static const String claim = '/api/orders/{orderId}/claim';
+
+  static const String orderHistory = '/api/orders/drivers/me/orders';
+  static const String status = '/api/orders/{orderId}/status';
+  static const String confirmDelivery =
+      "/api/orders/{orderId}/confirm-delivery";
 }
+
 
 Future<void> _ensureDotEnv() async {
   if (dotenv.isInitialized) return;

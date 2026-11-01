@@ -3,28 +3,51 @@ import 'package:tracking_app/features/location_tracking/domain/entities/location
 
 part 'location_report_response_model.g.dart';
 
+/// Driver-location acknowledgement.
+///
+/// The backend answers with the standard `{status, code, message, data}`
+/// envelope while the original mock returned the bare body, so both shapes
+/// are accepted here and every field is optional. Reading a bare body out of
+/// an envelope used to throw a `TypeError` on a successful (HTTP 200) call,
+/// which surfaced as the generic "Something went wrong." message.
 @JsonSerializable()
 class LocationReportResponseModel {
   const LocationReportResponseModel({
-    required this.recordedAt,
-    required this.updatedOrderIds,
-    required this.broadcast,
+    this.status,
+    this.code,
+    this.message,
+    this.recordedAt,
+    this.updatedOrderIds,
+    this.broadcast,
   });
 
-  final DateTime recordedAt;
-  final List<String> updatedOrderIds;
-  final bool broadcast;
+  factory LocationReportResponseModel.fromJson(Map<String, dynamic> json) {
+    final body = json['data'] is Map
+        ? Map<String, dynamic>.from(json['data'] as Map)
+        : json;
 
-  factory LocationReportResponseModel.fromJson(Map<String, dynamic> json) =>
-      _$LocationReportResponseModelFromJson(json);
+    return _$LocationReportResponseModelFromJson({
+      ...body,
+      if (json['status'] != null) 'status': json['status'],
+      if (json['code'] != null) 'code': json['code'],
+      if (json['message'] != null) 'message': json['message'],
+    });
+  }
+
+  final bool? status;
+  final int? code;
+  final String? message;
+  final DateTime? recordedAt;
+  final List<String>? updatedOrderIds;
+  final bool? broadcast;
 
   Map<String, dynamic> toJson() => _$LocationReportResponseModelToJson(this);
 
   LocationReportEntity toDomain() {
     return LocationReportEntity(
-      recordedAt: recordedAt,
-      updatedOrderIds: updatedOrderIds,
-      broadcast: broadcast,
+      recordedAt: recordedAt ?? DateTime.now(),
+      updatedOrderIds: updatedOrderIds ?? const [],
+      broadcast: broadcast ?? false,
     );
   }
 }

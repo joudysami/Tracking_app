@@ -32,8 +32,10 @@ void main() {
   });
 
   test('VerifyOtpDataDto -> entity', () {
-    final entity =
-    VerifyOtpDataDto(otpToken: 'token-1', expiresInMinutes: 30).toEntity();
+    final entity = VerifyOtpDataDto(
+      otpToken: 'token-1',
+      expiresInMinutes: 30,
+    ).toEntity();
     expect(
       entity,
       const VerifyOtpResponse(otpToken: 'token-1', expiresInMinutes: 30),

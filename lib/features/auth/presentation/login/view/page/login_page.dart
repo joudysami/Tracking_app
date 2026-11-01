@@ -61,9 +61,8 @@ class _LoginPageState extends State<LoginPage> {
               previous.loginState.isLoading != current.loginState.isLoading ||
               previous.loginState.data != current.loginState.data,
           listener: (context, state) {
-            if (!state.loginState.isLoading &&
-                state.loginState.data != null) {
-              context.go(AppRoutes.profile);
+            if (!state.loginState.isLoading && state.loginState.data != null) {
+              context.go(AppRoutes.home);
             }
           },
           builder: (context, state) {
@@ -71,10 +70,7 @@ class _LoginPageState extends State<LoginPage> {
 
             return SingleChildScrollView(
               child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 16.h,
-                ),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 16.h),
                 child: Form(
                   key: _formKey,
                   child: Column(
@@ -92,6 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                         hint: LocaleKeys.authEnterPassword.tr(),
                         validator: AppValidators.passwordValidator,
                         controller: _passwordController,
+                        isPassword: true,
                       ),
                       if (errorMessage.isNotEmpty) ...[
                         SizedBox(height: 12.h),

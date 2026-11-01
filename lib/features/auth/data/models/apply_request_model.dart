@@ -35,16 +35,10 @@ class ApplyRequestModel {
     required this.fcmToken,
   });
 
-  static Future<ApplyRequestModel> fromEntity(
-    ApplyParams entity,
-  ) async {
-    final licenceImage = await MultipartFile.fromFile(
-      entity.licenceImage,
-    );
+  static Future<ApplyRequestModel> fromEntity(ApplyParams entity) async {
+    final licenceImage = await MultipartFile.fromFile(entity.licenceImage);
 
-    final nidImage = await MultipartFile.fromFile(
-      entity.nidImage,
-    );
+    final nidImage = await MultipartFile.fromFile(entity.nidImage);
 
     return ApplyRequestModel(
       firstName: entity.firstName,

@@ -3,6 +3,7 @@ import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/features/auth/data/models/login/login_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_entity.dart';
+import 'package:tracking_app/features/auth/domain/entities/login/login_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/apply_result_entity.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/forget_password_request.dart';
 import 'package:tracking_app/features/auth/domain/entities/forget_password/reset_password_request.dart';
@@ -55,7 +56,13 @@ class FakeAuthRepo implements AuthRepo {
   }
 
   @override
+<<<<<<< HEAD
+  Future<void> signOut() {
+    throw UnimplementedError();
+  }
+=======
   Future<void> signOut() async {}
+>>>>>>> origin/dev
 }
 
 void main() {

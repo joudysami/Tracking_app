@@ -68,7 +68,10 @@ Widget withScreenUtil(Widget Function(ThemeData theme) app) {
 
 Widget wrapWithApp({required Widget Function() builder}) {
   return withScreenUtil(
-    (theme) => MaterialApp(theme: theme, home: Scaffold(body: builder())),
+    (theme) => MaterialApp(
+      theme: theme,
+      home: Scaffold(body: builder()),
+    ),
   );
 }
 

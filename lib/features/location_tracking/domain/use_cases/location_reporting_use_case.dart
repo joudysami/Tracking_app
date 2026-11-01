@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/services/distance_service.dart';
@@ -18,15 +16,9 @@ class LocationReportingUseCase {
 
   LocationEntity? _lastReportedLocation;
 
-  StreamSubscription<BaseResponse<LocationReportEntity>?> call(
-    Stream<LocationEntity> locations,
-  ) {
-    return locations
-        .asyncMap(_reportLocationIfNeeded)
-        .listen((_) {});
-  }
-
-  Future<BaseResponse<LocationReportEntity>?> _reportLocationIfNeeded(
+  /// Reports one driver location. Returns null when the driver moved
+  /// less than [_minimumDistanceInMeters] since the last successful report.
+  Future<BaseResponse<LocationReportEntity>?> call(
     LocationEntity location,
   ) async {
     final lastLocation = _lastReportedLocation;

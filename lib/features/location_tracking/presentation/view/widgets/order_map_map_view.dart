@@ -14,7 +14,7 @@ import 'package:tracking_app/features/location_tracking/presentation/view/locati
 import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
 import 'package:tracking_app/features/location_tracking/presentation/view/widgets/map_pill.dart';
 
-class OrderMapMapView extends StatelessWidget {
+class OrderMapMapView extends StatefulWidget {
   final LatLng initialDriverPoint;
   final MapPartyModel target;
   final bool isPickup;
@@ -27,112 +27,157 @@ class OrderMapMapView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    final cameraPoints = [initialDriverPoint, target.location];
+  State<OrderMapMapView> createState() => _OrderMapMapViewState();
+}
 
-    return FlutterMap(
-      options: MapOptions(
-        initialCameraFit: CameraFit.bounds(
-          bounds: LatLngBounds.fromPoints(cameraPoints),
-          padding: EdgeInsets.fromLTRB(60.w, 100.h, 60.w, 320.h),
-        ),
-        interactionOptions: const InteractionOptions(
-          flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
-        ),
+class _OrderMapMapViewState extends State<OrderMapMapView> {
+  final MapController _mapController = MapController();
+
+  void _fitRoute(BuildContext context, List<RoutePointEntity> routePoints) {
+    final points = [
+      LatLng(
+        widget.initialDriverPoint.latitude,
+        widget.initialDriverPoint.longitude,
       ),
-      children: [
-        TileLayer(
-          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-          userAgentPackageName: AppConstants.packageName,
+      widget.target.location,
+      ...routePoints.map((point) => LatLng(point.latitude, point.longitude)),
+    ];
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _mapController.fitCamera(
+        CameraFit.bounds(
+          bounds: LatLngBounds.fromPoints(points),
+          padding: EdgeInsets.fromLTRB(
+            48.w,
+            80.h,
+            48.w,
+            MediaQuery.sizeOf(context).height * .35 + 32.h,
+          ),
         ),
+      );
+    });
+  }
 
-        // Rebuild the route layer only when route points change.
-        BlocSelector<
-          LocationTrackingViewModel,
-          LocationTrackingState,
-          List<RoutePointEntity>
-        >(
-          selector: (state) => state.routePoints,
-          builder: (context, routePoints) {
-            if (routePoints.length < 2) {
-              return const SizedBox.shrink();
-            }
+  @override
+  Widget build(BuildContext context) {
+    final cameraPoints = [widget.initialDriverPoint, widget.target.location];
 
-            final points = routePoints
-                .map((point) => LatLng(point.latitude, point.longitude))
-                .toList();
-
-            return PolylineLayer(
-              polylines: [
-                Polyline(
-                  points: points,
-                  strokeWidth: 3,
-                  color: context.colors.pink,
-                ),
-              ],
-            );
-          },
+    return BlocListener<LocationTrackingViewModel, LocationTrackingState>(
+      listenWhen: (previous, current) =>
+          previous.routePoints != current.routePoints,
+      listener: (context, state) => _fitRoute(context, state.routePoints),
+      child: FlutterMap(
+        mapController: _mapController,
+        options: MapOptions(
+          initialCameraFit: CameraFit.bounds(
+            bounds: LatLngBounds.fromPoints(cameraPoints),
+            padding: EdgeInsets.fromLTRB(
+              48.w,
+              80.h,
+              48.w,
+              MediaQuery.sizeOf(context).height * .35 + 32.h,
+            ),
+          ),
+          interactionOptions: const InteractionOptions(
+            flags: InteractiveFlag.all & ~InteractiveFlag.rotate,
+          ),
         ),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+            userAgentPackageName: AppConstants.packageName,
+          ),
 
-        // Rebuild the markers only when the driver's location changes.
-        BlocSelector<
-          LocationTrackingViewModel,
-          LocationTrackingState,
-          LocationEntity?
-        >(
-          selector: (state) => state.currentLocation,
-          builder: (context, currentLocation) {
-            final driverPoint = currentLocation == null
-                ? initialDriverPoint
-                : LatLng(currentLocation.lat, currentLocation.lng);
+          // Rebuild the route layer only when route points change.
+          BlocSelector<
+            LocationTrackingViewModel,
+            LocationTrackingState,
+            List<RoutePointEntity>
+          >(
+            selector: (state) => state.routePoints,
+            builder: (context, routePoints) {
+              if (routePoints.length < 2) {
+                return const SizedBox.shrink();
+              }
 
-            return MarkerLayer(
-              markers: [
-                Marker(
-                  point: driverPoint,
-                  width: 110.w,
-                  height: 30.h,
-                  child: Center(
-                    child: MapPill(
-                      label: LocaleKeys.orderMapYourLocation.tr(),
-                      icon: Icons.my_location,
+              final points = routePoints
+                  .map((point) => LatLng(point.latitude, point.longitude))
+                  .toList();
+
+              return PolylineLayer(
+                polylines: [
+                  Polyline(
+                    points: points,
+                    strokeWidth: 3,
+                    color: context.colors.pink,
+                  ),
+                ],
+              );
+            },
+          ),
+
+          // Rebuild the markers only when the driver's location changes.
+          BlocSelector<
+            LocationTrackingViewModel,
+            LocationTrackingState,
+            LocationEntity?
+          >(
+            selector: (state) => state.currentLocation,
+            builder: (context, currentLocation) {
+              final driverPoint = currentLocation == null
+                  ? widget.initialDriverPoint
+                  : LatLng(currentLocation.lat, currentLocation.lng);
+
+              return MarkerLayer(
+                markers: [
+                  Marker(
+                    point: driverPoint,
+                    width: 110.w,
+                    height: 30.h,
+                    child: Center(
+                      child: MapPill(
+                        label: LocaleKeys.orderMapYourLocation.tr(),
+                        icon: Icons.my_location,
+                      ),
                     ),
                   ),
-                ),
-                Marker(
-                  point: target.location,
-                  width: 110.w,
-                  height: 30.h,
-                  child: Center(
-                    child: MapPill(
-                      label: isPickup
-                          ? target.name
-                          : LocaleKeys.orderMapUser.tr(),
-                      icon: isPickup ? Icons.local_florist : Icons.home,
+                  Marker(
+                    point: widget.target.location,
+                    width: 110.w,
+                    height: 30.h,
+                    child: Center(
+                      child: MapPill(
+                        label: widget.isPickup
+                            ? widget.target.name
+                            : LocaleKeys.orderMapUser.tr(),
+                        icon: widget.isPickup
+                            ? Icons.local_florist
+                            : Icons.home,
+                      ),
                     ),
                   ),
-                ),
-              ],
-            );
-          },
-        ),
+                ],
+              );
+            },
+          ),
 
-        // Rebuild the loading indicator only when its value changes.
-        BlocSelector<LocationTrackingViewModel, LocationTrackingState, bool>(
-          selector: (state) => state.isRouteLoading,
-          builder: (context, isRouteLoading) {
-            if (!isRouteLoading) {
-              return const SizedBox.shrink();
-            }
+          // Rebuild the loading indicator only when its value changes.
+          BlocSelector<LocationTrackingViewModel, LocationTrackingState, bool>(
+            selector: (state) => state.isRouteLoading,
+            builder: (context, isRouteLoading) {
+              if (!isRouteLoading) {
+                return const SizedBox.shrink();
+              }
 
-            return Positioned(
-              top: 60.h,
-              right: 16.w,
-              child: const CircularProgressIndicator(),
-            );
-          },
-        ),
-      ],
+              return Positioned(
+                top: 60.h,
+                right: 16.w,
+                child: const CircularProgressIndicator(),
+              );
+            },
+          ),
+        ],
+      ),
     );
   }
 }

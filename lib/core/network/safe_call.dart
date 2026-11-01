@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/error/error_parser.dart';
+
 @injectable
 class SafeCall {
   Future<BaseResponse<T>> safeApiCall<T>(Future<T> Function() apiCall) async {
@@ -15,5 +16,6 @@ class SafeCall {
     }
   }
 }
+
 //try catch//
 //return safeApiCall(() => api.login());

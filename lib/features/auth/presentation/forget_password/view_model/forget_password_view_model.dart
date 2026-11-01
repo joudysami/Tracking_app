@@ -22,13 +22,13 @@ class ForgetPasswordViewModel extends Cubit<ForgetPasswordState> {
   final ResetPasswordUseCase _resetPasswordUseCase;
 
   ForgetPasswordViewModel(
-      this._forgetPasswordUseCase,
-      this._verifyOtpUseCase,
-      this._resetPasswordUseCase,
-      ) : super(const ForgetPasswordState());
+    this._forgetPasswordUseCase,
+    this._verifyOtpUseCase,
+    this._resetPasswordUseCase,
+  ) : super(const ForgetPasswordState());
 
   final _uiEventController =
-  StreamController<ForgetPasswordUiEvent>.broadcast();
+      StreamController<ForgetPasswordUiEvent>.broadcast();
   Stream<ForgetPasswordUiEvent> get uiEvents => _uiEventController.stream;
 
   void onEvent(ForgetPasswordEvent event) {
@@ -56,11 +56,13 @@ class ForgetPasswordViewModel extends Cubit<ForgetPasswordState> {
 
     switch (result) {
       case SuccessResponse():
-        emit(state.copyWith(
-          isLoading: false,
-          step: ForgetPasswordStep.otp,
-          email: email,
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            step: ForgetPasswordStep.otp,
+            email: email,
+          ),
+        );
       case ErrorResponse(:final errorMessage):
         emit(state.copyWith(isLoading: false));
         _uiEventController.add(ShowErrorUiEvent(errorMessage));
@@ -83,11 +85,13 @@ class ForgetPasswordViewModel extends Cubit<ForgetPasswordState> {
           _uiEventController.add(ShowErrorUiEvent(LocaleKeys.commonError.tr()));
           return;
         }
-        emit(state.copyWith(
-          isLoading: false,
-          step: ForgetPasswordStep.resetPassword,
-          otpToken: otpToken,
-        ));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            step: ForgetPasswordStep.resetPassword,
+            otpToken: otpToken,
+          ),
+        );
       case ErrorResponse(:final errorMessage):
         emit(state.copyWith(isLoading: false));
         _uiEventController.add(ShowErrorUiEvent(errorMessage));

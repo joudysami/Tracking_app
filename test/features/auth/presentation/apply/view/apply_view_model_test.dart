@@ -21,11 +21,7 @@ import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_mo
 
 import 'apply_view_model_test.mocks.dart';
 
-@GenerateMocks([
-  ApplyUseCase,
-  GetVehicleTypesUseCase,
-  ImagePickerService,
-])
+@GenerateMocks([ApplyUseCase, GetVehicleTypesUseCase, ImagePickerService])
 void main() {
   provideDummy<BaseResponse<ApplyResultEntity>>(
     const SuccessResponse<ApplyResultEntity>(null),
@@ -79,10 +75,7 @@ void main() {
         viewModel.state.vehicleTypesState,
         const BaseState<List<VehicleTypeEntity>>(),
       );
-      expect(
-        viewModel.state.applyState,
-        const BaseState<ApplyResultEntity>(),
-      );
+      expect(viewModel.state.applyState, const BaseState<ApplyResultEntity>());
     });
   });
 
@@ -91,90 +84,70 @@ void main() {
       'updates firstName when FirstNameChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(FirstNameChanged('John')),
-      expect: () => [
-        const ApplyState(firstName: 'John'),
-      ],
+      expect: () => [const ApplyState(firstName: 'John')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates lastName when LastNameChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(LastNameChanged('Doe')),
-      expect: () => [
-        const ApplyState(lastName: 'Doe'),
-      ],
+      expect: () => [const ApplyState(lastName: 'Doe')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates selectedVehicleType when VehicleTypeChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(VehicleTypeChanged(tVehicleType)),
-      expect: () => [
-        const ApplyState(selectedVehicleType: tVehicleType),
-      ],
+      expect: () => [const ApplyState(selectedVehicleType: tVehicleType)],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates plateNumber when PlateNumberChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(PlateNumberChanged('123 ABC')),
-      expect: () => [
-        const ApplyState(plateNumber: '123 ABC'),
-      ],
+      expect: () => [const ApplyState(plateNumber: '123 ABC')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates email when EmailChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(EmailChanged('john@example.com')),
-      expect: () => [
-        const ApplyState(email: 'john@example.com'),
-      ],
+      expect: () => [const ApplyState(email: 'john@example.com')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates phone when PhoneChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(PhoneChanged('01012345678')),
-      expect: () => [
-        const ApplyState(phone: '01012345678'),
-      ],
+      expect: () => [const ApplyState(phone: '01012345678')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates nid when NidChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(NidChanged('12345678901234')),
-      expect: () => [
-        const ApplyState(nid: '12345678901234'),
-      ],
+      expect: () => [const ApplyState(nid: '12345678901234')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates password when PasswordChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(PasswordChanged('Password123')),
-      expect: () => [
-        const ApplyState(password: 'Password123'),
-      ],
+      expect: () => [const ApplyState(password: 'Password123')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates confirmPassword when ConfirmPasswordChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(ConfirmPasswordChanged('Password123')),
-      expect: () => [
-        const ApplyState(confirmPassword: 'Password123'),
-      ],
+      expect: () => [const ApplyState(confirmPassword: 'Password123')],
     );
 
     blocTest<ApplyViewModel, ApplyState>(
       'updates gender when GenderChanged is received',
       build: () => viewModel,
       act: (vm) => vm.doEvent(GenderChanged(Gender.male)),
-      expect: () => [
-        const ApplyState(gender: Gender.male),
-      ],
+      expect: () => [const ApplyState(gender: Gender.male)],
     );
   });
 
@@ -182,15 +155,13 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'updates licenseImage when image is successfully picked',
       build: () {
-        when(mockImagePickerService.pickImage()).thenAnswer(
-          (_) async => XFile('dummy_license.png'),
-        );
+        when(
+          mockImagePickerService.pickImage(),
+        ).thenAnswer((_) async => XFile('dummy_license.png'));
         return viewModel;
       },
       act: (vm) => vm.doEvent(PickLicenseImageRequested()),
-      expect: () => [
-        const ApplyState(licenseImage: 'dummy_license.png'),
-      ],
+      expect: () => [const ApplyState(licenseImage: 'dummy_license.png')],
       verify: (_) {
         verify(mockImagePickerService.pickImage()).called(1);
       },
@@ -199,9 +170,7 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'does not update licenseImage when picker returns null',
       build: () {
-        when(mockImagePickerService.pickImage()).thenAnswer(
-          (_) async => null,
-        );
+        when(mockImagePickerService.pickImage()).thenAnswer((_) async => null);
         return viewModel;
       },
       act: (vm) => vm.doEvent(PickLicenseImageRequested()),
@@ -214,15 +183,13 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'updates idImage when image is successfully picked',
       build: () {
-        when(mockImagePickerService.pickImage()).thenAnswer(
-          (_) async => XFile('dummy_id.png'),
-        );
+        when(
+          mockImagePickerService.pickImage(),
+        ).thenAnswer((_) async => XFile('dummy_id.png'));
         return viewModel;
       },
       act: (vm) => vm.doEvent(PickIdImageRequested()),
-      expect: () => [
-        const ApplyState(idImage: 'dummy_id.png'),
-      ],
+      expect: () => [const ApplyState(idImage: 'dummy_id.png')],
       verify: (_) {
         verify(mockImagePickerService.pickImage()).called(1);
       },
@@ -231,9 +198,7 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'does not update idImage when picker returns null',
       build: () {
-        when(mockImagePickerService.pickImage()).thenAnswer(
-          (_) async => null,
-        );
+        when(mockImagePickerService.pickImage()).thenAnswer((_) async => null);
         return viewModel;
       },
       act: (vm) => vm.doEvent(PickIdImageRequested()),
@@ -248,9 +213,9 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'emits loading then success with list of vehicle types',
       build: () {
-        when(mockGetVehicleTypesUseCase()).thenAnswer(
-          (_) async => const SuccessResponse([tVehicleType]),
-        );
+        when(
+          mockGetVehicleTypesUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse([tVehicleType]));
         return viewModel;
       },
       act: (vm) => vm.doEvent(VehicleTypesRequested()),
@@ -278,9 +243,9 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'emits loading then success with empty list when no types returned',
       build: () {
-        when(mockGetVehicleTypesUseCase()).thenAnswer(
-          (_) async => const SuccessResponse([]),
-        );
+        when(
+          mockGetVehicleTypesUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse([]));
         return viewModel;
       },
       act: (vm) => vm.doEvent(VehicleTypesRequested()),
@@ -424,9 +389,9 @@ void main() {
     blocTest<ApplyViewModel, ApplyState>(
       'emits loading then success state and passes correct parameters to use case',
       build: () {
-        when(mockApplyUseCase(any)).thenAnswer(
-          (_) async => const SuccessResponse(tApplyResult),
-        );
+        when(
+          mockApplyUseCase(any),
+        ).thenAnswer((_) async => const SuccessResponse(tApplyResult));
         return viewModel;
       },
       seed: () => validSeedState,
@@ -466,9 +431,8 @@ void main() {
       'emits loading then error state with message when apply fails',
       build: () {
         when(mockApplyUseCase(any)).thenAnswer(
-          (_) async => ErrorResponse(
-            appError: BadResponseError('Application failed'),
-          ),
+          (_) async =>
+              ErrorResponse(appError: BadResponseError('Application failed')),
         );
         return viewModel;
       },

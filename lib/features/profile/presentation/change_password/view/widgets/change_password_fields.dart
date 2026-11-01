@@ -12,14 +12,20 @@ import 'package:tracking_app/features/profile/presentation/widgets/profile_feedb
 
 class ChangePasswordFields extends StatelessWidget {
   const ChangePasswordFields({
+<<<<<<< HEAD
+=======
     required this.formKey,
+>>>>>>> origin/dev
     required this.current,
     required this.next,
     required this.confirm,
     super.key,
   });
 
+<<<<<<< HEAD
+=======
   final GlobalKey<FormState> formKey;
+>>>>>>> origin/dev
   final TextEditingController current;
   final TextEditingController next;
   final TextEditingController confirm;
@@ -27,7 +33,11 @@ class ChangePasswordFields extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Form(
+<<<<<<< HEAD
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+=======
       key: formKey,
+>>>>>>> origin/dev
       child: ListView(
         padding: EdgeInsets.fromLTRB(16.w, 16.h, 16.w, 24.h),
         children: [
@@ -58,7 +68,11 @@ class CurrentPasswordField extends StatelessWidget {
       isPassword: true,
       textInputAction: TextInputAction.next,
       onChanged: (value) => _current(context, value),
+<<<<<<< HEAD
+      validator: AppValidators.registrationPasswordValidator,
+=======
       validator: (value) => _currentError(context, value),
+>>>>>>> origin/dev
     );
   }
 }
@@ -101,7 +115,12 @@ class ConfirmPasswordField extends StatelessWidget {
       isPassword: true,
       textInputAction: TextInputAction.done,
       onChanged: (value) => _confirm(context, value),
+<<<<<<< HEAD
+      validator: (value) =>
+          AppValidators.confirmPasswordValidator(value, original.text),
+=======
       validator: (value) => _match(value, original.text),
+>>>>>>> origin/dev
     );
   }
 }
@@ -136,6 +155,8 @@ void _confirm(BuildContext context, String value) {
   );
 }
 
+<<<<<<< HEAD
+=======
 String? _currentError(BuildContext context, String? value) {
   final invalid = context
       .read<ChangePasswordViewModel>()
@@ -152,6 +173,7 @@ String? _match(String? value, String password) {
   return AppValidators.confirmPasswordValidator(value, password);
 }
 
+>>>>>>> origin/dev
 void _submit(BuildContext context) {
   context.read<ChangePasswordViewModel>().doEvent(
     const ChangePasswordSubmitted(),

@@ -2,6 +2,7 @@ import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
 import 'package:tracking_app/core/domain/entities/geo_point.dart';
 import 'package:tracking_app/core/domain/entities/location_permission_status.dart';
+import 'package:tracking_app/core/error/api_exception.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/core/services/location_service.dart';
 import 'package:tracking_app/features/location_tracking/data/data_sources/location_remote_data_source.dart';
@@ -46,16 +47,12 @@ class LocationRepoImpl implements LocationRepo {
 
   @override
   Future<BaseResponse<bool>> openLocationSettings() {
-    return _safeCall.safeApiCall<bool>(
-      _locationService.openLocationSettings,
-    );
+    return _safeCall.safeApiCall<bool>(_locationService.openLocationSettings);
   }
 
   @override
   Future<BaseResponse<bool>> openAppSettings() {
-    return _safeCall.safeApiCall<bool>(
-      _locationService.openAppSettings,
-    );
+    return _safeCall.safeApiCall<bool>(_locationService.openAppSettings);
   }
 
   @override
@@ -71,9 +68,7 @@ class LocationRepoImpl implements LocationRepo {
 
   @override
   Future<BaseResponse<GeoPoint>> getCurrentPosition() {
-    return _safeCall.safeApiCall<GeoPoint>(
-      _locationService.getCurrentPosition,
-    );
+    return _safeCall.safeApiCall<GeoPoint>(_locationService.getCurrentPosition);
   }
 
   @override
@@ -89,13 +84,19 @@ class LocationRepoImpl implements LocationRepo {
 
       final response = await _remoteDataSource.reportLocation(request);
 
+      if (response.status == false) {
+        throw ApiException(
+          message: response.message ?? 'Failed to report your location.',
+        );
+      }
+
       return response.toDomain();
     });
   }
 
   @override
   Future<BaseResponse<LocationPermissionStatus>>
-      checkAndRequestPermission() async {
+  checkAndRequestPermission() async {
     final permissionResponse = await checkPermission();
 
     switch (permissionResponse) {

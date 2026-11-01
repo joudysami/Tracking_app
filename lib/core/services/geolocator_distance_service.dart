@@ -2,7 +2,6 @@ import 'package:geolocator/geolocator.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/services/distance_service.dart';
 
-
 @Injectable(as: DistanceService)
 class GeolocatorDistanceService implements DistanceService {
   @override

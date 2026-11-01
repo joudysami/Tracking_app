@@ -48,6 +48,7 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
   }
+
   @override
   void dispose() {
     _uiSub.cancel();
@@ -57,44 +58,47 @@ class _ForgetPasswordPageState extends State<ForgetPasswordPage> {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ForgetPasswordViewModel, ForgetPasswordState>(
-        buildWhen: (p, c) => p.step != c.step,
-        builder: (context, state) {
-          final isFirstStep = state.step == ForgetPasswordStep.email;
+      buildWhen: (p, c) => p.step != c.step,
+      builder: (context, state) {
+        final isFirstStep = state.step == ForgetPasswordStep.email;
 
-          return PopScope(
-            canPop: isFirstStep,
-            onPopInvokedWithResult: (didPop, _) {
-              if (!didPop) _viewModel.onEvent(const GoBackEvent());
-            },
-            child: Scaffold(
-              appBar: AppBar(
-                title:  Text(LocaleKeys.authPassword.tr()),
-                leading: BackButton(
-                  onPressed: () {
-                    if (!isFirstStep) {
-                      _viewModel.onEvent(const GoBackEvent());
-                    } else if (context.canPop()) {
-                      context.pop();
-                    } else {
-                      context.go(AppRoutes.login);
-                    }
-                  },
-                ),
-              ),
-              body: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 250),
-                child: switch (state.step) {
-                  ForgetPasswordStep.email =>
-                  const EmailStepView(key: ValueKey('email')),
-                  ForgetPasswordStep.otp =>
-                  const OtpStepView(key: ValueKey('otp')),
-                  ForgetPasswordStep.resetPassword =>
-                  const ResetPasswordStepView(key: ValueKey('reset')),
+        return PopScope(
+          canPop: isFirstStep,
+          onPopInvokedWithResult: (didPop, _) {
+            if (!didPop) _viewModel.onEvent(const GoBackEvent());
+          },
+          child: Scaffold(
+            appBar: AppBar(
+              title: Text(LocaleKeys.authPassword.tr()),
+              leading: BackButton(
+                onPressed: () {
+                  if (!isFirstStep) {
+                    _viewModel.onEvent(const GoBackEvent());
+                  } else if (context.canPop()) {
+                    context.pop();
+                  } else {
+                    context.go(AppRoutes.login);
+                  }
                 },
               ),
             ),
-          );
-        },
+            body: AnimatedSwitcher(
+              duration: const Duration(milliseconds: 250),
+              child: switch (state.step) {
+                ForgetPasswordStep.email => const EmailStepView(
+                  key: ValueKey('email'),
+                ),
+                ForgetPasswordStep.otp => const OtpStepView(
+                  key: ValueKey('otp'),
+                ),
+                ForgetPasswordStep.resetPassword => const ResetPasswordStepView(
+                  key: ValueKey('reset'),
+                ),
+              },
+            ),
+          ),
+        );
+      },
     );
   }
 }

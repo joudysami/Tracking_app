@@ -9,10 +9,7 @@ class VerifyOtpRequestDto {
   @JsonKey(name: "otp")
   final String? otp;
 
-  VerifyOtpRequestDto ({
-    this.email,
-    this.otp,
-  });
+  VerifyOtpRequestDto({this.email, this.otp});
 
   factory VerifyOtpRequestDto.fromJson(Map<String, dynamic> json) {
     return _$VerifyOtpRequestDtoFromJson(json);
@@ -22,5 +19,3 @@ class VerifyOtpRequestDto {
     return _$VerifyOtpRequestDtoToJson(this);
   }
 }
-
-
