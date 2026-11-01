@@ -86,7 +86,8 @@
         "enter_current_password": "Enter current password",
         "enter_new_password": "Enter new password",
         "wrong_email_or_password": "Invalid email or password",
-        "password_updated": "Password updated successfully"
+        "password_updated": "Password updated successfully",
+        "load_more": "Load more"
     },
     "validation": {
         "required": "This field is required",
@@ -157,7 +158,8 @@
         "reorder_btn": "Order Again",
         "view_receipt": "View Receipt",
         "cancel_order": "Cancel Order",
-        "no_orders_desc": "You haven't placed any flower orders yet."
+        "no_orders_desc": "You haven't placed any flower orders yet.",
+        "recent": "Recent Orders"
     },
     "order_details": {
         "title": "Order details",

@@ -86,7 +86,8 @@
         "enter_current_password": "أدخل كلمة المرور الحالية",
         "enter_new_password": "أدخل كلمة المرور الجديدة",
         "wrong_email_or_password": "البريد الإلكتروني أو كلمة المرور غير صحيحة",
-        "password_updated": "تم تحديث كلمة المرور بنجاح"
+        "password_updated": "تم تحديث كلمة المرور بنجاح",
+        "load_more": "عرض المزيد"
     },
     "validation": {
         "required": "هذا الحقل مطلوب",
@@ -157,7 +158,8 @@
         "reorder_btn": "إعادة الطلب",
         "view_receipt": "عرض الفاتورة",
         "cancel_order": "إلغاء الطلب",
-        "no_orders_desc": "لم تقم بطلب أي باقة ورود بعد."
+        "no_orders_desc": "لم تقم بطلب أي باقة ورود بعد.",
+        "recent": "أحدث الطلبات"
     },
     "order_details": {
         "title": "تفاصيل الطلب",

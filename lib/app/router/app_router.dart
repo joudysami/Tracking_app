@@ -7,13 +7,11 @@ import 'package:tracking_app/core/di/di.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/network/auth_interceptors.dart';
 import 'package:tracking_app/core/network/token_storage.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
+import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
-import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_event.dart';
-import 'package:tracking_app/features/auth/presentation/apply/view/apply_view_model/apply_view_model.dart';
-import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_event.dart';
-import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/forget_password/view_model/forget_password_view_model.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/login_page.dart';
 import 'package:tracking_app/features/auth/presentation/login/view/page/view_model/login_viewmodel.dart';
@@ -21,12 +19,16 @@ import 'package:tracking_app/features/home/presentation/view/widgets/button_navi
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
 import 'package:tracking_app/features/location_tracking/data/models/map_party_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_event.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
 import 'package:tracking_app/features/location_tracking/presentation/view/page/order_map_page.dart';
 import 'package:tracking_app/features/on_bording/presentation/page/on_bording_page.dart';
 import 'package:tracking_app/features/order/order_screen.dart';
+import 'package:tracking_app/features/order/presentation/order_details/view/screen/order_details_screen.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
-import 'package:tracking_app/features/order/presentation/screen/order_details_screen.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
+
+import '../../features/order/presentation/order_details_history/view/screen/order_details_history_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -44,16 +46,15 @@ class AppRouter {
         _successApplyRoute(),
         _forgetPasswordRoute(),
         _homeRoute(),
-        //  _profileRoute(),
         _orderRoute(),
         _orderDetailsRoute(),
         _orderSuccessRoute(),
         _orderMapRoute(),
+        _orderDetailsHistoryRoute(),
       ],
     );
   }
 
-  /// Routes that belong to a driver who is not signed in yet.
   static const List<String> _signInRoutes = [
     AppRoutes.onBoarding,
     AppRoutes.login,
@@ -62,8 +63,6 @@ class AppRouter {
     AppRoutes.forgetPassword,
   ];
 
-  /// Re-runs the redirect when the interceptor ends the session, which
-  /// happens once and then settles on the login screen.
   static Listenable? _sessionChanges() {
     try {
       return getIt<AuthSessionNotifier>();
@@ -72,8 +71,6 @@ class AppRouter {
     }
   }
 
-  /// A stored access token keeps the driver signed in across a restart, so
-  /// they land on Home instead of the onboarding and login screens.
   static Future<String?> _sessionAwareRedirect(GoRouterState state) async {
     final isSignInRoute = _signInRoutes.contains(state.matchedLocation);
 
@@ -81,8 +78,6 @@ class AppRouter {
     try {
       accessToken = await getIt<TokenStorage>().getAccessToken();
     } catch (_) {
-      // Widget tests build the router without a configured container or
-      // secure storage; leave the requested location untouched.
       return null;
     }
 
@@ -175,15 +170,6 @@ class AppRouter {
     );
   }
 
-  /* static GoRoute _profileRoute() {
-    return GoRoute(
-      path: AppRoutes.profile,
-      builder: (context, state) {
-       // return ProfileScreen();
-      },
-    );
-  }
-*/
   static GoRoute _orderRoute() {
     return GoRoute(
       path: AppRoutes.order,
@@ -207,7 +193,6 @@ class AppRouter {
     );
   }
 
-  /// The driver's job is finished: the order waits with the customer now.
   static GoRoute _orderSuccessRoute() {
     return GoRoute(
       path: AppRoutes.orderSuccess,
@@ -226,9 +211,6 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.orderMap,
       builder: (context, state) {
-        // Which map opens is decided by the tapped address in order details:
-        // OrderMapStage.pickup or OrderMapStage.user comes through state.extra,
-        // wrapped in an OrderMapRequest so the real coordinates travel with it.
         final extra = state.extra;
         final request = extra is OrderMapRequest ? extra : null;
         final stage =
@@ -242,6 +224,15 @@ class AppRouter {
           child: OrderMapPage(order: orderMapFor(request?.order), stage: stage),
         );
       },
+    );
+  }
+
+  static GoRoute _orderDetailsHistoryRoute() {
+    return GoRoute(
+      path: AppRoutes.orderDetailsHistory,
+      builder: (context, state) => OrderDetailsHistoryScreen(
+        orderId: state.extra is String ? state.extra as String : null,
+      ),
     );
   }
 }
