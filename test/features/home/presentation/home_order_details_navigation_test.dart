@@ -8,7 +8,7 @@ import 'package:tracking_app/core/base/base_state.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart';
-import 'package:tracking_app/features/home/domain/repo/order_repo.dart';
+import 'package:tracking_app/features/home/domain/repo/home_repo.dart';
 import 'package:tracking_app/features/home/domain/use_case/claim_order_usecase.dart';
 import 'package:tracking_app/features/home/domain/use_case/get_available_order_usecase.dart';
 import 'package:tracking_app/features/home/presentation/view/screen/home_screen.dart';

@@ -33,3 +33,8 @@ class ForceLogin extends AppError {
 class BadResponseError extends AppError {
   BadResponseError(String message) : super(null, message);
 }
+
+/// The resource is gone, so anything the app still holds about it is stale.
+class NotFoundError extends AppError {
+  NotFoundError(String message) : super(null, message);
+}

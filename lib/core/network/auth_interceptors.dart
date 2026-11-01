@@ -63,6 +63,10 @@ class AuthInterceptors extends Interceptor {
     RequestInterceptorHandler handler,
   ) async {
     final token = await _tokenStorage.getAccessToken();
+    debugPrint(
+      '[AuthInterceptors] Access token exists: '
+      '${token?.isNotEmpty == true}',
+    );
 
     if (token != null && token.isNotEmpty) {
       options.headers['Authorization'] = 'Bearer $token';
@@ -198,7 +202,6 @@ class AuthInterceptors extends Interceptor {
           if (error is DioException &&
               _isAuthenticationFailure(error.response?.statusCode)) {
             await _expireSession();
-            _authSessionNotifier.notifySessionExpired();
           }
 
           completer.completeError(error, stackTrace);
@@ -242,6 +245,7 @@ class AuthInterceptors extends Interceptor {
 
   Future<void> _expireSession() async {
     await _tokenStorage.clearTokens();
+    _authSessionNotifier.notifySessionExpired();
     _log('Session expired');
   }
 

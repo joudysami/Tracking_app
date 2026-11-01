@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:tracking_app/core/theme/app_color.dart';
 
 class OrderPartyCard extends StatelessWidget {
   final String title;
   final String address;
   final bool isStore;
+  final String? imageUrl;
+  final VoidCallback? onCall;
+  final VoidCallback? onWhatsApp;
 
   const OrderPartyCard({
     super.key,
     required this.title,
     required this.address,
     this.isStore = false,
+    this.imageUrl,
+    this.onCall,
+    this.onWhatsApp,
   });
 
   static const Color _pink = Color(0xFFD51D72);
@@ -17,7 +25,7 @@ class OrderPartyCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
@@ -28,6 +36,34 @@ class OrderPartyCard extends StatelessWidget {
           _avatar(),
           const SizedBox(width: 12),
           Expanded(child: _details()),
+          Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              IconButton(
+                icon: Icon(
+                  Icons.phone_outlined,
+                  size: 20,
+                  color: context.colors.pink,
+                ),
+                padding: const EdgeInsets.all(4),
+                constraints: const BoxConstraints(),
+                visualDensity: VisualDensity.compact,
+                onPressed: onCall ?? () {},
+              ),
+              const SizedBox(width: 8),
+              IconButton(
+                icon: Icon(
+                  Icons.chat_bubble_outline,
+                  size: 20,
+                  color: context.colors.pink,
+                ),
+                padding: const EdgeInsets.all(4),
+                constraints: const BoxConstraints(),
+                visualDensity: VisualDensity.compact,
+                onPressed: onWhatsApp ?? () {},
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -37,6 +73,9 @@ class OrderPartyCard extends StatelessWidget {
     return CircleAvatar(
       radius: 22,
       backgroundColor: isStore ? _pink : const Color(0xFFE9D6C0),
+      backgroundImage: imageUrl == null || imageUrl!.isEmpty
+          ? null
+          : CachedNetworkImageProvider(imageUrl!),
       child: Icon(
         isStore ? Icons.local_florist : Icons.person,
         color: isStore ? Colors.white : Colors.brown,
@@ -63,8 +102,8 @@ class OrderPartyCard extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       style: const TextStyle(
         fontSize: 14,
-        fontWeight: FontWeight.w500,
-        color: Color(0xFF333333),
+        fontWeight: FontWeight.w600,
+        color: Color(0xFF222222),
       ),
     );
   }

@@ -5,14 +5,18 @@ part 'login_response.g.dart';
 
 @JsonSerializable()
 class LoginResponse {
-  final bool status;
-  final int code;
+  @JsonKey(name: 'status')
+  final bool isSuccess;
+
+  @JsonKey(name: 'code')
+  final int statusCode;
+
   final String message;
   final LoginData data;
 
   const LoginResponse({
-    required this.status,
-    required this.code,
+    required this.isSuccess,
+    required this.statusCode,
     required this.message,
     required this.data,
   });
@@ -25,55 +29,79 @@ class LoginResponse {
 
 @JsonSerializable()
 class LoginData {
-  final UserModel user;
+  final LoginUser? user;
+
+  @JsonKey(name: 'token')
   final String token;
+
   final String refreshToken;
 
+  @JsonKey(defaultValue: '')
+  final String accessTokenExpiresAt;
+
   const LoginData({
-    required this.user,
+    this.user,
     required this.token,
     required this.refreshToken,
+    required this.accessTokenExpiresAt,
   });
+
+  LoginEntity toDomain() {
+    return LoginEntity(
+      accessToken: token,
+      refreshToken: refreshToken,
+      role: user?.roles.isNotEmpty == true ? user!.roles.first : '',
+    );
+  }
 
   factory LoginData.fromJson(Map<String, dynamic> json) =>
       _$LoginDataFromJson(json);
 
   Map<String, dynamic> toJson() => _$LoginDataToJson(this);
-  LoginEntity toDomain() {
-    return LoginEntity(
-      accessToken: token,
-      refreshToken: refreshToken,
-      role: user.roles.isNotEmpty ? user.roles.first : '',
-    );
-  }
 }
 
 @JsonSerializable()
-class UserModel {
+class LoginUser {
   final String id;
   final String email;
-  final String phone;
-  final String name;
   final List<String> roles;
-  final DateTime createdAt;
-  final DateTime updatedAt;
-  final String gender;
-  final String notificationStatus;
 
-  const UserModel({
+  @JsonKey(name: 'name', defaultValue: '')
+  final String name;
+
+  const LoginUser({
     required this.id,
     required this.email,
-    required this.phone,
-    required this.name,
     required this.roles,
-    required this.createdAt,
-    required this.updatedAt,
-    required this.gender,
-    required this.notificationStatus,
+    this.name = '',
   });
 
-  factory UserModel.fromJson(Map<String, dynamic> json) =>
-      _$UserModelFromJson(json);
+  factory LoginUser.fromJson(Map<String, dynamic> json) =>
+      _$LoginUserFromJson(json);
 
-  Map<String, dynamic> toJson() => _$UserModelToJson(this);
+  Map<String, dynamic> toJson() => _$LoginUserToJson(this);
+}
+
+LoginData loginDataFromJson(dynamic raw) {
+  if (raw is Map<String, dynamic>) {
+    return LoginData.fromJson(raw);
+  }
+
+  if (raw is List && raw.isNotEmpty && raw.first is Map<String, dynamic>) {
+    return LoginData.fromJson(raw.first as Map<String, dynamic>);
+  }
+
+  throw const FormatException('Login response data is not valid.');
+}
+
+LoginUser? loginUserFromJson(dynamic raw) {
+  if (raw is Map<String, dynamic>) {
+    return LoginUser.fromJson(raw);
+  }
+
+  if (raw is List && raw.isNotEmpty && raw.first is Map<String, dynamic>) {
+    return LoginUser.fromJson(raw.first as Map<String, dynamic>);
+  }
+
+  return null;
 }

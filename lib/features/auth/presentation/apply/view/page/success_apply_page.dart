@@ -9,7 +9,20 @@ import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/core/widgets/app_button.dart';
 
 class SuccessApplyPage extends StatelessWidget {
-  const SuccessApplyPage({super.key});
+  final String titleKey;
+  final String bodyKey;
+  final String buttonKey;
+  final VoidCallback? onButtonPressed;
+
+  /// One success layout, two uses: the driver application (defaults) and the
+  /// order flow, which only changes the wording and the button action.
+  const SuccessApplyPage({
+    super.key,
+    this.titleKey = LocaleKeys.applySuccessTitle,
+    this.bodyKey = LocaleKeys.applySuccessBody,
+    this.buttonKey = LocaleKeys.authLogin,
+    this.onButtonPressed,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -46,7 +59,7 @@ class SuccessApplyPage extends StatelessWidget {
                   SizedBox(height: 32.h),
 
                   Text(
-                    LocaleKeys.applySuccessTitle.tr(),
+                    titleKey.tr(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 20.sp,
@@ -58,7 +71,7 @@ class SuccessApplyPage extends StatelessWidget {
                   SizedBox(height: 12.h),
 
                   Text(
-                    LocaleKeys.applySuccessBody.tr(),
+                    bodyKey.tr(),
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       fontSize: 14.sp,
@@ -71,12 +84,13 @@ class SuccessApplyPage extends StatelessWidget {
                   const Spacer(flex: 3),
 
                   Padding(
-                    padding: EdgeInsets.only(bottom: 50.h),
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + 24.h,
+                    ),
                     child: AppButton(
-                      text: LocaleKeys.authLogin.tr(),
-                      onPressed: () {
-                        context.go(AppRoutes.login);
-                      },
+                      text: buttonKey.tr(),
+                      onPressed:
+                          onButtonPressed ?? () => context.go(AppRoutes.login),
                     ),
                   ),
                 ],

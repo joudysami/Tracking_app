@@ -12,5 +12,7 @@ final class AppRoutes {
   static const String home = '/home';
   static const String order = '/order';
   static const String orderDetails = '/order-details';
+  static const String orderSuccess = '/order-success';
+  static const String orderMap = '/orderMap';
   static const String orderDetailsHistory = '/order-details-history';
 }

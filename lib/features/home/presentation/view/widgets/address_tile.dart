@@ -42,10 +42,10 @@ class AddressTile extends StatelessWidget {
                   title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.w500,
-                    color:context.colors.pink.shade900,
+                    color: context.colors.pink.shade900,
                   ),
                 ),
                 const SizedBox(height: 3),

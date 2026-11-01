@@ -12,7 +12,14 @@ AppError errorParser(Exception exception) {
 AppError _parseApiException(ApiException exception) {
   final fieldErrors = fieldErrorsMessage(exception.errors);
   if (fieldErrors != null) return BadResponseError(fieldErrors);
-  return BadResponseError(exception.message);
+
+  // A blank message would leave the driver with no feedback at all.
+  final message = exception.message.trim().isEmpty
+      ? statusCodeToMessage(exception.statusCode)
+      : exception.message;
+
+  if (exception.statusCode == 404) return NotFoundError(message);
+  return BadResponseError(message);
 }
 
 AppError _parseDioException(DioException exception) {
@@ -47,6 +54,8 @@ AppError _connectionError(DioException exception) {
 
 AppError _parseBadResponse(DioException exception) {
   final data = exception.response?.data;
+  final statusCode = exception.response?.statusCode;
+  String? bodyMessage;
 
   if (data is Map) {
     final responseData = Map<String, dynamic>.from(data);
@@ -62,20 +71,30 @@ AppError _parseBadResponse(DioException exception) {
       return BadResponseError(fieldErrors);
     }
 
-    if (responseData['message'] != null) {
-      return BadResponseError(responseData['message'].toString());
-    }
-
-    if (responseData['error'] != null) {
-      return BadResponseError(responseData['error'].toString());
-    }
+    bodyMessage =
+        responseData['message']?.toString() ??
+        responseData['error']?.toString();
   }
 
-  if (exception.response?.statusCode == 401) {
+  if (statusCode == 401) {
     return UnauthorizedError();
   }
 
-  return BadResponseError(statusCodeToMessage(exception.response?.statusCode));
+  // 404 is not a retryable failure: the order the driver is holding is gone.
+  if (statusCode == 404) {
+    final message = bodyMessage;
+    return NotFoundError(
+      message == null || message.trim().isEmpty
+          ? statusCodeToMessage(statusCode)
+          : message,
+    );
+  }
+
+  if (bodyMessage != null) {
+    return BadResponseError(bodyMessage);
+  }
+
+  return BadResponseError(statusCodeToMessage(statusCode));
 }
 
 Map<String, dynamic>? _toStringDynamicMap(dynamic raw) {
