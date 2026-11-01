@@ -202,7 +202,6 @@ class AuthInterceptors extends Interceptor {
           if (error is DioException &&
               _isAuthenticationFailure(error.response?.statusCode)) {
             await _expireSession();
-            _authSessionNotifier.notifySessionExpired();
           }
 
           completer.completeError(error, stackTrace);
@@ -246,6 +245,7 @@ class AuthInterceptors extends Interceptor {
 
   Future<void> _expireSession() async {
     await _tokenStorage.clearTokens();
+    _authSessionNotifier.notifySessionExpired();
     _log('Session expired');
   }
 

@@ -16,6 +16,13 @@ class OrderDetailsEntity extends Equatable {
   final String paymentMethod;
   final List<OrderItemEntity> items;
 
+  /// Delivery coordinates, when the backend provided them. `null` means the
+  /// map falls back to the sample locations in [orderMapMock].
+  final double? storeLatitude;
+  final double? storeLongitude;
+  final double? customerLatitude;
+  final double? customerLongitude;
+
   const OrderDetailsEntity({
     required this.orderId,
     required this.orderNumber,
@@ -28,6 +35,10 @@ class OrderDetailsEntity extends Equatable {
     required this.totalAmount,
     required this.paymentMethod,
     required this.items,
+    this.storeLatitude,
+    this.storeLongitude,
+    this.customerLatitude,
+    this.customerLongitude,
   });
 
   factory OrderDetailsEntity.fromAvailableOrder(AvailableOrderEntity order) {
@@ -59,32 +70,51 @@ class OrderDetailsEntity extends Equatable {
     );
   }
 
+  /// The claim response carries no store, customer, items or amounts, so the
+  /// sample values below are still what a freshly accepted order shows. The
+  /// assigned-order endpoint fills them in, and real data always wins.
   factory OrderDetailsEntity.fromClaimedOrder(ClaimedOrderEntity order) {
+    final hasRealData = order.hasDetails;
+
     return OrderDetailsEntity(
       orderId: order.orderId,
-      orderNumber: order.orderNumber,
+      orderNumber: order.orderNumber.isEmpty
+          ? order.orderId
+          : order.orderNumber,
       status: order.status,
       createdAt: order.assignedAt.toIso8601String(),
-      customerName: 'Nour mohamed',
-      customerAddress: '20th st, Sheikh Zayed, Giza',
-      storeName: 'Flowery store',
-      storeAddress: '20th st, Sheikh Zayed, Giza',
-      totalAmount: 3000,
-      paymentMethod: 'Cash on delivery',
-      items: const [
-        OrderItemEntity(
-          name: 'Red roses,15 Pink Rose Bouquet',
-          imageUrl: null,
-          quantity: 1,
-          price: 600,
-        ),
-        OrderItemEntity(
-          name: 'Red roses,15 Pink Rose Bouquet',
-          imageUrl: null,
-          quantity: 1,
-          price: 600,
-        ),
-      ],
+      customerName: hasRealData ? order.customerName : 'Nour mohamed',
+      customerAddress: hasRealData
+          ? order.customerAddress
+          : '20th st, Sheikh Zayed, Giza',
+      storeName: hasRealData ? order.storeName : 'Flowery store',
+      storeAddress: hasRealData
+          ? order.storeAddress
+          : '20th st, Sheikh Zayed, Giza',
+      totalAmount: hasRealData ? order.totalAmount : 3000,
+      paymentMethod: order.paymentMethod.isEmpty
+          ? 'Cash on delivery'
+          : order.paymentMethod,
+      items: hasRealData && order.items.isNotEmpty
+          ? order.items
+          : const [
+              OrderItemEntity(
+                name: 'Red roses,15 Pink Rose Bouquet',
+                imageUrl: null,
+                quantity: 1,
+                price: 600,
+              ),
+              OrderItemEntity(
+                name: 'Red roses,15 Pink Rose Bouquet',
+                imageUrl: null,
+                quantity: 1,
+                price: 600,
+              ),
+            ],
+      storeLatitude: order.storeLatitude,
+      storeLongitude: order.storeLongitude,
+      customerLatitude: order.customerLatitude,
+      customerLongitude: order.customerLongitude,
     );
   }
 
@@ -100,6 +130,10 @@ class OrderDetailsEntity extends Equatable {
     double? totalAmount,
     String? paymentMethod,
     List<OrderItemEntity>? items,
+    double? storeLatitude,
+    double? storeLongitude,
+    double? customerLatitude,
+    double? customerLongitude,
   }) {
     return OrderDetailsEntity(
       orderId: orderId ?? this.orderId,
@@ -113,6 +147,10 @@ class OrderDetailsEntity extends Equatable {
       totalAmount: totalAmount ?? this.totalAmount,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       items: items ?? this.items,
+      storeLatitude: storeLatitude ?? this.storeLatitude,
+      storeLongitude: storeLongitude ?? this.storeLongitude,
+      customerLatitude: customerLatitude ?? this.customerLatitude,
+      customerLongitude: customerLongitude ?? this.customerLongitude,
     );
   }
 
@@ -129,5 +167,9 @@ class OrderDetailsEntity extends Equatable {
     totalAmount,
     paymentMethod,
     items,
+    storeLatitude,
+    storeLongitude,
+    customerLatitude,
+    customerLongitude,
   ];
 }

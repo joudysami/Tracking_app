@@ -177,6 +177,8 @@
         "unknown_store": "متجر غير معروف",
         "no_address": "لا يوجد عنوان",
         "unavailable": "تفاصيل الطلب غير متاحة.",
+        "success_title": "شكرًا!",
+        "success_body": "تم تسليم الطلب بنجاح",
         "currency": "ج.م"
     },
     "status": {
@@ -415,6 +417,7 @@
     "locationPermissionDenied": "تم رفض صلاحية الموقع. من فضلك اسمحي بالوصول إلى الموقع للمتابعة.",
     "locationStreamFailed": "فشل استقبال تحديثات الموقع. من فضلك حاولي مرة أخرى.",
     "locationReportFailed": "فشل إرسال موقعك إلى الخادم.",
+    "locationFixTimedOut": "لم يتم تحديد موقعك بعد، لذا لم يتم إرسال موقعك.",
     "locationOpenSettingsFailed": "تعذر فتح الإعدادات. من فضلك افتحيها يدويًا.",
     "locationRouteLoadFailed": "تعذّر تحميل المسار. حاولي مرة أخرى."
 }

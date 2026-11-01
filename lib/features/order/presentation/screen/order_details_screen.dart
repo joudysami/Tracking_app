@@ -2,6 +2,7 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
@@ -36,6 +37,7 @@ class OrderDetailsScreen extends StatelessWidget {
                 current.confirmDeliveryState.errorMessage ||
             previous.locationReportState.errorMessage !=
                 current.locationReportState.errorMessage ||
+            current.activeOrderMissing ||
             reachedAwaitingConfirmation;
       },
       listener: (context, state) {
@@ -49,6 +51,10 @@ class OrderDetailsScreen extends StatelessWidget {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(error)));
+
+          // A 404 means the order is gone: pop with `true` so Home drops the
+          // stale active order and Accept is free again.
+          if (state.activeOrderMissing) context.pop(true);
         } else if (_awaitsCustomerConfirmation(state.order?.status)) {
           final messenger = ScaffoldMessenger.of(context);
           messenger
@@ -60,7 +66,12 @@ class OrderDetailsScreen extends StatelessWidget {
                 ),
               ),
             );
-          context.pop(true);
+          // The success screen tells the driver the job is done; Done pops
+          // back here and this route then pops with `true`, which is what
+          // clears the active order on Home.
+          context.push(AppRoutes.orderSuccess).then((_) {
+            if (context.mounted) context.pop(true);
+          });
         }
       },
       builder: (context, state) {

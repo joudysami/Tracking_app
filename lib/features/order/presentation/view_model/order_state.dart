@@ -10,11 +10,16 @@ class OrderState extends Equatable {
   final BaseState<ConfirmDeliveryEntity> confirmDeliveryState;
   final BaseState<LocationReportEntity> locationReportState;
 
+  /// The backend no longer knows this order, so the active order the
+  /// driver is holding is stale and Home must drop it.
+  final bool activeOrderMissing;
+
   const OrderState({
     this.order,
     this.updateStatusState = const BaseState(),
     this.confirmDeliveryState = const BaseState(),
     this.locationReportState = const BaseState(),
+    this.activeOrderMissing = false,
   });
 
   bool get isActionLoading =>
@@ -27,12 +32,14 @@ class OrderState extends Equatable {
     BaseState<OrderDetailsEntity>? updateStatusState,
     BaseState<ConfirmDeliveryEntity>? confirmDeliveryState,
     BaseState<LocationReportEntity>? locationReportState,
+    bool? activeOrderMissing,
   }) {
     return OrderState(
       order: order ?? this.order,
       updateStatusState: updateStatusState ?? this.updateStatusState,
       confirmDeliveryState: confirmDeliveryState ?? this.confirmDeliveryState,
       locationReportState: locationReportState ?? this.locationReportState,
+      activeOrderMissing: activeOrderMissing ?? this.activeOrderMissing,
     );
   }
 
@@ -42,5 +49,6 @@ class OrderState extends Equatable {
     updateStatusState,
     confirmDeliveryState,
     locationReportState,
+    activeOrderMissing,
   ];
 }

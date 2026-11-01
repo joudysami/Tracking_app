@@ -14,8 +14,18 @@ import 'package:tracking_app/features/location_tracking/presentation/view/locati
 import 'package:tracking_app/features/location_tracking/presentation/view/widgets/ocation_tracking_dialogs.dart';
 import 'package:tracking_app/features/location_tracking/presentation/view/widgets/order_map_bottom_sheet.dart';
 import 'package:tracking_app/features/location_tracking/presentation/view/widgets/order_map_map_view.dart';
+import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 
 enum OrderMapStage { pickup, user }
+
+/// Extra payload of [AppRoutes.orderMap]: which address was tapped, plus the
+/// order so the map can use its real coordinates when it has them.
+class OrderMapRequest {
+  final OrderMapStage stage;
+  final OrderDetailsEntity? order;
+
+  const OrderMapRequest({required this.stage, this.order});
+}
 
 class OrderMapPage extends StatefulWidget {
   final OrderMapModel order;

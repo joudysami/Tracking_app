@@ -14,4 +14,8 @@ abstract interface class HomeRepo {
   Future<BaseResponse<ClaimedOrderEntity>> claimOrder({
     required String orderId,
   });
+
+  /// The order the driver is holding right now, or `null` data when they
+  /// have none.
+  Future<BaseResponse<ClaimedOrderEntity?>> getAssignedOrder();
 }

@@ -47,6 +47,8 @@ import '../../features/home/data/data_source/home_data_source_impl.dart'
 import '../../features/home/data/repo/home_repo_impl.dart' as _i1024;
 import '../../features/home/domain/repo/home_repo.dart' as _i280;
 import '../../features/home/domain/use_case/claim_order_usecase.dart' as _i610;
+import '../../features/home/domain/use_case/get_assigned_order_usecase.dart'
+    as _i858;
 import '../../features/home/domain/use_case/get_available_order_usecase.dart'
     as _i264;
 import '../../features/home/presentation/view_model/home_view_model.dart'
@@ -269,6 +271,9 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i610.ClaimOrderUseCase>(
       () => _i610.ClaimOrderUseCase(gh<_i280.HomeRepo>()),
     );
+    gh.factory<_i858.GetAssignedOrderUseCase>(
+      () => _i858.GetAssignedOrderUseCase(gh<_i280.HomeRepo>()),
+    );
     gh.factory<_i264.GetAvailableOrdersUseCase>(
       () => _i264.GetAvailableOrdersUseCase(gh<_i280.HomeRepo>()),
     );
@@ -304,6 +309,7 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i77.HomeCubit(
         getAvailableOrdersUseCase: gh<_i264.GetAvailableOrdersUseCase>(),
         claimOrderUseCase: gh<_i610.ClaimOrderUseCase>(),
+        getAssignedOrderUseCase: gh<_i858.GetAssignedOrderUseCase>(),
       ),
     );
     return this;

@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> {
             claimError != previous.claimOrderState.errorMessage;
         final newClaimSuccess =
             claimSuccess != null &&
+            previous.claimOrderState.isLoading &&
             claimSuccess.orderId != previous.claimOrderState.data?.orderId;
         final newOrdersError =
             ordersError.isNotEmpty &&
@@ -204,6 +205,25 @@ class _HomeScreenState extends State<HomeScreen> {
                                 isAcceptDisabled: claimStatus.isDisabled,
                                 onAccept: () {
                                   if (claimStatus.isDisabled) return;
+
+                                  final hasActiveOrder = context
+                                      .read<HomeCubit>()
+                                      .hasActiveOrder;
+
+                                  if (hasActiveOrder) {
+                                    ScaffoldMessenger.of(context)
+                                      ..hideCurrentSnackBar()
+                                      ..showSnackBar(
+                                        SnackBar(
+                                          content: Text(
+                                            LocaleKeys
+                                                .orderDetailsFinishOrderFirst
+                                                .tr(),
+                                          ),
+                                        ),
+                                      );
+                                    return;
+                                  }
 
                                   context.read<HomeCubit>().doEvent(
                                     ClaimOrderEvent(orderId: order.orderId),

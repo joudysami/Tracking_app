@@ -47,20 +47,22 @@ class OrdersRepoImpl implements OrderRepo {
         note: note,
       );
 
-      if (!response.status) {
-        throw ApiException(message: response.message);
+      if (response.status == false) {
+        throw ApiException(
+          message: response.message ?? 'Could not update the order status.',
+          statusCode: response.code,
+        );
       }
 
+      // The status change may be acknowledged with a message only, so the
+      // status just sent is used when the payload is missing.
       final data = response.data;
-      if (data == null) {
-        throw Exception('Order status update data is empty.');
-      }
 
       return OrderDetailsEntity(
-        orderId: data.orderId,
-        orderNumber: data.orderId,
-        status: data.status,
-        createdAt: data.occurredAt,
+        orderId: data?.orderId ?? orderId,
+        orderNumber: data?.orderId ?? orderId,
+        status: data?.status ?? status,
+        createdAt: data?.occurredAt ?? DateTime.now().toIso8601String(),
         customerName: '',
         customerAddress: '',
         storeName: '',

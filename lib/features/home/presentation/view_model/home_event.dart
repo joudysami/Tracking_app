@@ -9,6 +9,10 @@ class GetAvailableOrdersEvent extends HomeEvent {
   const GetAvailableOrdersEvent({this.page = 1, this.pageSize = 20});
 }
 
+class GetAssignedOrderEvent extends HomeEvent {
+  const GetAssignedOrderEvent();
+}
+
 class ClaimOrderEvent extends HomeEvent {
   final String orderId;
 

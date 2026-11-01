@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
@@ -17,6 +20,10 @@ import 'package:tracking_app/features/order/presentation/view_model/order_state.
 
 @injectable
 class OrderViewModel extends Cubit<OrderState> {
+  /// How long the driver may have to wait for a GPS fix before the location
+  /// report is given up on; the stage transition itself is never held back.
+  static const Duration _locationFixTimeout = Duration(seconds: 15);
+
   final UpdateOrderStatusUseCase updateOrderStatusUseCase;
   final ConfirmDeliveryUseCase confirmDeliveryUseCase;
   final LocationReportingUseCase locationReportingUseCase;
@@ -92,7 +99,11 @@ class OrderViewModel extends Cubit<OrderState> {
   /// Failures only surface a message; they never block the stage transition.
   Future<void> _reportDriverLocation() async {
     try {
-      final location = await locationTrackingUseCase().first;
+      // GPS can stay unfixed (permission denied, service off, no signal), so
+      // the wait is bounded and the stage the driver just reached stands.
+      final location = await locationTrackingUseCase().first.timeout(
+        _locationFixTimeout,
+      );
       final result = await locationReportingUseCase(location);
 
       if (isClosed) return;
@@ -117,6 +128,16 @@ class OrderViewModel extends Cubit<OrderState> {
             ),
           );
       }
+    } on TimeoutException {
+      if (isClosed) return;
+
+      emit(
+        state.copyWith(
+          locationReportState: state.locationReportState.copyWith(
+            errorMessage: LocaleKeys.locationFixTimedOut.tr(),
+          ),
+        ),
+      );
     } catch (_) {
       if (isClosed) return;
 
@@ -186,6 +207,7 @@ class OrderViewModel extends Cubit<OrderState> {
       case ErrorResponse(appError: final appError):
         emit(
           state.copyWith(
+            activeOrderMissing: appError is NotFoundError,
             updateStatusState: state.updateStatusState.copyWith(
               isLoading: false,
               errorMessage: appError.message,

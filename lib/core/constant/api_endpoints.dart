@@ -71,6 +71,7 @@ class ApiEndpoints {
 
   /// home ///
   static const String availableOrders = "/api/orders/drivers/available-orders";
+  static const String assignedOrder = '/api/orders/drivers/me/assigned-order';
   static const String claim = '/api/orders/{orderId}/claim';
   
    /// order details///

@@ -6,18 +6,18 @@ part 'available_orders_response.g.dart';
 
 @JsonSerializable()
 class AvailableOrdersResponse {
-  final bool status;
-  final int code;
-  final String message;
-  final List<AvailableOrderModel> data;
-  final PaginationModel pagination;
+  final bool? status;
+  final int? code;
+  final String? message;
+  final List<AvailableOrderModel>? data;
+  final PaginationModel? pagination;
 
   const AvailableOrdersResponse({
-    required this.status,
-    required this.code,
-    required this.message,
-    required this.data,
-    required this.pagination,
+    this.status,
+    this.code,
+    this.message,
+    this.data,
+    this.pagination,
   });
 
   factory AvailableOrdersResponse.fromJson(Map<String, dynamic> json) =>

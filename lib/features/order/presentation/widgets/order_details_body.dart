@@ -60,7 +60,7 @@ class OrderDetailsBody extends StatelessWidget {
         GestureDetector(
           onTap: () => context.push(
             AppRoutes.orderMap,
-            extra: OrderMapStage.pickup,
+            extra: OrderMapRequest(stage: OrderMapStage.pickup, order: order),
           ),
           child: OrderPartyCard(
             title: storeName,
@@ -72,8 +72,10 @@ class OrderDetailsBody extends StatelessWidget {
 
         OrderSectionTitle(title: LocaleKeys.orderDetailsUserAddress.tr()),
         GestureDetector(
-          onTap: () =>
-              context.push(AppRoutes.orderMap, extra: OrderMapStage.user),
+          onTap: () => context.push(
+            AppRoutes.orderMap,
+            extra: OrderMapRequest(stage: OrderMapStage.user, order: order),
+          ),
           child: OrderPartyCard(
             title: order.customerName.trim(),
             address: customerAddress,

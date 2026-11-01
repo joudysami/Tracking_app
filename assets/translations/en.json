@@ -177,6 +177,8 @@
         "unknown_store": "Unknown store",
         "no_address": "No address",
         "unavailable": "Order details are unavailable.",
+        "success_title": "Thank you!",
+        "success_body": "The order delivered successfully",
         "currency": "EGP"
     },
     "status": {
@@ -415,6 +417,7 @@
     "locationPermissionDenied": "Location permission was denied. Please allow location access to continue.",
     "locationStreamFailed": "Failed to receive location updates. Please try again.",
     "locationReportFailed": "Failed to send your location to the server.",
+    "locationFixTimedOut": "No location fix yet, so your location was not reported.",
     "locationOpenSettingsFailed": "Failed to open settings. Please open them manually.",
     "locationRouteLoadFailed": "Failed to load route. Please try again."
 }

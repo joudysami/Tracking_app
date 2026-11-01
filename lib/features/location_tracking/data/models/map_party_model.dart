@@ -1,4 +1,5 @@
 import 'package:latlong2/latlong.dart';
+import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 
 class MapPartyModel {
   final String name;
@@ -55,3 +56,39 @@ final orderMapMock = OrderMapModel(
     LatLng(30.0120, 30.9950),
   ],
 );
+
+/// The map for one order: names, addresses and coordinates come from the
+/// assigned-order payload, and [orderMapMock] fills in whatever the backend
+/// did not send (the claim response and the available-orders list carry no
+/// coordinates, and there is no route geometry yet either).
+OrderMapModel orderMapFor(OrderDetailsEntity? order) {
+  if (order == null) return orderMapMock;
+
+  LatLng? point(double? latitude, double? longitude) {
+    if (latitude == null || longitude == null) return null;
+    return LatLng(latitude, longitude);
+  }
+
+  String fallback(String value, String sample) =>
+      value.trim().isEmpty ? sample : value.trim();
+
+  return OrderMapModel(
+    store: MapPartyModel(
+      name: fallback(order.storeName, orderMapMock.store.name),
+      address: fallback(order.storeAddress, orderMapMock.store.address),
+      location:
+          point(order.storeLatitude, order.storeLongitude) ??
+          orderMapMock.store.location,
+    ),
+    user: MapPartyModel(
+      name: fallback(order.customerName, orderMapMock.user.name),
+      address: fallback(order.customerAddress, orderMapMock.user.address),
+      location:
+          point(order.customerLatitude, order.customerLongitude) ??
+          orderMapMock.user.location,
+    ),
+    driverLocation: orderMapMock.driverLocation,
+    pickupRoute: orderMapMock.pickupRoute,
+    userRoute: orderMapMock.userRoute,
+  );
+}

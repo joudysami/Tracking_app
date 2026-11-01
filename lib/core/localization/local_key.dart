@@ -154,6 +154,8 @@ abstract class LocaleKeys {
   static const String orderDetailsNoAddress = 'order_details.no_address';
   static const String orderDetailsCurrency = 'order_details.currency';
   static const String orderDetailsUnavailable = 'order_details.unavailable';
+  static const String orderDetailsSuccessTitle = 'order_details.success_title';
+  static const String orderDetailsSuccessBody = 'order_details.success_body';
 
   static const String statusPending = 'status.pending';
   static const String statusAccepted = 'status.accepted';
@@ -262,6 +264,7 @@ static const locationPermissionDialogTitle = 'locationPermissionDialogTitle';
   static const locationPermissionDenied = 'locationPermissionDenied';
   static const locationStreamFailed = 'locationStreamFailed';
   static const locationReportFailed = 'locationReportFailed';
+  static const locationFixTimedOut = 'locationFixTimedOut';
   static const locationOpenSettingsFailed = 'locationOpenSettingsFailed';
   static const String locationRouteLoadFailed = 'locationRouteLoadFailed';  
 }

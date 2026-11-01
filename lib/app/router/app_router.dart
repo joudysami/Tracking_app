@@ -4,6 +4,9 @@ import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/constant/app_constants.dart';
 import 'package:tracking_app/core/di/di.dart';
+import 'package:tracking_app/core/localization/local_key.dart';
+import 'package:tracking_app/core/network/auth_interceptors.dart';
+import 'package:tracking_app/core/network/token_storage.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/apply/view/page/success_apply_page.dart';
 import 'package:tracking_app/features/auth/presentation/forget_password/view/page/forget_password_page.dart';
@@ -32,6 +35,8 @@ class AppRouter {
     return GoRouter(
       initialLocation: initialLocation ?? AppRoutes.onBoarding,
       errorBuilder: _errorBuilder,
+      refreshListenable: _sessionChanges(),
+      redirect: (context, state) => _sessionAwareRedirect(state),
       routes: [
         _onBordingRoute(),
         _loginRoute(),
@@ -42,9 +47,50 @@ class AppRouter {
       //  _profileRoute(),
         _orderRoute(),
         _orderDetailsRoute(),
+        _orderSuccessRoute(),
         _orderMapRoute(),
       ],
     );
+  }
+
+  /// Routes that belong to a driver who is not signed in yet.
+  static const List<String> _signInRoutes = [
+    AppRoutes.onBoarding,
+    AppRoutes.login,
+    AppRoutes.apply,
+    AppRoutes.successApply,
+    AppRoutes.forgetPassword,
+  ];
+
+  /// Re-runs the redirect when the interceptor ends the session, which
+  /// happens once and then settles on the login screen.
+  static Listenable? _sessionChanges() {
+    try {
+      return getIt<AuthSessionNotifier>();
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// A stored access token keeps the driver signed in across a restart, so
+  /// they land on Home instead of the onboarding and login screens.
+  static Future<String?> _sessionAwareRedirect(GoRouterState state) async {
+    final isSignInRoute = _signInRoutes.contains(state.matchedLocation);
+
+    final String? accessToken;
+    try {
+      accessToken = await getIt<TokenStorage>().getAccessToken();
+    } catch (_) {
+      // Widget tests build the router without a configured container or
+      // secure storage; leave the requested location untouched.
+      return null;
+    }
+
+    final hasSession = accessToken != null && accessToken.isNotEmpty;
+
+    if (hasSession && isSignInRoute) return AppRoutes.home;
+    if (!hasSession && !isSignInRoute) return AppRoutes.login;
+    return null;
   }
 
   static Widget _errorBuilder(BuildContext context, GoRouterState state) {
@@ -111,8 +157,9 @@ class AppRouter {
       path: AppRoutes.home,
       builder: (context, state) {
         return BlocProvider(
-          create: (_) =>
-              getIt<HomeCubit>()..doEvent(const GetAvailableOrdersEvent()),
+          create: (_) => getIt<HomeCubit>()
+            ..doEvent(const GetAvailableOrdersEvent())
+            ..doEvent(const GetAssignedOrderEvent()),
           child: const ButtonNavigationBar(),
         );
       },
@@ -151,20 +198,39 @@ static GoRoute _orderDetailsRoute() {
     },
   );
 }
+  /// The driver's job is finished: the order waits with the customer now.
+  static GoRoute _orderSuccessRoute() {
+    return GoRoute(
+      path: AppRoutes.orderSuccess,
+      builder: (context, state) {
+        return SuccessApplyPage(
+          titleKey: LocaleKeys.orderDetailsSuccessTitle,
+          bodyKey: LocaleKeys.orderDetailsSuccessBody,
+          buttonKey: LocaleKeys.commonDone,
+          onButtonPressed: () => context.pop(),
+        );
+      },
+    );
+  }
+
   static GoRoute _orderMapRoute() {
     return GoRoute(
       path: AppRoutes.orderMap,
       builder: (context, state) {
         // Which map opens is decided by the tapped address in order details:
-        // OrderMapStage.pickup or OrderMapStage.user comes through state.extra.
-        final stage = state.extra is OrderMapStage
-            ? state.extra as OrderMapStage
-            : OrderMapStage.pickup;
+        // OrderMapStage.pickup or OrderMapStage.user comes through state.extra,
+        // wrapped in an OrderMapRequest so the real coordinates travel with it.
+        final extra = state.extra;
+        final request = extra is OrderMapRequest ? extra : null;
+        final stage =
+            request?.stage ??
+            (extra is OrderMapStage ? extra : OrderMapStage.pickup);
+
         return BlocProvider(
           create: (_) =>
               getIt<LocationTrackingViewModel>()
                 ..doEvent(LocationTrackingStarted()),
-          child: OrderMapPage(order: orderMapMock, stage: stage),
+          child: OrderMapPage(order: orderMapFor(request?.order), stage: stage),
         );
       },
     );
