@@ -142,10 +142,25 @@ class HomeCubit extends Cubit<HomeState> {
 
     switch (result) {
       case SuccessResponse(data: final order):
-        if (order == null) return;
+        if (order == null) {
+          emit(
+            state.copyWith(
+              claimOrderState: state.claimOrderState.copyWith(data: null),
+            ),
+          );
+          return;
+        }
 
         final status = normalizeOrderStatus(order.status);
-        if (status == 'delivered' || status == 'cancelled') return;
+        if (status == 'delivered') {
+          emit(
+            state.copyWith(
+              claimOrderState: state.claimOrderState.copyWith(data: null),
+            ),
+          );
+          return;
+        }
+        if (status == 'cancelled') return;
 
         emit(state.copyWith(claimOrderState: BaseState(data: order)));
 

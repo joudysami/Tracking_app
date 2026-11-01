@@ -72,6 +72,13 @@ class LocationRepoImpl implements LocationRepo {
   }
 
   @override
+  Future<BaseResponse<GeoPoint?>> getLastKnownPosition() {
+    return _safeCall.safeApiCall<GeoPoint?>(
+      _locationService.getLastKnownPosition,
+    );
+  }
+
+  @override
   Future<BaseResponse<LocationReportEntity>> reportLocation(
     LocationEntity location,
   ) {

@@ -7,33 +7,6 @@ import 'package:go_router/go_router.dart';
 import 'package:tracking_app/app/router/app_routes.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/profile/presentation/change_password/view/widgets/change_password_fields.dart';
-<<<<<<< HEAD
-import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_ui_event.dart';
-import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_view_model.dart';
-
-class ChangePasswordPage extends StatefulWidget {
-  const ChangePasswordPage({super.key});
-
-  @override
-  State<ChangePasswordPage> createState() => _ChangePasswordPageState();
-}
-
-class _ChangePasswordPageState extends State<ChangePasswordPage> {
-  final _current = TextEditingController();
-  final _next = TextEditingController();
-  final _confirm = TextEditingController();
-  StreamSubscription<ChangePasswordUiEvent>? _events;
-
-  @override
-  void initState() {
-    super.initState();
-    _events = context.read<ChangePasswordViewModel>().uiEvents.listen(_onEvent);
-  }
-
-  @override
-  void dispose() {
-    _events?.cancel();
-=======
 import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_state.dart';
 import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_ui_event.dart';
 import 'package:tracking_app/features/profile/presentation/change_password/view_model/change_password_view_model.dart';
@@ -74,15 +47,12 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
 
   @override
   void dispose() {
->>>>>>> origin/dev
     _current.dispose();
     _next.dispose();
     _confirm.dispose();
     super.dispose();
   }
 
-<<<<<<< HEAD
-=======
   @override
   Widget build(BuildContext context) {
     return BlocListener<ChangePasswordViewModel, ChangePasswordState>(
@@ -126,7 +96,6 @@ class _ChangePasswordEffectListenerState
     _subscription = viewModel.uiEvents.listen(_onEvent);
   }
 
->>>>>>> origin/dev
   void _onEvent(ChangePasswordUiEvent event) {
     if (!mounted) return;
     switch (event) {
@@ -144,18 +113,6 @@ class _ChangePasswordEffectListenerState
   }
 
   @override
-<<<<<<< HEAD
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(title: Text(LocaleKeys.profileResetPassword.tr())),
-      body: ChangePasswordFields(
-        current: _current,
-        next: _next,
-        confirm: _confirm,
-      ),
-    );
-  }
-=======
   void dispose() {
     _subscription?.cancel();
     super.dispose();
@@ -163,5 +120,4 @@ class _ChangePasswordEffectListenerState
 
   @override
   Widget build(BuildContext context) => widget.child;
->>>>>>> origin/dev
 }

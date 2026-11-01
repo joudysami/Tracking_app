@@ -4,17 +4,23 @@ import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/domain/entities/geo_point.dart';
+import 'package:tracking_app/core/domain/entities/location_permission_status.dart';
 import 'package:tracking_app/core/error/app_error.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/home/domain/entity/avaliable_order_entity.dart';
 import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart';
 import 'package:tracking_app/features/location_tracking/domain/entities/location_report_entity.dart';
+import 'package:tracking_app/features/location_tracking/domain/entities/location_entity.dart';
+import 'package:tracking_app/features/location_tracking/domain/use_cases/check_and_request_location_permission_use_case.dart';
+import 'package:tracking_app/features/location_tracking/domain/use_cases/is_location_service_enabled_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_reporting_use_case.dart';
 import 'package:tracking_app/features/location_tracking/domain/use_cases/location_tracking_use_case.dart';
 import 'package:tracking_app/features/order/core/order_status_progress.dart';
 import 'package:tracking_app/features/order/domain/enitiy/order_details_entity.dart';
 import 'package:tracking_app/features/order/domain/use_case/confirm_delivery_usecase.dart';
 import 'package:tracking_app/features/order/domain/use_case/order_status_use_case.dart';
+import 'package:tracking_app/features/home/domain/use_case/get_assigned_order_usecase.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_event.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_state.dart';
 
@@ -26,12 +32,19 @@ class OrderViewModel extends Cubit<OrderState> {
 
   final UpdateOrderStatusUseCase updateOrderStatusUseCase;
   final ConfirmDeliveryUseCase confirmDeliveryUseCase;
+  final GetAssignedOrderUseCase getAssignedOrderUseCase;
+  final IsLocationServiceEnabledUseCase isLocationServiceEnabledUseCase;
+  final CheckAndRequestLocationPermissionUseCase
+  checkAndRequestPermissionUseCase;
   final LocationReportingUseCase locationReportingUseCase;
   final LocationTrackingUseCase locationTrackingUseCase;
 
   OrderViewModel({
     required this.updateOrderStatusUseCase,
     required this.confirmDeliveryUseCase,
+    required this.getAssignedOrderUseCase,
+    required this.isLocationServiceEnabledUseCase,
+    required this.checkAndRequestPermissionUseCase,
     required this.locationReportingUseCase,
     required this.locationTrackingUseCase,
   }) : super(const OrderState());
@@ -50,6 +63,21 @@ class OrderViewModel extends Cubit<OrderState> {
         _confirmDelivery(event.orderId);
       case NextStatus():
         _nextStatus();
+    }
+  }
+
+  Future<({bool finished, String? errorMessage})>
+  checkFinishedOnBackend() async {
+    final result = await getAssignedOrderUseCase();
+
+    switch (result) {
+      case SuccessResponse(data: final assignedOrder):
+        final finished =
+            assignedOrder == null ||
+            normalizeOrderStatus(assignedOrder.status) == 'delivered';
+        return (finished: finished, errorMessage: null);
+      case ErrorResponse(appError: final appError):
+        return (finished: false, errorMessage: appError.message);
     }
   }
 
@@ -86,7 +114,7 @@ class OrderViewModel extends Cubit<OrderState> {
     // and can never hold the stage back.
     final newStatus = normalizeOrderStatus(state.order?.status ?? '');
     if (newStatus == 'out_for_delivery') {
-      await _reportDriverLocation();
+      unawaited(_reportDriverLocation());
     }
   }
 
@@ -95,11 +123,43 @@ class OrderViewModel extends Cubit<OrderState> {
   /// Failures only surface a message; they never block the stage transition.
   Future<void> _reportDriverLocation() async {
     try {
-      // GPS can stay unfixed (permission denied, service off, no signal), so
-      // the wait is bounded and the stage the driver just reached stands.
-      final location = await locationTrackingUseCase().first.timeout(
-        _locationFixTimeout,
-      );
+      final serviceResponse = await isLocationServiceEnabledUseCase();
+      switch (serviceResponse) {
+        case ErrorResponse<bool>():
+          _setLocationReportError(LocaleKeys.locationServiceCheckFailed.tr());
+          return;
+        case SuccessResponse<bool>(:final data):
+          if (data != true) {
+            _setLocationReportError(
+              LocaleKeys.locationServiceDisabledMessage.tr(),
+            );
+            return;
+          }
+      }
+
+      final permissionResponse = await checkAndRequestPermissionUseCase();
+      switch (permissionResponse) {
+        case ErrorResponse<LocationPermissionStatus>():
+          _setLocationReportError(
+            LocaleKeys.locationPermissionCheckFailed.tr(),
+          );
+          return;
+        case SuccessResponse<LocationPermissionStatus>(:final data):
+          if (data == null ||
+              data == LocationPermissionStatus.denied ||
+              data == LocationPermissionStatus.deniedForever ||
+              data == LocationPermissionStatus.unableToDetermine) {
+            _setLocationReportError(LocaleKeys.locationPermissionDenied.tr());
+            return;
+          }
+      }
+
+      final location = await _getCurrentOrLastKnownLocation();
+      if (location == null) {
+        _setLocationReportError(LocaleKeys.locationFixTimedOut.tr());
+        return;
+      }
+
       final result = await locationReportingUseCase(location);
 
       if (isClosed) return;
@@ -124,27 +184,60 @@ class OrderViewModel extends Cubit<OrderState> {
             ),
           );
       }
-    } on TimeoutException {
-      if (isClosed) return;
-
-      emit(
-        state.copyWith(
-          locationReportState: state.locationReportState.copyWith(
-            errorMessage: LocaleKeys.locationFixTimedOut.tr(),
-          ),
-        ),
-      );
     } catch (_) {
-      if (isClosed) return;
+      _setLocationReportError(LocaleKeys.locationReportFailed.tr());
+    }
+  }
 
-      emit(
-        state.copyWith(
-          locationReportState: state.locationReportState.copyWith(
-            errorMessage: LocaleKeys.locationReportFailed.tr(),
-          ),
-        ),
+  Future<LocationEntity?> _getCurrentOrLastKnownLocation() async {
+    try {
+      final currentResponse = await locationTrackingUseCase
+          .getCurrentPosition()
+          .timeout(_locationFixTimeout);
+
+      if (currentResponse case SuccessResponse(data: final point)
+          when point != null) {
+        return LocationEntity(
+          lat: point.latitude,
+          lng: point.longitude,
+          recordedAt: DateTime.now(),
+        );
+      }
+    } on TimeoutException {
+      // Fall back to the last known position below.
+    }
+
+    late final BaseResponse<GeoPoint?> lastKnownResponse;
+    try {
+      lastKnownResponse = await locationTrackingUseCase
+          .getLastKnownPosition()
+          .timeout(_locationFixTimeout);
+    } on TimeoutException {
+      return null;
+    }
+
+    if (lastKnownResponse case SuccessResponse(data: final point)
+        when point != null) {
+      return LocationEntity(
+        lat: point.latitude,
+        lng: point.longitude,
+        recordedAt: DateTime.now(),
       );
     }
+
+    return null;
+  }
+
+  void _setLocationReportError(String message) {
+    if (isClosed) return;
+
+    emit(
+      state.copyWith(
+        locationReportState: state.locationReportState.copyWith(
+          errorMessage: message,
+        ),
+      ),
+    );
   }
 
   Future<void> _updateStatus({

@@ -173,6 +173,7 @@ abstract class LocaleKeys {
   static const String profileEditVehicle = 'profile.edit_vehicle';
   static const String profileChangePassword = 'profile.change_password';
   static const String profileLanguage = 'profile.language';
+  static const String profileLanguageValue = 'profile.language_value';
   static const String profileLanguageEnglish = 'profile.language_english';
   static const String profileLanguageArabic = 'profile.language_arabic';
   static const String profileNotifications = 'profile.notifications';

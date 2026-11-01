@@ -64,6 +64,7 @@ class AppRouter {
         _homeRoute(),
         _orderRoute(),
         _orderDetailsRoute(),
+        _orderMapRoute(),
         _orderSuccessRoute(),
         _profileRoute(),
         _editProfileRoute(),

@@ -405,14 +405,6 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i644.ImagePickerService>(),
       ),
     );
-    gh.factory<_i124.OrderViewModel>(
-      () => _i124.OrderViewModel(
-        updateOrderStatusUseCase: gh<_i571.UpdateOrderStatusUseCase>(),
-        confirmDeliveryUseCase: gh<_i690.ConfirmDeliveryUseCase>(),
-        locationReportingUseCase: gh<_i541.LocationReportingUseCase>(),
-        locationTrackingUseCase: gh<_i258.LocationTrackingUseCase>(),
-      ),
-    );
     gh.factory<_i360.EditVehicleViewModel>(
       () => _i360.EditVehicleViewModel(
         gh<_i167.GetVehicleInfoUseCase>(),
@@ -426,6 +418,19 @@ extension GetItInjectableX on _i174.GetIt {
         getAvailableOrdersUseCase: gh<_i264.GetAvailableOrdersUseCase>(),
         claimOrderUseCase: gh<_i610.ClaimOrderUseCase>(),
         getAssignedOrderUseCase: gh<_i858.GetAssignedOrderUseCase>(),
+      ),
+    );
+    gh.factory<_i124.OrderViewModel>(
+      () => _i124.OrderViewModel(
+        updateOrderStatusUseCase: gh<_i571.UpdateOrderStatusUseCase>(),
+        confirmDeliveryUseCase: gh<_i690.ConfirmDeliveryUseCase>(),
+        getAssignedOrderUseCase: gh<_i858.GetAssignedOrderUseCase>(),
+        isLocationServiceEnabledUseCase:
+            gh<_i521.IsLocationServiceEnabledUseCase>(),
+        checkAndRequestPermissionUseCase:
+            gh<_i553.CheckAndRequestLocationPermissionUseCase>(),
+        locationReportingUseCase: gh<_i541.LocationReportingUseCase>(),
+        locationTrackingUseCase: gh<_i258.LocationTrackingUseCase>(),
       ),
     );
     return this;

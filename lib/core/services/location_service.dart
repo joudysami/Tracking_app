@@ -52,6 +52,13 @@ class LocationService {
     return GeoPoint(latitude: position.latitude, longitude: position.longitude);
   }
 
+  Future<GeoPoint?> getLastKnownPosition() async {
+    final position = await geolocator.getLastKnownPosition();
+    if (position == null) return null;
+
+    return GeoPoint(latitude: position.latitude, longitude: position.longitude);
+  }
+
   Stream<GeoPoint> getPositionStream() {
     return geolocator
         .getPositionStream(

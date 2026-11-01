@@ -18,6 +18,7 @@ abstract interface class LocationRepo {
 
   Stream<LocationEntity> getPositionStream();
   Future<BaseResponse<GeoPoint>> getCurrentPosition();
+  Future<BaseResponse<GeoPoint?>> getLastKnownPosition();
 
   Future<BaseResponse<LocationReportEntity>> reportLocation(
     LocationEntity location,

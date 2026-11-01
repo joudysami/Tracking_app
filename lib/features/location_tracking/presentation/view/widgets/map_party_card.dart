@@ -42,6 +42,8 @@ class MapPartyCard extends StatelessWidget {
               children: [
                 Text(
                   party.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     color: colors.grey.shade800,
                     fontSize: 14.sp,

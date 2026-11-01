@@ -21,9 +21,13 @@ class MapPill extends StatelessWidget {
         children: [
           Icon(icon, size: 12.sp, color: context.colors.white),
           SizedBox(width: 4.w),
-          Text(
-            label,
-            style: TextStyle(color: context.colors.white, fontSize: 10.sp),
+          Flexible(
+            child: Text(
+              label,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(color: context.colors.white, fontSize: 10.sp),
+            ),
           ),
         ],
       ),
