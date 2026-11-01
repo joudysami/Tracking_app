@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/order/domain/order_status_progress.dart';
@@ -8,6 +9,12 @@ import 'package:tracking_app/features/order/presentation/view_model/order_event.
 import 'package:tracking_app/features/order/presentation/view_model/order_state.dart';
 import 'package:tracking_app/features/order/presentation/view_model/order_view_model.dart';
 import 'package:tracking_app/features/order/presentation/widgets/order_details_body.dart';
+
+/// The driver's job ends at AWAITING_DELIVERY_CONFIRMATION: only the customer
+/// (or an admin) can move the order to DELIVERED.
+bool _awaitsCustomerConfirmation(String? status) {
+  return normalizeOrderStatus(status ?? '') == 'awaiting_delivery_confirmation';
+}
 
 class OrderDetailsScreen extends StatelessWidget {
   final Object? order;
@@ -18,14 +25,18 @@ class OrderDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocConsumer<OrderViewModel, OrderState>(
       listenWhen: (previous, current) {
+        final reachedAwaitingConfirmation =
+            previous.order != null &&
+            !_awaitsCustomerConfirmation(previous.order!.status) &&
+            _awaitsCustomerConfirmation(current.order?.status);
+
         return previous.updateStatusState.errorMessage !=
                 current.updateStatusState.errorMessage ||
             previous.confirmDeliveryState.errorMessage !=
                 current.confirmDeliveryState.errorMessage ||
             previous.locationReportState.errorMessage !=
                 current.locationReportState.errorMessage ||
-            (previous.confirmDeliveryState.data == null &&
-                current.confirmDeliveryState.data != null);
+            reachedAwaitingConfirmation;
       },
       listener: (context, state) {
         final error = state.updateStatusState.errorMessage.isNotEmpty
@@ -38,12 +49,18 @@ class OrderDetailsScreen extends StatelessWidget {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(error)));
-        } else if (state.confirmDeliveryState.data != null) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text(LocaleKeys.orderDetailsDeliveredToUser.tr()),
-            ),
-          );
+        } else if (_awaitsCustomerConfirmation(state.order?.status)) {
+          final messenger = ScaffoldMessenger.of(context);
+          messenger
+            ..hideCurrentSnackBar()
+            ..showSnackBar(
+              SnackBar(
+                content: Text(
+                  LocaleKeys.orderDetailsAwaitingCustomerConfirmation.tr(),
+                ),
+              ),
+            );
+          context.pop(true);
         }
       },
       builder: (context, state) {

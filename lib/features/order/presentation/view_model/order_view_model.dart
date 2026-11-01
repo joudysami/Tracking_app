@@ -67,45 +67,35 @@ class OrderViewModel extends Cubit<OrderState> {
     final currentOrder = state.order;
     if (currentOrder == null || state.isActionLoading) return;
 
-    final reported = await _reportDriverLocation();
-    if (!reported) return;
-
-    final normalized = normalizeOrderStatus(currentOrder.status);
-
-    // 'arrived' / 'awaiting_delivery_confirmation' → confirm delivery endpoint
-    if (normalized == 'arrived' ||
-        normalized == 'awaiting_delivery_confirmation') {
-      await _confirmDelivery(currentOrder.orderId);
-      return;
-    }
-
-    // All other actionable statuses → update status endpoint
+    // Every driver stage, the last one included, goes through the status
+    // endpoint: the backend's confirm-delivery endpoint is the customer's.
     final nextStatus = getNextOrderStatus(currentOrder.status);
-    if (nextStatus != null) {
-      await _updateStatus(
-        orderId: currentOrder.orderId,
-        status: nextStatus,
-        note: 'Status updated to $nextStatus',
-      );
+    if (nextStatus == null) return;
+
+    await _updateStatus(
+      orderId: currentOrder.orderId,
+      status: nextStatus,
+      note: 'Status updated to $nextStatus',
+    );
+
+    // The backend only accepts a driver-location report while the order is
+    // out for delivery, so the location is reported after the status call
+    // and can never hold the stage back.
+    final newStatus = normalizeOrderStatus(state.order?.status ?? '');
+    if (newStatus == 'out_for_delivery') {
+      await _reportDriverLocation();
     }
   }
 
-  /// Reports the driver's current location through LocationReportingUseCase.
-  /// Returns true when reporting succeeded (or was skipped because the
-  /// driver barely moved), so the stage can advance.
-  Future<bool> _reportDriverLocation() async {
-    emit(
-      state.copyWith(
-        locationReportState: state.locationReportState.copyWith(
-          isLoading: true,
-          errorMessage: '',
-        ),
-      ),
-    );
-
+  /// Best effort driver-location report. A null result from the use case
+  /// means the driver barely moved (nothing to report) and is not an error.
+  /// Failures only surface a message; they never block the stage transition.
+  Future<void> _reportDriverLocation() async {
     try {
       final location = await locationTrackingUseCase().first;
       final result = await locationReportingUseCase(location);
+
+      if (isClosed) return;
 
       switch (result) {
         case null:
@@ -113,34 +103,30 @@ class OrderViewModel extends Cubit<OrderState> {
           emit(
             state.copyWith(
               locationReportState: state.locationReportState.copyWith(
-                isLoading: false,
                 errorMessage: '',
               ),
             ),
           );
-          return true;
 
         case ErrorResponse<LocationReportEntity>(:final appError):
           emit(
             state.copyWith(
               locationReportState: state.locationReportState.copyWith(
-                isLoading: false,
                 errorMessage: appError.message,
               ),
             ),
           );
-          return false;
       }
     } catch (_) {
+      if (isClosed) return;
+
       emit(
         state.copyWith(
           locationReportState: state.locationReportState.copyWith(
-            isLoading: false,
             errorMessage: LocaleKeys.locationReportFailed.tr(),
           ),
         ),
       );
-      return false;
     }
   }
 

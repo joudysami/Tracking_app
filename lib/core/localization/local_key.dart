@@ -146,6 +146,8 @@ abstract class LocaleKeys {
       'order_details.arrived_to_user';
   static const String orderDetailsDeliveredToUser =
       'order_details.delivered_to_user';
+  static const String orderDetailsAwaitingCustomerConfirmation =
+      'order_details.awaiting_customer_confirmation';
   static const String orderDetailsFinishOrderFirst =
       'order_details.finish_order_first';
   static const String orderDetailsUnknownStore = 'order_details.unknown_store';
@@ -215,6 +217,7 @@ abstract class LocaleKeys {
       'status.awaiting_delivery_confirmation';
 
   static const String statusPlaced = 'status.placed';
+  static const String statusPreparing = 'status.preparing';
   static const String dateMon = 'date.mon';
   static const String dateTue = 'date.tue';
   static const String dateWed = 'date.wed';

@@ -12,6 +12,7 @@ int completedOrderProgressSegments(String status) {
     // A claimed order stays 'placed' on the backend while the driver
     // works stage 1 (assignment status is 'Accepted').
     case 'placed':
+    case 'preparing':
     case 'accepted':
       return 1;
     case 'picked':
@@ -19,8 +20,9 @@ int completedOrderProgressSegments(String status) {
     case 'out_for_delivery':
       return 3;
     case 'arrived':
-    case 'awaiting_delivery_confirmation':
       return 4;
+    case 'awaiting_delivery_confirmation':
+      return orderProgressSegmentCount;
     case 'delivered':
       return orderProgressSegmentCount;
     case 'pending':
@@ -31,18 +33,23 @@ int completedOrderProgressSegments(String status) {
   }
 }
 
+/// The status each stage button sends to PATCH /api/orders/{id}/status.
+///
+/// Backend timeline:
+/// PLACED -> PREPARING -> PICKED_UP -> OUT_FOR_DELIVERY -> ARRIVED
+/// -> AWAITING_DELIVERY_CONFIRMATION (DELIVERED is done by the customer).
 String? getNextOrderStatus(String currentStatus) {
   switch (normalizeOrderStatus(currentStatus)) {
     case 'placed':
+    case 'preparing':
     case 'accepted':
-      return 'picked';
+      return 'PICKED_UP';
     case 'picked':
-      return 'out_for_delivery';
+      return 'OUT_FOR_DELIVERY';
     case 'out_for_delivery':
-      return 'arrived';
+      return 'ARRIVED';
     case 'arrived':
-    case 'awaiting_delivery_confirmation':
-      return 'delivered';
+      return 'AWAITING_DELIVERY_CONFIRMATION';
     default:
       return null;
   }
@@ -50,6 +57,7 @@ String? getNextOrderStatus(String currentStatus) {
 String? getOrderActionLabelKey(String currentStatus) {
   switch (normalizeOrderStatus(currentStatus)) {
     case 'placed':
+    case 'preparing':
     case 'accepted':
       return LocaleKeys.orderDetailsArrivedAtPickup;
 
@@ -77,6 +85,8 @@ String? orderStatusLocalizationKey(String status) {
       return LocaleKeys.statusPending;
     case 'placed':
       return LocaleKeys.statusPlaced;
+    case 'preparing':
+      return LocaleKeys.statusPreparing;
     case 'accepted':
       return LocaleKeys.statusAccepted;
     case 'picked':

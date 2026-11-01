@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/base/base_state.dart';
 import 'package:tracking_app/features/home/domain/use_case/claim_order_usecase.dart';
 import 'package:tracking_app/features/home/domain/use_case/get_available_order_usecase.dart';
 
@@ -25,6 +26,15 @@ class HomeCubit extends Cubit<HomeState> {
 
       case ClaimOrderEvent():
         _claimOrder(event.orderId);
+        break;
+
+      case ActiveOrderDelivered():
+        emit(
+          state.copyWith(
+            claimOrderState: const BaseState(),
+            clearClaimingOrderId: true,
+          ),
+        );
         break;
     }
   }

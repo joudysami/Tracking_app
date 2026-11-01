@@ -1,5 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:tracking_app/core/base/base_response.dart';
+import 'package:tracking_app/core/error/api_exception.dart';
 import 'package:tracking_app/core/network/safe_call.dart';
 import 'package:tracking_app/features/order/data/data_source/order_data_source.dart';
 import 'package:tracking_app/features/order/domain/enitiy/confirm_delivery_entity.dart';
@@ -21,12 +22,12 @@ class OrdersRepoImpl implements OrderRepo {
       final response = await remoteDataSource.confirmDelivery(orderId: orderId);
 
       if (!response.status) {
-        throw Exception(response.message);
+        throw ApiException(message: response.message);
       }
 
       final data = response.data;
       if (data == null) {
-        throw Exception('Delivery confirmation data is empty.');
+        throw ApiException(message: 'Delivery confirmation data is empty.');
       }
 
       return data.toDomain();
@@ -47,7 +48,7 @@ class OrdersRepoImpl implements OrderRepo {
       );
 
       if (!response.status) {
-        throw Exception(response.message);
+        throw ApiException(message: response.message);
       }
 
       final data = response.data;

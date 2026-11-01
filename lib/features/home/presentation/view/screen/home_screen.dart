@@ -211,10 +211,19 @@ class _HomeScreenState extends State<HomeScreen> {
                                   context.read<HomeCubit>().doEvent(
                                     const GetAvailableOrdersEvent(),
                                   );
-                                  context.push(
-                                    AppRoutes.orderDetails,
-                                    extra: order,
-                                  );
+                                  context
+                                      .push<bool>(
+                                        AppRoutes.orderDetails,
+                                        extra: order,
+                                      )
+                                      .then((finished) {
+                                        if (finished == true &&
+                                            context.mounted) {
+                                          context.read<HomeCubit>().doEvent(
+                                            const ActiveOrderDelivered(),
+                                          );
+                                        }
+                                      });
                                 },
                               );
                             },

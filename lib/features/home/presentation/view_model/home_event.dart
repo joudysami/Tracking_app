@@ -14,3 +14,9 @@ class ClaimOrderEvent extends HomeEvent {
 
   const ClaimOrderEvent({required this.orderId});
 }
+
+/// The driver finished the order they were holding, so the app can forget it
+/// and Accept becomes available again.
+class ActiveOrderDelivered extends HomeEvent {
+  const ActiveOrderDelivered();
+}

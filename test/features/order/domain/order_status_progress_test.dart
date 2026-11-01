@@ -5,13 +5,14 @@ import 'package:tracking_app/features/order/domain/order_status_progress.dart';
 void main() {
   test('maps verified statuses onto the five screenshot segments', () {
     expect(completedOrderProgressSegments('Accepted'), 1);
+    expect(completedOrderProgressSegments('PREPARING'), 1);
     expect(completedOrderProgressSegments('picked'), 2);
     expect(completedOrderProgressSegments('PICKED_UP'), 2);
     expect(completedOrderProgressSegments('Out for delivery'), 3);
     expect(completedOrderProgressSegments('OUT_FOR_DELIVERY'), 3);
-    expect(completedOrderProgressSegments('AWAITING_DELIVERY_CONFIRMATION'), 4);
     expect(completedOrderProgressSegments('arrived'), 4);
     expect(completedOrderProgressSegments('ARRIVED'), 4);
+    expect(completedOrderProgressSegments('AWAITING_DELIVERY_CONFIRMATION'), 5);
     expect(completedOrderProgressSegments('Delivered'), 5);
   });
 
@@ -19,16 +20,24 @@ void main() {
     expect(completedOrderProgressSegments(''), 0);
     expect(completedOrderProgressSegments('available'), 0);
     expect(completedOrderProgressSegments('pending'), 0);
-    expect(completedOrderProgressSegments('Placed'), 0);
-    expect(completedOrderProgressSegments('PLACED'), 0);
+    // A claimed order stays PLACED on the backend while the driver works
+    // stage 1 (assignment status is 'Accepted').
+    expect(completedOrderProgressSegments('Placed'), 1);
+    expect(completedOrderProgressSegments('PLACED'), 1);
     expect(completedOrderProgressSegments('cancelled'), 0);
   });
 
   test('returns next status in delivery sequence', () {
-    expect(getNextOrderStatus('accepted'), 'picked');
-    expect(getNextOrderStatus('picked'), 'out_for_delivery');
-    expect(getNextOrderStatus('out_for_delivery'), 'arrived');
-    expect(getNextOrderStatus('arrived'), 'delivered');
+    expect(getNextOrderStatus('placed'), 'PICKED_UP');
+    expect(getNextOrderStatus('preparing'), 'PICKED_UP');
+    expect(getNextOrderStatus('accepted'), 'PICKED_UP');
+    expect(getNextOrderStatus('picked'), 'OUT_FOR_DELIVERY');
+    expect(getNextOrderStatus('out_for_delivery'), 'ARRIVED');
+    expect(
+      getNextOrderStatus('arrived'),
+      'AWAITING_DELIVERY_CONFIRMATION',
+    );
+    expect(getNextOrderStatus('awaiting_delivery_confirmation'), isNull);
     expect(getNextOrderStatus('delivered'), isNull);
   });
 
@@ -49,6 +58,10 @@ void main() {
       getOrderActionLabelKey('arrived'),
       LocaleKeys.orderDetailsDeliveredToUser,
     );
+    expect(
+      getOrderActionLabelKey('AWAITING_DELIVERY_CONFIRMATION'),
+      LocaleKeys.orderDetailsDeliveredToUser,
+    );
   });
 
   test('localizes only known status values', () {
@@ -57,6 +70,7 @@ void main() {
       LocaleKeys.statusOutForDelivery,
     );
     expect(orderStatusLocalizationKey('PLACED'), LocaleKeys.statusPlaced);
+    expect(orderStatusLocalizationKey('PREPARING'), LocaleKeys.statusPreparing);
     expect(orderStatusLocalizationKey('PICKED_UP'), LocaleKeys.statusPicked);
     expect(
       orderStatusLocalizationKey('AWAITING_DELIVERY_CONFIRMATION'),
