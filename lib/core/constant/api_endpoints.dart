@@ -1,7 +1,7 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ApiEndpoints {
   ApiEndpoints._();
@@ -70,6 +70,9 @@ class ApiEndpoints {
   /// home ///
   static const String availableOrders = "/api/orders/drivers/available-orders";
   static const String claim = '/api/orders/{orderId}/claim';
+
+  /// order history ///
+  static const String orderHistory = '/api/orders/drivers/me/orders';
 }
 
 Future<void> _ensureDotEnv() async {

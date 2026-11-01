@@ -1,5 +1,5 @@
 import 'package:injectable/injectable.dart';
-import 'package:tracking_app/features/home/data/api/order_api_client.dart';
+import 'package:tracking_app/features/home/data/api/home_api_client.dart';
 import 'package:tracking_app/features/home/data/data_source/orders_data_source.dart';
 import 'package:tracking_app/features/home/data/models/available_orders_response.dart';
 import 'package:tracking_app/features/home/data/models/claim_order_response.dart';

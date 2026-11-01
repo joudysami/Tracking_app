@@ -12,4 +12,5 @@ final class AppRoutes {
   static const String home = '/home';
   static const String order = '/order';
   static const String orderDetails = '/order-details';
+  static const String orderDetailsHistory = '/order-details-history';
 }
