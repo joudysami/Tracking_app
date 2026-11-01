@@ -1,56 +1,86 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:tracking_app/core/constant/widget_keys.dart';
 
 import '../../../../../../core/localization/local_key.dart';
 import '../../../../../../core/theme/app_color.dart';
+import '../../../../data/api/order_status_api_values.dart';
+import '../../view_model/order_history_state.dart';
 
 class OrdersHistoryCount extends StatelessWidget {
   const OrdersHistoryCount({
     super.key,
-    required this.completedCount,
-    required this.cancelledCount,
+    required this.completed,
+    required this.cancelled,
+    this.onRetry,
   });
 
-  final int? completedCount;
-  final int? cancelledCount;
+  final OrderCountState completed;
+  final OrderCountState cancelled;
+  final ValueChanged<String>? onRetry;
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _buildCard(
-          context,
-          icon: Icon(
-            Icons.cancel_outlined,
-            color: context.colors.error,
-            size: 24.r,
+        Expanded(
+          child: HistoryCountCard(
+            key: WidgetKeys.cancelledCountCard,
+            icon: Icon(
+              Icons.cancel_outlined,
+              color: context.colors.error,
+              size: 24.r,
+            ),
+            text: LocaleKeys.statusCancelled.tr(),
+            count: cancelled,
+            onRetry:
+            onRetry == null || !cancelled.failed
+                ? null
+                : () => onRetry!(OrderStatusApiValues.cancelled),
           ),
-          text: LocaleKeys.statusCancelled.tr(),
-          count: cancelledCount ?? 0,
         ),
         SizedBox(width: 16.w),
-        _buildCard(
-          context,
-          icon: Icon(
-            Icons.check_circle_outline_rounded,
-            color: context.colors.green,
-            size: 24.r,
+        Expanded(
+          child: HistoryCountCard(
+            key: WidgetKeys.completedCountCard,
+            icon: Icon(
+              Icons.check_circle_outline_rounded,
+              color: context.colors.green,
+              size: 24.r,
+            ),
+            text: LocaleKeys.statusDelivered.tr(),
+            count: completed,
+            onRetry:
+            onRetry == null || !completed.failed
+                ? null
+                : () => onRetry!(OrderStatusApiValues.delivered),
           ),
-          text: LocaleKeys.statusDelivered.tr(),
-          count: completedCount ?? 0,
         ),
       ],
     );
   }
+}
 
-  Widget _buildCard(
-    BuildContext context, {
-    required Icon icon,
-    required String text,
-    required int count,
-  }) {
-    return Expanded(
+class HistoryCountCard extends StatelessWidget {
+  const HistoryCountCard({
+    super.key,
+    required this.icon,
+    required this.text,
+    required this.count,
+    this.onRetry,
+  });
+
+  final Icon icon;
+  final String text;
+  final OrderCountState count;
+  final VoidCallback? onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onRetry,
+      behavior: HitTestBehavior.opaque,
       child: Container(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
@@ -59,12 +89,10 @@ class OrdersHistoryCount extends StatelessWidget {
         ),
         child: Column(
           children: [
-            Text(
-              '$count',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                fontSize: 18.sp,
-                color: context.colors.black,
+            SizedBox(
+              height: 24.h,
+              child: Center(
+                child: _buildValue(context),
               ),
             ),
             SizedBox(height: 6.h),
@@ -85,6 +113,31 @@ class OrdersHistoryCount extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildValue(BuildContext context) {
+    if (count.loading) {
+      return SizedBox(
+        width: 18.r,
+        height: 18.r,
+        child: const CircularProgressIndicator(strokeWidth: 2),
+      );
+    }
+    if (count.failed) {
+      return Icon(
+        Icons.refresh_rounded,
+        size: 20.r,
+        color: context.colors.black,
+      );
+    }
+    return Text(
+      '${count.value ?? 0}',
+      style: TextStyle(
+        fontWeight: FontWeight.w600,
+        fontSize: 18.sp,
+        color: context.colors.black,
       ),
     );
   }

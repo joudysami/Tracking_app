@@ -137,6 +137,8 @@ void main() {
 
     await pumpView(tester, viewModel);
 
+    expect(find.byType(AppBar), findsOneWidget);
+    expect(find.byIcon(Icons.arrow_back_ios_new_rounded), findsNothing);
     expect(find.byType(OrdersHistoryCount), findsOneWidget);
 
     await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
@@ -145,21 +147,58 @@ void main() {
     expect(find.byType(OrderHistoryCard), findsNWidgets(2));
   });
 
-  testWidgets('shows the load more footer when more pages remain', (
+  testWidgets('footer stays idle on success because loading is automatic', (
     tester,
   ) async {
     stubFirstPage(const [
       OrderHistoryEntity(id: '1', status: OrderStatusApiValues.delivered),
     ], true);
+    when(history.call(page: 2, pageSize: 10)).thenAnswer(
+      (_) async => SuccessResponse(
+        PaginatedResult(
+          items: const [OrderHistoryEntity(id: '2')],
+          pagination: PaginationParams(hasNextPage: false),
+        ),
+      ),
+    );
     final viewModel = buildViewModel();
     addTearDown(viewModel.close);
-    await viewModel.onEvent(const LoadOrderHistory());
-
     await pumpView(tester, viewModel);
-    await tester.drag(find.byType(CustomScrollView), const Offset(0, -300));
+
+    expect(find.byKey(WidgetKeys.orderHistoryShimmer), findsOneWidget);
+
+    await viewModel.onEvent(const LoadOrderHistory());
+    await tester.pump();
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+    await tester.pump();
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
     await tester.pump();
 
     expect(find.byType(OrderHistoryLoadMoreFooter), findsOneWidget);
-    expect(find.byKey(WidgetKeys.orderHistoryLoadMoreButton), findsOneWidget);
+    expect(find.byKey(WidgetKeys.orderHistoryLoadMoreRetry), findsNothing);
+    verify(history.call(page: 2, pageSize: 10)).called(1);
+    expect(find.byType(OrderHistoryCard), findsNWidgets(2));
+  });
+
+  testWidgets('footer shows retry when loading more failed', (tester) async {
+    stubFirstPage(const [
+      OrderHistoryEntity(id: '1', status: OrderStatusApiValues.delivered),
+    ], true);
+    when(history.call(page: 2, pageSize: 10)).thenAnswer(
+      (_) async => ErrorResponse<PaginatedResult<OrderHistoryEntity>>(
+        appError: BadResponseError('down'),
+      ),
+    );
+    final viewModel = buildViewModel();
+    addTearDown(viewModel.close);
+    await viewModel.onEvent(const LoadOrderHistory());
+    await viewModel.onEvent(const LoadMoreOrderHistory());
+
+    await pumpView(tester, viewModel);
+    await tester.pump();
+    await tester.drag(find.byType(CustomScrollView), const Offset(0, -600));
+    await tester.pump();
+
+    expect(find.byKey(WidgetKeys.orderHistoryLoadMoreRetry), findsOneWidget);
   });
 }

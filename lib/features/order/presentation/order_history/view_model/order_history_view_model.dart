@@ -20,7 +20,6 @@ class OrderHistoryViewModel
 
   static const int _pageSize = 10;
   static const int _maxEmptyPageSkips = 10;
-  int _emptyPageSkips = 0;
   bool _isRequestInProgress = false;
   bool _refreshQueued = false;
 
@@ -32,6 +31,7 @@ class OrderHistoryViewModel
       LoadOrderHistory() => Future.wait([_load(), _loadCounts()]),
       RefreshOrderHistory() => _refresh(),
       LoadMoreOrderHistory() || RetryOrderHistory() => _load(),
+      RetryOrderCount(:final status) => _loadCount(status),
       OpenOrderDetails(:final orderId) => _openDetails(orderId),
     };
   }
@@ -52,14 +52,16 @@ class OrderHistoryViewModel
   }
 
   Future<void> _load({bool refresh = false}) async {
-    if (_isRequestInProgress) return;
+    if (_isRequestInProgress) {
+      if (refresh) _refreshQueued = true;
+      return;
+    }
     if (!refresh && !state.hasMore) return;
 
     _isRequestInProgress = true;
 
     final isFirstPage = refresh || state.currentPage == 0;
-    final page = isFirstPage ? 1 : state.currentPage + 1;
-    if (isFirstPage) _emptyPageSkips = 0;
+    var page = isFirstPage ? 1 : state.currentPage + 1;
 
     emit(
       refresh
@@ -76,65 +78,87 @@ class OrderHistoryViewModel
             ),
     );
 
-    final response = await _getOrdersHistory(page: page, pageSize: _pageSize);
-    _isRequestInProgress = false;
-    if (isClosed) return;
+    try {
+      final collected = <OrderHistoryEntity>[];
+      var emptyPageSkips = 0;
 
-    switch (response) {
-      case SuccessResponse(:final data):
-        final items = data?.items ?? const <OrderHistoryEntity>[];
-        final hasMore = data?.pagination.hasNextPage ?? false;
-
-        emit(
-          state.copyWith(
-            orders: [...state.orders, ...items],
-            status: PaginationStatus.success,
-            hasMore: hasMore,
-            currentPage: page,
-          ),
+      loadLoop:
+      while (true) {
+        final response = await _getOrdersHistory(
+          page: page,
+          pageSize: _pageSize,
         );
+        if (isClosed) return;
 
-        if (items.isNotEmpty) _emptyPageSkips = 0;
-        if (items.isEmpty && hasMore && _emptyPageSkips < _maxEmptyPageSkips) {
-          _emptyPageSkips++;
-          await _load();
+        switch (response) {
+          case SuccessResponse(:final data):
+            final items = data?.items ?? const <OrderHistoryEntity>[];
+            final hasMore = data?.pagination.hasNextPage ?? false;
+            collected.addAll(items);
+
+            if (collected.isEmpty &&
+                hasMore &&
+                emptyPageSkips < _maxEmptyPageSkips) {
+              emptyPageSkips++;
+              page++;
+              break;
+            }
+
+            emit(
+              state.copyWith(
+                orders: [...state.orders, ...collected],
+                status: PaginationStatus.success,
+                hasMore: hasMore,
+                currentPage: page,
+              ),
+            );
+            break loadLoop;
+          case ErrorResponse(:final appError):
+            emit(
+              state.copyWith(
+                status: isFirstPage
+                    ? PaginationStatus.error
+                    : PaginationStatus.errorLoadingMore,
+              ),
+            );
+            emitError(appError);
+            break loadLoop;
         }
-
-      case ErrorResponse(:final appError):
-        emit(
-          state.copyWith(
-            status: isFirstPage
-                ? PaginationStatus.error
-                : PaginationStatus.errorLoadingMore,
-          ),
-        );
-        emitError(appError);
-    }
-
-    if (_refreshQueued && !_isRequestInProgress) {
-      _refreshQueued = false;
-      await _refresh();
+      }
+    } finally {
+      _isRequestInProgress = false;
+      if (_refreshQueued && !isClosed) {
+        _refreshQueued = false;
+        await _refresh();
+      }
     }
   }
 
-  Future<void> _loadCounts() async {
-    final results = await Future.wait([
-      _getOrdersCount(status: OrderStatusApiValues.delivered),
-      _getOrdersCount(status: OrderStatusApiValues.cancelled),
+  Future<void> _loadCounts() {
+    return Future.wait([
+      _loadCount(OrderStatusApiValues.delivered),
+      _loadCount(OrderStatusApiValues.cancelled),
     ]);
+  }
+
+  Future<void> _loadCount(String status) async {
+    _emitCount(status, const OrderCountState(loading: true));
+    final result = await _getOrdersCount(status: status);
     if (isClosed) return;
 
+    switch (result) {
+      case SuccessResponse(:final data):
+        _emitCount(status, OrderCountState(value: data));
+      case ErrorResponse():
+        _emitCount(status, const OrderCountState(failed: true));
+    }
+  }
+
+  void _emitCount(String status, OrderCountState value) {
     emit(
-      state.copyWith(
-        completedCount: switch (results[0]) {
-          SuccessResponse(:final data) => data,
-          ErrorResponse() => null,
-        },
-        cancelledCount: switch (results[1]) {
-          SuccessResponse(:final data) => data,
-          ErrorResponse() => null,
-        },
-      ),
+      status == OrderStatusApiValues.delivered
+          ? state.copyWith(completed: value)
+          : state.copyWith(cancelled: value),
     );
   }
 }

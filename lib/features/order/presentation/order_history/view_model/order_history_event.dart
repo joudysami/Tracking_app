@@ -23,3 +23,9 @@ class OpenOrderDetails extends OrderHistoryEvent {
 
   const OpenOrderDetails(this.orderId);
 }
+
+class RetryOrderCount extends OrderHistoryEvent {
+  final String status;
+
+  const RetryOrderCount(this.status);
+}

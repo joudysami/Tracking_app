@@ -34,7 +34,7 @@ class OrderRepoImpl implements OrderRepo {
       final rawPagination = response.pagination;
       return PaginatedResult(
         items: response.dataOrThrow().map((e) => e.toEntity()).toList(),
-        pagination: rawPagination is Map<String, dynamic>
+        pagination: rawPagination != null
             ? PaginationModel.fromJson(rawPagination).toEntity()
             : const PaginationParams(),
       );

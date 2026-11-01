@@ -18,10 +18,12 @@ class OrderAddressCard extends StatelessWidget {
   final String? addressLine;
   final String? userName;
   final bool isStore;
-  final String storeAddress = "20th st, Sheikh Zayed, Giza";
 
   @override
   Widget build(BuildContext context) {
+    final displayAddress = (addressLine?.trim().isNotEmpty ?? false)
+        ? addressLine!
+        : LocaleKeys.orderDetailsNoAddress.tr();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -69,7 +71,7 @@ class OrderAddressCard extends StatelessWidget {
                 SizedBox(width: 4.w),
                 Expanded(
                   child: Text(
-                    isStore ? storeAddress : addressLine ?? '_',
+                    displayAddress,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: context.colors.black,

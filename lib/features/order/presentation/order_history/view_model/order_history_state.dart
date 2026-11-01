@@ -2,21 +2,36 @@ import 'package:equatable/equatable.dart';
 import 'package:tracking_app/core/utils/pagination/pagination_state.dart';
 import 'package:tracking_app/features/order/domain/entities/order_history_entity.dart';
 
+class OrderCountState extends Equatable {
+  final int? value;
+  final bool loading;
+  final bool failed;
+
+  const OrderCountState({
+    this.value,
+    this.loading = false,
+    this.failed = false,
+  });
+
+  @override
+  List<Object?> get props => [value, loading, failed];
+}
+
 class OrderHistoryState extends Equatable {
   final List<OrderHistoryEntity> orders;
   final PaginationStatus status;
   final bool hasMore;
   final int currentPage;
-  final int? completedCount;
-  final int? cancelledCount;
+  final OrderCountState completed;
+  final OrderCountState cancelled;
 
   const OrderHistoryState({
     this.orders = const [],
     this.status = PaginationStatus.initial,
     this.hasMore = true,
     this.currentPage = 0,
-    this.completedCount,
-    this.cancelledCount,
+    this.completed = const OrderCountState(),
+    this.cancelled = const OrderCountState(),
   });
 
   OrderHistoryState copyWith({
@@ -24,16 +39,16 @@ class OrderHistoryState extends Equatable {
     PaginationStatus? status,
     bool? hasMore,
     int? currentPage,
-    int? completedCount,
-    int? cancelledCount,
+    OrderCountState? completed,
+    OrderCountState? cancelled,
   }) {
     return OrderHistoryState(
       orders: orders ?? this.orders,
       status: status ?? this.status,
       hasMore: hasMore ?? this.hasMore,
       currentPage: currentPage ?? this.currentPage,
-      completedCount: completedCount ?? this.completedCount,
-      cancelledCount: cancelledCount ?? this.cancelledCount,
+      completed: completed ?? this.completed,
+      cancelled: cancelled ?? this.cancelled,
     );
   }
 
@@ -43,7 +58,7 @@ class OrderHistoryState extends Equatable {
     status,
     hasMore,
     currentPage,
-    completedCount,
-    cancelledCount,
+    completed,
+    cancelled,
   ];
 }

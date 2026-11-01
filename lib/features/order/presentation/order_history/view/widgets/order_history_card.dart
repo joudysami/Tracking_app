@@ -67,8 +67,8 @@ class OrderHistoryCard extends StatelessWidget {
             OrderAddressCard(isStore: true),
             SizedBox(height: 16.h),
             OrderAddressCard(
-              addressLine: order.destination?.addressLine ?? '_',
-              userName: order.destination?.recipientName ?? '_',
+              addressLine: order.destination?.addressLine,
+              userName: order.destination?.recipientName,
             ),
           ],
         ),

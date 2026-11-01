@@ -28,7 +28,7 @@ void main() {
     List<OrderHistoryResponse>? data = const [
       OrderHistoryResponse(id: '1', status: OrderStatusApiValues.delivered),
     ],
-    Object? pagination,
+    Map<String, dynamic>? pagination,
   }) {
     return ApiResponse(
       status: status,
@@ -60,7 +60,7 @@ void main() {
     });
 
     test(
-      'falls back to empty pagination when the payload is not a map',
+      'falls back to empty pagination when the response has none',
       () async {
         when(
           dataSource.getOrderHistory(page: 1, pageSize: 10, status: null),

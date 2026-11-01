@@ -21,7 +21,6 @@ import 'package:tracking_app/features/order/presentation/order_details/view/scre
 import 'package:tracking_app/features/profile/profile.dart';
 
 import '../../features/order/presentation/order_details_history/view/screen/order_details_history_screen.dart';
-import '../../features/order/presentation/order_history/view/screens/order_history_screen.dart';
 
 class AppRouter {
   AppRouter._();
@@ -41,7 +40,6 @@ class AppRouter {
         _orderRoute(),
         _orderDetailsRoute(),
         _orderDetailsHistoryRoute(),
-        _orderHistoryRoute(),
       ],
     );
   }
@@ -149,13 +147,6 @@ class AppRouter {
       builder: (context, state) => OrderDetailsHistoryScreen(
         orderId: state.extra is String ? state.extra as String : null,
       ),
-    );
-  }
-
-  static GoRoute _orderHistoryRoute() {
-    return GoRoute(
-      path: AppRoutes.orderHistory,
-      builder: (context, state) => const OrderHistoryScreen(),
     );
   }
 }

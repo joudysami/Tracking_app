@@ -7,42 +7,35 @@ class ApiResponse<T> {
     required this.message,
     required this.data,
     this.pagination,
-    this.errors,
   });
 
   final bool status;
   final int code;
   final String message;
   final T? data;
-  final dynamic pagination;
-  final dynamic errors;
+  final Map<String, dynamic>? pagination;
 
   factory ApiResponse.fromJson(
     Map<String, dynamic> json,
     T Function(Object? json) fromJsonT,
   ) {
     final rawData = json['data'];
+    final rawPagination = json['pagination'];
 
     return ApiResponse<T>(
       status: json['status'] as bool? ?? false,
       code: json['code'] as int? ?? 0,
       message: json['message'] as String? ?? '',
       data: rawData == null ? null : fromJsonT(rawData),
-      pagination: json['pagination'],
-      errors: json['errors'],
+      pagination: rawPagination is Map<String, dynamic> ? rawPagination : null,
     );
-  }
-
-  String get errorMessage {
-    if (errors == null) return message;
-    return '$message\n${errors is Map ? errors.values.join('\n') : errors}';
   }
 }
 
 extension ApiResponseValidation<T> on ApiResponse<T> {
   T dataOrThrow() {
-    if (!status || errors != null || data == null) {
-      throw ApiException(message: errorMessage, statusCode: code);
+    if (!status || data == null) {
+      throw ApiException(message: message, statusCode: code);
     }
     return data as T;
   }

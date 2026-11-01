@@ -74,8 +74,8 @@ void main() {
       expect(viewModel.state.status, PaginationStatus.success);
       expect(viewModel.state.currentPage, 1);
       expect(viewModel.state.hasMore, isFalse);
-      expect(viewModel.state.completedCount, 5);
-      expect(viewModel.state.cancelledCount, 5);
+      expect(viewModel.state.completed.value, 5);
+      expect(viewModel.state.cancelled.value, 5);
     });
 
     test('appends the next page on load more', () async {
@@ -200,6 +200,47 @@ void main() {
       expect(event, isA<NavigateEvent>());
       expect((event as NavigateEvent).route, AppRoutes.orderDetailsHistory);
       expect(event.arguments, '7');
+    });
+
+    test('marks only the failed count as failed', () async {
+      stubHistoryPage(1, const [OrderHistoryEntity(id: '1')], false);
+      when(
+        count.call(status: OrderStatusApiValues.delivered),
+      ).thenAnswer((_) async => const SuccessResponse<int?>(4));
+      when(
+        count.call(status: OrderStatusApiValues.cancelled),
+      ).thenAnswer(
+            (_) async =>
+            ErrorResponse<int?>(appError: BadResponseError('count down')),
+      );
+
+      await viewModel.onEvent(const LoadOrderHistory());
+
+      expect(viewModel.state.completed.value, 4);
+      expect(viewModel.state.cancelled.failed, isTrue);
+      expect(viewModel.state.cancelled.value, isNull);
+    });
+
+    test('retries a single failed count', () async {
+      stubHistoryPage(1, const [OrderHistoryEntity(id: '1')], false);
+      when(
+        count.call(status: OrderStatusApiValues.cancelled),
+      ).thenAnswer(
+            (_) async =>
+            ErrorResponse<int?>(appError: BadResponseError('count down')),
+      );
+      await viewModel.onEvent(const LoadOrderHistory());
+      expect(viewModel.state.cancelled.failed, isTrue);
+
+      when(
+        count.call(status: OrderStatusApiValues.cancelled),
+      ).thenAnswer((_) async => const SuccessResponse<int?>(2));
+      await viewModel.onEvent(
+        const RetryOrderCount(OrderStatusApiValues.cancelled),
+      );
+
+      expect(viewModel.state.cancelled.value, 2);
+      expect(viewModel.state.cancelled.failed, isFalse);
     });
   });
 }
