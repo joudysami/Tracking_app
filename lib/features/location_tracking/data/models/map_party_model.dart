@@ -76,6 +76,7 @@ OrderMapModel orderMapFor(OrderDetailsEntity? order) {
     store: MapPartyModel(
       name: fallback(order.storeName, orderMapMock.store.name),
       address: fallback(order.storeAddress, orderMapMock.store.address),
+      imageUrl: order.storeImageUrl,
       location:
           point(order.storeLatitude, order.storeLongitude) ??
           orderMapMock.store.location,

@@ -24,12 +24,11 @@ abstract interface class LocationRepo {
   );
 
   Future<BaseResponse<LocationPermissionStatus>> checkAndRequestPermission();
-  
-Future<BaseResponse<RouteEntity>> getRoute({
+
+  Future<BaseResponse<RouteEntity>> getRoute({
     required double startLatitude,
     required double startLongitude,
     required double endLatitude,
     required double endLongitude,
   });
-
 }

@@ -182,6 +182,21 @@ abstract class LocaleKeys {
   static const String profileVehicleNumber = 'profile.vehicle_number';
   static const String profileVehicleLicense = 'profile.vehicle_license';
   static const String profileUpdated = 'profile.profile_updated';
+  static const String profileResetPassword = 'profile.reset_password';
+  static const String profileCurrentPassword = 'profile.current_password';
+  static const String profileNewPassword = 'profile.new_password';
+  static const String profileConfirmPassword = 'profile.confirm_password';
+  static const String profileEditTitle = 'profile.edit_title';
+  static const String profileChange = 'profile.change';
+  static const String profileFirstName = 'profile.first_name';
+  static const String profileLastName = 'profile.last_name';
+  static const String profileLogoutTitle = 'profile.logout_title';
+  static const String profileLogoutMessage = 'profile.logout_message';
+  static const String profileLogoutAction = 'profile.logout_action';
+  static const String profileVehicleInfo = 'profile.vehicle_info';
+  static const String profileBike = 'profile.bike';
+  static const String profileLanguageValue = 'profile.language_value';
+  static const String profileVersion = 'profile.version';
 
   static const String applyTitle = 'apply.title';
   static const String applyWelcome = 'apply.welcome';
@@ -241,15 +256,15 @@ abstract class LocaleKeys {
   static const String dateDec = 'date.dec';
   static const String dateAm = 'date.am';
   static const String datePm = 'date.pm';
-    // Order Map
+  // Order Map
   static const String orderMapYourLocation = 'order_map.your_location';
   static const String orderMapPickupAddress = 'order_map.pickup_address';
   static const String orderMapUserAddress = 'order_map.user_address';
-  static const String orderMapUser = 'order_map.user';  
+  static const String orderMapUser = 'order_map.user';
   static const unableToCheckLocationPermission =
-      'location_tracking.unable_to_check_permission';  
-  
-static const locationPermissionDialogTitle = 'locationPermissionDialogTitle';
+      'location_tracking.unable_to_check_permission';
+
+  static const locationPermissionDialogTitle = 'locationPermissionDialogTitle';
   static const locationPermissionDialogMessage =
       'locationPermissionDialogMessage';
   static const cancel = 'cancel';
@@ -266,5 +281,5 @@ static const locationPermissionDialogTitle = 'locationPermissionDialogTitle';
   static const locationReportFailed = 'locationReportFailed';
   static const locationFixTimedOut = 'locationFixTimedOut';
   static const locationOpenSettingsFailed = 'locationOpenSettingsFailed';
-  static const String locationRouteLoadFailed = 'locationRouteLoadFailed';  
+  static const String locationRouteLoadFailed = 'locationRouteLoadFailed';
 }

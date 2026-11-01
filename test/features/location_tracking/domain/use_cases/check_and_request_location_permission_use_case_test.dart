@@ -71,8 +71,9 @@ void main() {
 
   group('CheckAndRequestLocationPermissionUseCase', () {
     test('delegates to the repo and returns the same response', () async {
-      const expectedResponse =
-          SuccessResponse<LocationPermission>(LocationPermission.whileInUse);
+      const expectedResponse = SuccessResponse<LocationPermission>(
+        LocationPermission.whileInUse,
+      );
       fakeRepo.checkAndRequestPermissionResponse = expectedResponse;
 
       final result = await useCase();
@@ -94,8 +95,9 @@ void main() {
     });
 
     test('increments call counter when invoked', () async {
-      const expectedResponse =
-          SuccessResponse<LocationPermission>(LocationPermission.always);
+      const expectedResponse = SuccessResponse<LocationPermission>(
+        LocationPermission.always,
+      );
       fakeRepo.checkAndRequestPermissionResponse = expectedResponse;
 
       await useCase();

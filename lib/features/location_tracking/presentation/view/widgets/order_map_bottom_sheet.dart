@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/core/theme/app_color.dart';
 import 'package:tracking_app/features/location_tracking/data/models/map_party_model.dart';
-import 'package:tracking_app/features/location_tracking/presentation/view/widgets/map_party_card.dart';
+import 'package:tracking_app/features/order/presentation/widgets/order_party_card.dart';
 
 class OrderMapBottomSheet extends StatelessWidget {
   final MapPartyModel target;
@@ -52,14 +52,24 @@ class OrderMapBottomSheet extends StatelessWidget {
                     ? LocaleKeys.orderMapPickupAddress.tr()
                     : LocaleKeys.orderMapUserAddress.tr(),
               ),
-              MapPartyCard(party: target),
+              OrderPartyCard(
+                title: target.name,
+                address: target.address,
+                isStore: isPickup,
+                imageUrl: target.imageUrl,
+              ),
               SizedBox(height: 16.h),
               _SectionLabel(
                 isPickup
                     ? LocaleKeys.orderMapUserAddress.tr()
                     : LocaleKeys.orderMapPickupAddress.tr(),
               ),
-              MapPartyCard(party: other),
+              OrderPartyCard(
+                title: other.name,
+                address: other.address,
+                isStore: !isPickup,
+                imageUrl: other.imageUrl,
+              ),
             ],
           ),
         );

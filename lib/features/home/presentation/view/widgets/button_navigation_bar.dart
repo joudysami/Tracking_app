@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:tracking_app/core/localization/local_key.dart';
 import 'package:tracking_app/features/home/presentation/view/screen/home_screen.dart';
 import 'package:tracking_app/features/order/order_screen.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:tracking_app/core/di/di.dart';
+import 'package:tracking_app/features/profile/presentation/profile/view/page/profile_page.dart';
+import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_event.dart';
+import 'package:tracking_app/features/profile/presentation/profile/view_model/profile_view_model.dart';
 
 class ButtonNavigationBar extends StatefulWidget {
   const ButtonNavigationBar({super.key});
@@ -17,13 +22,24 @@ class _ButtonNavigationBarState extends State<ButtonNavigationBar> {
   final List<Widget> screens = const [
     HomeScreen(),
     OrderScreen(),
-    //ProfileScreen(),
+    ProfilePage(),
   ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: IndexedStack(index: currentIndex, children: screens),
+      body: IndexedStack(
+        index: currentIndex,
+        children: [
+          screens[0],
+          screens[1],
+          BlocProvider(
+            create: (_) =>
+                getIt<ProfileViewModel>()..doEvent(const ProfileRequested()),
+            child: screens[2],
+          ),
+        ],
+      ),
       bottomNavigationBar: NavigationBar(
         selectedIndex: currentIndex,
         onDestinationSelected: (index) {

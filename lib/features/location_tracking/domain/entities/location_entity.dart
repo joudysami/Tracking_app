@@ -10,7 +10,7 @@ class LocationEntity extends Equatable {
   final double lat;
   final double lng;
   final DateTime recordedAt;
-  
+
   @override
   List<Object?> get props => [lat, lng, recordedAt];
 }

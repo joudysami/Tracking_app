@@ -12,6 +12,7 @@ class ClaimedOrderEntity extends Equatable {
   /// none of it, so every value below stays empty for a freshly claimed order.
   final String storeName;
   final String storeAddress;
+  final String? storeImageUrl;
   final String customerName;
   final String customerAddress;
   final double totalAmount;
@@ -30,6 +31,7 @@ class ClaimedOrderEntity extends Equatable {
     required this.assignedAt,
     this.storeName = '',
     this.storeAddress = '',
+    this.storeImageUrl,
     this.customerName = '',
     this.customerAddress = '',
     this.totalAmount = 0,
@@ -53,6 +55,7 @@ class ClaimedOrderEntity extends Equatable {
     assignedAt,
     storeName,
     storeAddress,
+    storeImageUrl,
     customerName,
     customerAddress,
     totalAmount,

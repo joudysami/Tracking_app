@@ -47,16 +47,12 @@ class LocationRepoImpl implements LocationRepo {
 
   @override
   Future<BaseResponse<bool>> openLocationSettings() {
-    return _safeCall.safeApiCall<bool>(
-      _locationService.openLocationSettings,
-    );
+    return _safeCall.safeApiCall<bool>(_locationService.openLocationSettings);
   }
 
   @override
   Future<BaseResponse<bool>> openAppSettings() {
-    return _safeCall.safeApiCall<bool>(
-      _locationService.openAppSettings,
-    );
+    return _safeCall.safeApiCall<bool>(_locationService.openAppSettings);
   }
 
   @override
@@ -72,9 +68,7 @@ class LocationRepoImpl implements LocationRepo {
 
   @override
   Future<BaseResponse<GeoPoint>> getCurrentPosition() {
-    return _safeCall.safeApiCall<GeoPoint>(
-      _locationService.getCurrentPosition,
-    );
+    return _safeCall.safeApiCall<GeoPoint>(_locationService.getCurrentPosition);
   }
 
   @override
@@ -102,7 +96,7 @@ class LocationRepoImpl implements LocationRepo {
 
   @override
   Future<BaseResponse<LocationPermissionStatus>>
-      checkAndRequestPermission() async {
+  checkAndRequestPermission() async {
     final permissionResponse = await checkPermission();
 
     switch (permissionResponse) {

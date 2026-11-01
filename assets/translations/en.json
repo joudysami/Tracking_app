@@ -220,6 +220,20 @@
         "privacy_policy": "Privacy Policy",
         "terms_conditions": "Terms & Conditions",
         "delete_account": "Delete Account"
+        ,"reset_password": "Reset Password"
+        ,"current_password": "Current Password"
+        ,"new_password": "New Password"
+        ,"confirm_password": "Confirm Password"
+        ,"edit_title": "Edit Profile"
+        ,"change": "Change"
+        ,"first_name": "First name"
+        ,"last_name": "Last name"
+        ,"logout_title": "Log out"
+        ,"logout_message": "Are you sure you want to log out?"
+        ,"logout_action": "Log out"
+        ,"vehicle_info": "Vehicle information"
+        ,"bike": "Bike"
+        ,"version": "Version {version} ({build})"
     },
     "apply": {
         "no_vehicle_types_available": "No vehicle types available",

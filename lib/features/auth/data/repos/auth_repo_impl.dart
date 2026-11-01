@@ -120,7 +120,6 @@ class AuthRepoImpl implements AuthRepo {
     });
   }
 
-
   @override
   Future<void> signOut() {
     return tokenStorage.clearTokens();

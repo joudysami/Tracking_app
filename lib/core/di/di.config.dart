@@ -83,7 +83,7 @@ import '../../features/order/data/api/order_api_client.dart' as _i1026;
 import '../../features/order/data/data_source/order_data_source.dart' as _i173;
 import '../../features/order/data/data_source/order_data_source_impl.dart'
     as _i578;
-import '../../features/order/data/repo/order_repo_impl.dart' as _i491;
+import '../../features/order/data/repo/order_repo_impl.dart' as _i492;
 import '../../features/order/domain/repo/order_repo.dart' as _i989;
 import '../../features/order/domain/use_case/confirm_delivery_usecase.dart'
     as _i690;
@@ -91,6 +91,33 @@ import '../../features/order/domain/use_case/order_status_use_case.dart'
     as _i571;
 import '../../features/order/presentation/view_model/order_view_model.dart'
     as _i124;
+import '../../features/profile/api/profile_api_client.dart' as _i211;
+import '../../features/profile/data/data_sources/profile_remote_data_source.dart'
+    as _i1012;
+import '../../features/profile/data/data_sources/profile_remote_data_source_impl.dart'
+    as _i491;
+import '../../features/profile/data/repos/profile_repo_impl.dart' as _i1072;
+import '../../features/profile/domain/repos/profile_repo.dart' as _i1007;
+import '../../features/profile/domain/use_cases/change_password_use_case.dart'
+    as _i266;
+import '../../features/profile/domain/use_cases/get_profile_use_case.dart'
+    as _i110;
+import '../../features/profile/domain/use_cases/get_vehicle_info_use_case.dart'
+    as _i167;
+import '../../features/profile/domain/use_cases/logout_session_use_case.dart'
+    as _i712;
+import '../../features/profile/domain/use_cases/update_profile_use_case.dart'
+    as _i186;
+import '../../features/profile/domain/use_cases/update_vehicle_info_use_case.dart'
+    as _i974;
+import '../../features/profile/presentation/change_password/view_model/change_password_view_model.dart'
+    as _i441;
+import '../../features/profile/presentation/edit_profile/view_model/edit_profile_view_model.dart'
+    as _i1023;
+import '../../features/profile/presentation/edit_vehicle/view_model/edit_vehicle_view_model.dart'
+    as _i360;
+import '../../features/profile/presentation/profile/view_model/profile_view_model.dart'
+    as _i197;
 import '../modules/api_module.dart' as _i98;
 import '../modules/dio_module.dart' as _i948;
 import '../modules/services_module.dart' as _i120;
@@ -156,11 +183,24 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i1026.OrderApiClient>(
       () => apiModule.provideOrderApiClient(gh<_i361.Dio>()),
     );
+    gh.singleton<_i211.ProfileApiClient>(
+      () => apiModule.provideProfileApiClient(gh<_i361.Dio>()),
+    );
     gh.singleton<_i692.LocationApiClient>(
       () => apiModule.provideLocationApiClient(gh<_i361.Dio>()),
     );
     gh.singleton<_i821.RoutingApiClient>(
       () => apiModule.provideRoutingApiClient(gh<_i361.Dio>()),
+    );
+    gh.factory<_i1012.ProfileRemoteDataSource>(
+      () => _i491.ProfileRemoteDataSourceImpl(gh<_i211.ProfileApiClient>()),
+    );
+    gh.factory<_i1007.ProfileRepo>(
+      () => _i1072.ProfileRepoImpl(
+        remote: gh<_i1012.ProfileRemoteDataSource>(),
+        safeCall: gh<_i185.SafeCall>(),
+        tokenStorage: gh<_i964.TokenStorage>(),
+      ),
     );
     gh.factory<_i25.AuthRemoteDataSource>(
       () =>
@@ -202,6 +242,24 @@ extension GetItInjectableX on _i174.GetIt {
         homeApiClient: gh<_i549.HomeApiClient>(),
       ),
     );
+    gh.factory<_i266.ChangePasswordUseCase>(
+      () => _i266.ChangePasswordUseCase(gh<_i1007.ProfileRepo>()),
+    );
+    gh.factory<_i110.GetProfileUseCase>(
+      () => _i110.GetProfileUseCase(gh<_i1007.ProfileRepo>()),
+    );
+    gh.factory<_i167.GetVehicleInfoUseCase>(
+      () => _i167.GetVehicleInfoUseCase(gh<_i1007.ProfileRepo>()),
+    );
+    gh.factory<_i712.LogoutSessionUseCase>(
+      () => _i712.LogoutSessionUseCase(gh<_i1007.ProfileRepo>()),
+    );
+    gh.factory<_i186.UpdateProfileUseCase>(
+      () => _i186.UpdateProfileUseCase(gh<_i1007.ProfileRepo>()),
+    );
+    gh.factory<_i974.UpdateVehicleInfoUseCase>(
+      () => _i974.UpdateVehicleInfoUseCase(gh<_i1007.ProfileRepo>()),
+    );
     gh.factory<_i1038.LoginUseCase>(
       () => _i1038.LoginUseCase(gh<_i877.AuthRepo>()),
     );
@@ -209,10 +267,13 @@ extension GetItInjectableX on _i174.GetIt {
       () => _i725.LoginViewModel(gh<_i1038.LoginUseCase>()),
     );
     gh.factory<_i989.OrderRepo>(
-      () => _i491.OrdersRepoImpl(
+      () => _i492.OrdersRepoImpl(
         gh<_i173.OrdersRemoteDataSource>(),
         gh<_i185.SafeCall>(),
       ),
+    );
+    gh.factory<_i441.ChangePasswordViewModel>(
+      () => _i441.ChangePasswordViewModel(gh<_i266.ChangePasswordUseCase>()),
     );
     gh.factory<_i553.CheckAndRequestLocationPermissionUseCase>(
       () => _i553.CheckAndRequestLocationPermissionUseCase(
@@ -256,6 +317,13 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i311.GetVehicleTypesUseCase>(
       () => _i311.GetVehicleTypesUseCase(gh<_i877.AuthRepo>()),
     );
+    gh.factory<_i197.ProfileViewModel>(
+      () => _i197.ProfileViewModel(
+        gh<_i110.GetProfileUseCase>(),
+        gh<_i167.GetVehicleInfoUseCase>(),
+        gh<_i712.LogoutSessionUseCase>(),
+      ),
+    );
     gh.factory<_i483.ForgetPasswordUseCase>(
       () => _i483.ForgetPasswordUseCase(gh<_i877.AuthRepo>()),
     );
@@ -284,6 +352,13 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i169.ResetPasswordUseCase>(),
       ),
     );
+    gh.factory<_i1023.EditProfileViewModel>(
+      () => _i1023.EditProfileViewModel(
+        gh<_i110.GetProfileUseCase>(),
+        gh<_i186.UpdateProfileUseCase>(),
+        gh<_i644.ImagePickerService>(),
+      ),
+    );
     gh.lazySingleton<_i690.ConfirmDeliveryUseCase>(
       () => _i690.ConfirmDeliveryUseCase(gh<_i989.OrderRepo>()),
     );
@@ -303,6 +378,14 @@ extension GetItInjectableX on _i174.GetIt {
         confirmDeliveryUseCase: gh<_i690.ConfirmDeliveryUseCase>(),
         locationReportingUseCase: gh<_i541.LocationReportingUseCase>(),
         locationTrackingUseCase: gh<_i258.LocationTrackingUseCase>(),
+      ),
+    );
+    gh.factory<_i360.EditVehicleViewModel>(
+      () => _i360.EditVehicleViewModel(
+        gh<_i167.GetVehicleInfoUseCase>(),
+        gh<_i974.UpdateVehicleInfoUseCase>(),
+        gh<_i311.GetVehicleTypesUseCase>(),
+        gh<_i644.ImagePickerService>(),
       ),
     );
     gh.factory<_i77.HomeCubit>(

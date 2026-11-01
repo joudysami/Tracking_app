@@ -8,7 +8,7 @@ import 'package:tracking_app/features/home/domain/entity/claim_order_entity.dart
 import 'package:tracking_app/features/home/domain/entity/pagenation_entity.dart';
 import 'package:tracking_app/features/home/domain/repo/home_repo.dart';
 
-@Injectable(as:HomeRepo)
+@Injectable(as: HomeRepo)
 class HomeRepoImpl implements HomeRepo {
   final HomeRemoteDataSource remoteDataSource;
   final SafeCall safeCall;

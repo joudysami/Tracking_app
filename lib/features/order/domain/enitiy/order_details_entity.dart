@@ -12,6 +12,7 @@ class OrderDetailsEntity extends Equatable {
   final String customerAddress;
   final String storeName;
   final String storeAddress;
+  final String? storeImageUrl;
   final double totalAmount;
   final String paymentMethod;
   final List<OrderItemEntity> items;
@@ -32,6 +33,7 @@ class OrderDetailsEntity extends Equatable {
     required this.customerAddress,
     required this.storeName,
     required this.storeAddress,
+    this.storeImageUrl,
     required this.totalAmount,
     required this.paymentMethod,
     required this.items,
@@ -91,6 +93,7 @@ class OrderDetailsEntity extends Equatable {
       storeAddress: hasRealData
           ? order.storeAddress
           : '20th st, Sheikh Zayed, Giza',
+      storeImageUrl: order.storeImageUrl,
       totalAmount: hasRealData ? order.totalAmount : 3000,
       paymentMethod: order.paymentMethod.isEmpty
           ? 'Cash on delivery'
@@ -127,6 +130,7 @@ class OrderDetailsEntity extends Equatable {
     String? customerAddress,
     String? storeName,
     String? storeAddress,
+    String? storeImageUrl,
     double? totalAmount,
     String? paymentMethod,
     List<OrderItemEntity>? items,
@@ -144,6 +148,7 @@ class OrderDetailsEntity extends Equatable {
       customerAddress: customerAddress ?? this.customerAddress,
       storeName: storeName ?? this.storeName,
       storeAddress: storeAddress ?? this.storeAddress,
+      storeImageUrl: storeImageUrl ?? this.storeImageUrl,
       totalAmount: totalAmount ?? this.totalAmount,
       paymentMethod: paymentMethod ?? this.paymentMethod,
       items: items ?? this.items,
@@ -164,6 +169,7 @@ class OrderDetailsEntity extends Equatable {
     customerAddress,
     storeName,
     storeAddress,
+    storeImageUrl,
     totalAmount,
     paymentMethod,
     items,

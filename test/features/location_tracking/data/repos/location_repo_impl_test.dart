@@ -80,9 +80,9 @@ void main() {
 
   group('LocationRepoImpl - isLocationServiceEnabled', () {
     test('returns SuccessResponse with boolean value when enabled', () async {
-      when(mockLocationService.isLocationServiceEnabled()).thenAnswer(
-        (_) async => true,
-      );
+      when(
+        mockLocationService.isLocationServiceEnabled(),
+      ).thenAnswer((_) async => true);
 
       final result = await repo.isLocationServiceEnabled();
 
@@ -92,127 +92,154 @@ void main() {
       verify(mockLocationService.isLocationServiceEnabled()).called(1);
     });
 
-    test('returns ErrorResponse when service check throws an exception', () async {
-      when(mockLocationService.isLocationServiceEnabled()).thenThrow(
-        Exception('Service unavailable'),
-      );
+    test(
+      'returns ErrorResponse when service check throws an exception',
+      () async {
+        when(
+          mockLocationService.isLocationServiceEnabled(),
+        ).thenThrow(Exception('Service unavailable'));
 
-      final result = await repo.isLocationServiceEnabled();
+        final result = await repo.isLocationServiceEnabled();
 
-      expect(result, isA<ErrorResponse<bool>>());
-      verify(mockLocationService.isLocationServiceEnabled()).called(1);
-    });
+        expect(result, isA<ErrorResponse<bool>>());
+        verify(mockLocationService.isLocationServiceEnabled()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - checkPermission', () {
-    test('returns SuccessResponse with LocationPermission when check succeeds', () async {
-      when(mockLocationService.checkPermission()).thenAnswer(
-        (_) async => LocationPermission.whileInUse,
-      );
+    test(
+      'returns SuccessResponse with LocationPermission when check succeeds',
+      () async {
+        when(
+          mockLocationService.checkPermission(),
+        ).thenAnswer((_) async => LocationPermission.whileInUse);
 
-      final result = await repo.checkPermission();
+        final result = await repo.checkPermission();
 
-      expect(result, isA<SuccessResponse<LocationPermission>>());
-      final successResponse = result as SuccessResponse<LocationPermission>;
-      expect(successResponse.data, LocationPermission.whileInUse);
-      verify(mockLocationService.checkPermission()).called(1);
-    });
+        expect(result, isA<SuccessResponse<LocationPermission>>());
+        final successResponse = result as SuccessResponse<LocationPermission>;
+        expect(successResponse.data, LocationPermission.whileInUse);
+        verify(mockLocationService.checkPermission()).called(1);
+      },
+    );
 
-    test('returns ErrorResponse when checkPermission throws an exception', () async {
-      when(mockLocationService.checkPermission()).thenThrow(
-        Exception('Permission query failed'),
-      );
+    test(
+      'returns ErrorResponse when checkPermission throws an exception',
+      () async {
+        when(
+          mockLocationService.checkPermission(),
+        ).thenThrow(Exception('Permission query failed'));
 
-      final result = await repo.checkPermission();
+        final result = await repo.checkPermission();
 
-      expect(result, isA<ErrorResponse<LocationPermission>>());
-      verify(mockLocationService.checkPermission()).called(1);
-    });
+        expect(result, isA<ErrorResponse<LocationPermission>>());
+        verify(mockLocationService.checkPermission()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - requestPermission', () {
-    test('returns SuccessResponse with LocationPermission when request succeeds', () async {
-      when(mockLocationService.requestPermission()).thenAnswer(
-        (_) async => LocationPermission.always,
-      );
+    test(
+      'returns SuccessResponse with LocationPermission when request succeeds',
+      () async {
+        when(
+          mockLocationService.requestPermission(),
+        ).thenAnswer((_) async => LocationPermission.always);
 
-      final result = await repo.requestPermission();
+        final result = await repo.requestPermission();
 
-      expect(result, isA<SuccessResponse<LocationPermission>>());
-      final successResponse = result as SuccessResponse<LocationPermission>;
-      expect(successResponse.data, LocationPermission.always);
-      verify(mockLocationService.requestPermission()).called(1);
-    });
+        expect(result, isA<SuccessResponse<LocationPermission>>());
+        final successResponse = result as SuccessResponse<LocationPermission>;
+        expect(successResponse.data, LocationPermission.always);
+        verify(mockLocationService.requestPermission()).called(1);
+      },
+    );
 
-    test('returns ErrorResponse when requestPermission throws an exception', () async {
-      when(mockLocationService.requestPermission()).thenThrow(
-        Exception('Permission request failed'),
-      );
+    test(
+      'returns ErrorResponse when requestPermission throws an exception',
+      () async {
+        when(
+          mockLocationService.requestPermission(),
+        ).thenThrow(Exception('Permission request failed'));
 
-      final result = await repo.requestPermission();
+        final result = await repo.requestPermission();
 
-      expect(result, isA<ErrorResponse<LocationPermission>>());
-      verify(mockLocationService.requestPermission()).called(1);
-    });
+        expect(result, isA<ErrorResponse<LocationPermission>>());
+        verify(mockLocationService.requestPermission()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - openLocationSettings', () {
-    test('returns SuccessResponse when opening location settings succeeds', () async {
-      when(mockLocationService.openLocationSettings()).thenAnswer(
-        (_) async => true,
-      );
+    test(
+      'returns SuccessResponse when opening location settings succeeds',
+      () async {
+        when(
+          mockLocationService.openLocationSettings(),
+        ).thenAnswer((_) async => true);
 
-      final result = await repo.openLocationSettings();
+        final result = await repo.openLocationSettings();
 
-      expect(result, isA<SuccessResponse<bool>>());
-      final successResponse = result as SuccessResponse<bool>;
-      expect(successResponse.data, true);
-      verify(mockLocationService.openLocationSettings()).called(1);
-    });
+        expect(result, isA<SuccessResponse<bool>>());
+        final successResponse = result as SuccessResponse<bool>;
+        expect(successResponse.data, true);
+        verify(mockLocationService.openLocationSettings()).called(1);
+      },
+    );
 
-    test('returns ErrorResponse when openLocationSettings throws an exception', () async {
-      when(mockLocationService.openLocationSettings()).thenThrow(
-        Exception('Failed to open location settings'),
-      );
+    test(
+      'returns ErrorResponse when openLocationSettings throws an exception',
+      () async {
+        when(
+          mockLocationService.openLocationSettings(),
+        ).thenThrow(Exception('Failed to open location settings'));
 
-      final result = await repo.openLocationSettings();
+        final result = await repo.openLocationSettings();
 
-      expect(result, isA<ErrorResponse<bool>>());
-      verify(mockLocationService.openLocationSettings()).called(1);
-    });
+        expect(result, isA<ErrorResponse<bool>>());
+        verify(mockLocationService.openLocationSettings()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - openAppSettings', () {
-    test('returns SuccessResponse when opening app settings succeeds', () async {
-      when(mockLocationService.openAppSettings()).thenAnswer(
-        (_) async => true,
-      );
+    test(
+      'returns SuccessResponse when opening app settings succeeds',
+      () async {
+        when(
+          mockLocationService.openAppSettings(),
+        ).thenAnswer((_) async => true);
 
-      final result = await repo.openAppSettings();
+        final result = await repo.openAppSettings();
 
-      expect(result, isA<SuccessResponse<bool>>());
-      final successResponse = result as SuccessResponse<bool>;
-      expect(successResponse.data, true);
-      verify(mockLocationService.openAppSettings()).called(1);
-    });
+        expect(result, isA<SuccessResponse<bool>>());
+        final successResponse = result as SuccessResponse<bool>;
+        expect(successResponse.data, true);
+        verify(mockLocationService.openAppSettings()).called(1);
+      },
+    );
 
-    test('returns ErrorResponse when openAppSettings throws an exception', () async {
-      when(mockLocationService.openAppSettings()).thenThrow(
-        Exception('Failed to open app settings'),
-      );
+    test(
+      'returns ErrorResponse when openAppSettings throws an exception',
+      () async {
+        when(
+          mockLocationService.openAppSettings(),
+        ).thenThrow(Exception('Failed to open app settings'));
 
-      final result = await repo.openAppSettings();
+        final result = await repo.openAppSettings();
 
-      expect(result, isA<ErrorResponse<bool>>());
-      verify(mockLocationService.openAppSettings()).called(1);
-    });
+        expect(result, isA<ErrorResponse<bool>>());
+        verify(mockLocationService.openAppSettings()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - getCurrentPosition', () {
     test('returns SuccessResponse with Position on success', () async {
-      when(mockLocationService.getCurrentPosition()).thenAnswer(
-        (_) async => tPosition,
-      );
+      when(
+        mockLocationService.getCurrentPosition(),
+      ).thenAnswer((_) async => tPosition);
 
       final result = await repo.getCurrentPosition();
 
@@ -222,100 +249,118 @@ void main() {
       verify(mockLocationService.getCurrentPosition()).called(1);
     });
 
-    test('returns ErrorResponse when getCurrentPosition throws an exception', () async {
-      when(mockLocationService.getCurrentPosition()).thenThrow(
-        Exception('GPS signal not found'),
-      );
+    test(
+      'returns ErrorResponse when getCurrentPosition throws an exception',
+      () async {
+        when(
+          mockLocationService.getCurrentPosition(),
+        ).thenThrow(Exception('GPS signal not found'));
 
-      final result = await repo.getCurrentPosition();
+        final result = await repo.getCurrentPosition();
 
-      expect(result, isA<ErrorResponse<Position>>());
-      verify(mockLocationService.getCurrentPosition()).called(1);
-    });
+        expect(result, isA<ErrorResponse<Position>>());
+        verify(mockLocationService.getCurrentPosition()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - getPositionStream', () {
-    test('maps Position stream from service to LocationEntity stream', () async {
-      when(mockLocationService.getPositionStream()).thenAnswer(
-        (_) => Stream.fromIterable([tPosition]),
-      );
+    test(
+      'maps Position stream from service to LocationEntity stream',
+      () async {
+        when(
+          mockLocationService.getPositionStream(),
+        ).thenAnswer((_) => Stream.fromIterable([tPosition]));
 
-      final stream = repo.getPositionStream();
-      final emitted = await stream.first;
+        final stream = repo.getPositionStream();
+        final emitted = await stream.first;
 
-      expect(emitted, isA<LocationEntity>());
-      expect(emitted.lat, tPosition.latitude);
-      expect(emitted.lng, tPosition.longitude);
-      expect(emitted.recordedAt, tPosition.timestamp);
-      verify(mockLocationService.getPositionStream()).called(1);
-    });
+        expect(emitted, isA<LocationEntity>());
+        expect(emitted.lat, tPosition.latitude);
+        expect(emitted.lng, tPosition.longitude);
+        expect(emitted.recordedAt, tPosition.timestamp);
+        verify(mockLocationService.getPositionStream()).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - reportLocation', () {
-    test('returns SuccessResponse with mapped LocationReportEntity on success', () async {
-      when(mockRemoteDataSource.reportLocation(any)).thenAnswer(
-        (_) async => tReportResponseModel,
-      );
+    test(
+      'returns SuccessResponse with mapped LocationReportEntity on success',
+      () async {
+        when(
+          mockRemoteDataSource.reportLocation(any),
+        ).thenAnswer((_) async => tReportResponseModel);
 
-      final result = await repo.reportLocation(tLocation);
+        final result = await repo.reportLocation(tLocation);
 
-      expect(result, isA<SuccessResponse<LocationReportEntity>>());
-      final successResponse = result as SuccessResponse<LocationReportEntity>;
-      expect(successResponse.data?.broadcast, true);
-      expect(successResponse.data?.updatedOrderIds, ['order_1', 'order_2']);
-      expect(successResponse.data?.recordedAt, tRecordedAt);
-      verify(mockRemoteDataSource.reportLocation(any)).called(1);
-    });
+        expect(result, isA<SuccessResponse<LocationReportEntity>>());
+        final successResponse = result as SuccessResponse<LocationReportEntity>;
+        expect(successResponse.data?.broadcast, true);
+        expect(successResponse.data?.updatedOrderIds, ['order_1', 'order_2']);
+        expect(successResponse.data?.recordedAt, tRecordedAt);
+        verify(mockRemoteDataSource.reportLocation(any)).called(1);
+      },
+    );
 
-    test('throttles subsequent reportLocation calls within 5 seconds', () async {
-      when(mockRemoteDataSource.reportLocation(any)).thenAnswer(
-        (_) async => tReportResponseModel,
-      );
+    test(
+      'throttles subsequent reportLocation calls within 5 seconds',
+      () async {
+        when(
+          mockRemoteDataSource.reportLocation(any),
+        ).thenAnswer((_) async => tReportResponseModel);
 
-      final firstResult = await repo.reportLocation(tLocation);
-      expect(firstResult, isA<SuccessResponse<LocationReportEntity>>());
-      verify(mockRemoteDataSource.reportLocation(any)).called(1);
+        final firstResult = await repo.reportLocation(tLocation);
+        expect(firstResult, isA<SuccessResponse<LocationReportEntity>>());
+        verify(mockRemoteDataSource.reportLocation(any)).called(1);
 
-      // Immediate second call should be throttled and return null
-      final secondResult = await repo.reportLocation(tLocation);
-      expect(secondResult, isNull);
-      verifyNoMoreInteractions(mockRemoteDataSource);
-    });
+        // Immediate second call should be throttled and return null
+        final secondResult = await repo.reportLocation(tLocation);
+        expect(secondResult, isNull);
+        verifyNoMoreInteractions(mockRemoteDataSource);
+      },
+    );
 
-    test('returns ErrorResponse when remote data source throws an exception', () async {
-      when(mockRemoteDataSource.reportLocation(any)).thenThrow(
-        Exception('Network connection lost'),
-      );
+    test(
+      'returns ErrorResponse when remote data source throws an exception',
+      () async {
+        when(
+          mockRemoteDataSource.reportLocation(any),
+        ).thenThrow(Exception('Network connection lost'));
 
-      final result = await repo.reportLocation(tLocation);
+        final result = await repo.reportLocation(tLocation);
 
-      expect(result, isA<ErrorResponse<LocationReportEntity>>());
-      verify(mockRemoteDataSource.reportLocation(any)).called(1);
-    });
+        expect(result, isA<ErrorResponse<LocationReportEntity>>());
+        verify(mockRemoteDataSource.reportLocation(any)).called(1);
+      },
+    );
   });
 
   group('LocationRepoImpl - checkAndRequestPermission', () {
-    test('returns existing permission when already granted (whileInUse)', () async {
-      when(mockLocationService.checkPermission()).thenAnswer(
-        (_) async => LocationPermission.whileInUse,
-      );
+    test(
+      'returns existing permission when already granted (whileInUse)',
+      () async {
+        when(
+          mockLocationService.checkPermission(),
+        ).thenAnswer((_) async => LocationPermission.whileInUse);
 
-      final result = await repo.checkAndRequestPermission();
+        final result = await repo.checkAndRequestPermission();
 
-      expect(result, isA<SuccessResponse<LocationPermission>>());
-      final successResponse = result as SuccessResponse<LocationPermission>;
-      expect(successResponse.data, LocationPermission.whileInUse);
-      verify(mockLocationService.checkPermission()).called(1);
-      verifyNever(mockLocationService.requestPermission());
-    });
+        expect(result, isA<SuccessResponse<LocationPermission>>());
+        final successResponse = result as SuccessResponse<LocationPermission>;
+        expect(successResponse.data, LocationPermission.whileInUse);
+        verify(mockLocationService.checkPermission()).called(1);
+        verifyNever(mockLocationService.requestPermission());
+      },
+    );
 
     test('requests permission when checkPermission returns denied', () async {
-      when(mockLocationService.checkPermission()).thenAnswer(
-        (_) async => LocationPermission.denied,
-      );
-      when(mockLocationService.requestPermission()).thenAnswer(
-        (_) async => LocationPermission.whileInUse,
-      );
+      when(
+        mockLocationService.checkPermission(),
+      ).thenAnswer((_) async => LocationPermission.denied);
+      when(
+        mockLocationService.requestPermission(),
+      ).thenAnswer((_) async => LocationPermission.whileInUse);
 
       final result = await repo.checkAndRequestPermission();
 
@@ -327,9 +372,9 @@ void main() {
     });
 
     test('returns ErrorResponse when checkPermission fails', () async {
-      when(mockLocationService.checkPermission()).thenThrow(
-        Exception('Permission check error'),
-      );
+      when(
+        mockLocationService.checkPermission(),
+      ).thenThrow(Exception('Permission check error'));
 
       final result = await repo.checkAndRequestPermission();
 

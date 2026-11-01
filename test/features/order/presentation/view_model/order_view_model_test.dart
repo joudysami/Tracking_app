@@ -109,29 +109,31 @@ void main() {
     expect(viewModel.state.order?.items.length, 2);
   });
 
-  test('advances status from accepted to picked on AdvanceOrderStepEvent',
-      () async {
-    final available = AvailableOrderEntity(
-      orderId: '123456',
-      customerName: 'Nour mohamed',
-      customerAddress: '20th st, Sheikh Zayed, Giza',
-      storeId: 'store-1',
-      storeName: 'Flowery store',
-      storeAddress: '20th st, Sheikh Zayed, Giza',
-      totalAmount: 3000,
-      status: 'accepted',
-      createdAt: DateTime(2024, 9, 3, 11),
-    );
+  test(
+    'advances status from accepted to picked on AdvanceOrderStepEvent',
+    () async {
+      final available = AvailableOrderEntity(
+        orderId: '123456',
+        customerName: 'Nour mohamed',
+        customerAddress: '20th st, Sheikh Zayed, Giza',
+        storeId: 'store-1',
+        storeName: 'Flowery store',
+        storeAddress: '20th st, Sheikh Zayed, Giza',
+        totalAmount: 3000,
+        status: 'accepted',
+        createdAt: DateTime(2024, 9, 3, 11),
+      );
 
-    viewModel.doEvent(InitializeOrderEvent(available));
-    viewModel.doEvent(const AdvanceOrderStepEvent());
-    await pumpEventQueue();
+      viewModel.doEvent(InitializeOrderEvent(available));
+      viewModel.doEvent(const AdvanceOrderStepEvent());
+      await pumpEventQueue();
 
-    expect(fakeRepo.lastUpdatedOrderId, '123456');
-    expect(fakeRepo.lastUpdatedStatus, 'picked');
-    expect(viewModel.state.order?.status, 'picked');
-    expect(viewModel.state.updateStatusState.isLoading, isFalse);
-  });
+      expect(fakeRepo.lastUpdatedOrderId, '123456');
+      expect(fakeRepo.lastUpdatedStatus, 'picked');
+      expect(viewModel.state.order?.status, 'picked');
+      expect(viewModel.state.updateStatusState.isLoading, isFalse);
+    },
+  );
 
   test('calls confirmDelivery when order reaches arrived status', () async {
     final available = AvailableOrderEntity(

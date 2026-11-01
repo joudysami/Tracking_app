@@ -220,6 +220,20 @@
         "privacy_policy": "سياسة الخصوصية",
         "terms_conditions": "الشروط والأحكام",
         "delete_account": "حذف الحساب"
+        ,"reset_password": "إعادة تعيين كلمة المرور"
+        ,"current_password": "كلمة المرور الحالية"
+        ,"new_password": "كلمة المرور الجديدة"
+        ,"confirm_password": "تأكيد كلمة المرور"
+        ,"edit_title": "تعديل الملف الشخصي"
+        ,"change": "تغيير"
+        ,"first_name": "الاسم الأول"
+        ,"last_name": "اسم العائلة"
+        ,"logout_title": "تسجيل الخروج"
+        ,"logout_message": "هل أنت متأكد من رغبتك في تسجيل الخروج؟"
+        ,"logout_action": "تسجيل الخروج"
+        ,"vehicle_info": "بيانات المركبة"
+        ,"bike": "دراجة"
+        ,"version": "الإصدار {version} ({build})"
     },
     "apply": {
         "no_vehicle_types_available": "لا توجد أنواع مركبات متاحة",

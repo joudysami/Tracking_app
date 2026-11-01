@@ -33,10 +33,7 @@ void main() {
     expect(getNextOrderStatus('accepted'), 'PICKED_UP');
     expect(getNextOrderStatus('picked'), 'OUT_FOR_DELIVERY');
     expect(getNextOrderStatus('out_for_delivery'), 'ARRIVED');
-    expect(
-      getNextOrderStatus('arrived'),
-      'AWAITING_DELIVERY_CONFIRMATION',
-    );
+    expect(getNextOrderStatus('arrived'), 'AWAITING_DELIVERY_CONFIRMATION');
     expect(getNextOrderStatus('awaiting_delivery_confirmation'), isNull);
     expect(getNextOrderStatus('delivered'), isNull);
   });

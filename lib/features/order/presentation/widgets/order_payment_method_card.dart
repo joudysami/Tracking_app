@@ -31,7 +31,10 @@ class OrderPaymentMethodCard extends StatelessWidget {
           const Spacer(),
           Text(
             displayMethod,
-            style: TextStyle(fontSize: 14.sp, color: context.colors.grey.shade800),
+            style: TextStyle(
+              fontSize: 14.sp,
+              color: context.colors.grey.shade800,
+            ),
           ),
         ],
       ),

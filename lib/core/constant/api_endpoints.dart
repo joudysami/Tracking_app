@@ -66,6 +66,12 @@ class ApiEndpoints {
   //// Apply (Driver) ////
   static const String applyDriver = '/api/identity/drivers/apply';
   static const String vehicleTypes = '/api/identity/vehicle-types';
+  static const String myProfile = '/api/identity/drivers/me';
+  static const String updateProfile = '/api/identity/drivers/me';
+  static const String vehicleInfo = '/api/identity/drivers/me/vehicle';
+  static const String changePassword = '/api/identity/auth/change-password';
+  static const String logout = '/api/identity/auth/logout';
+
   /// Location Tracking ////
   static const String reportDriverLocation = '/api/orders/drivers/me/location';
 
@@ -73,10 +79,11 @@ class ApiEndpoints {
   static const String availableOrders = "/api/orders/drivers/available-orders";
   static const String assignedOrder = '/api/orders/drivers/me/assigned-order';
   static const String claim = '/api/orders/{orderId}/claim';
-  
-   /// order details///
-    static const String status = '/api/orders/{orderId}/status';
-    static const String confirmDelivery= "/api/orders/{orderId}/confirm-delivery";
+
+  /// order details///
+  static const String status = '/api/orders/{orderId}/status';
+  static const String confirmDelivery =
+      "/api/orders/{orderId}/confirm-delivery";
 }
 
 Future<void> _ensureDotEnv() async {

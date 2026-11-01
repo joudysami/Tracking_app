@@ -17,13 +17,10 @@ class ConfirmDeliveryResponse {
     this.data,
   });
 
-  factory ConfirmDeliveryResponse.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory ConfirmDeliveryResponse.fromJson(Map<String, dynamic> json) =>
       _$ConfirmDeliveryResponseFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$ConfirmDeliveryResponseToJson(this);
+  Map<String, dynamic> toJson() => _$ConfirmDeliveryResponseToJson(this);
 }
 
 @JsonSerializable()
@@ -38,13 +35,10 @@ class ConfirmDeliveryData {
     required this.confirmedAt,
   });
 
-  factory ConfirmDeliveryData.fromJson(
-    Map<String, dynamic> json,
-  ) =>
+  factory ConfirmDeliveryData.fromJson(Map<String, dynamic> json) =>
       _$ConfirmDeliveryDataFromJson(json);
 
-  Map<String, dynamic> toJson() =>
-      _$ConfirmDeliveryDataToJson(this);
+  Map<String, dynamic> toJson() => _$ConfirmDeliveryDataToJson(this);
 
   ConfirmDeliveryEntity toDomain() {
     return ConfirmDeliveryEntity(

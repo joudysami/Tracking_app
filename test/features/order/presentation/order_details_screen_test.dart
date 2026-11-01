@@ -37,7 +37,10 @@ void main() {
     expect(find.byIcon(Icons.phone_outlined), findsNWidgets(2));
     expect(find.byIcon(Icons.chat_bubble_outline), findsNWidgets(2));
     expect(find.text(LocaleKeys.orderDetailsStartDeliver.tr()), findsOneWidget);
-    expect(find.text(LocaleKeys.orderDetailsPaymentMethod.tr()), findsOneWidget);
+    expect(
+      find.text(LocaleKeys.orderDetailsPaymentMethod.tr()),
+      findsOneWidget,
+    );
     expect(find.text('Red roses,15 Pink Rose Bouquet'), findsWidgets);
     expect(find.byType(ElevatedButton), findsOneWidget);
   });
@@ -47,7 +50,10 @@ void main() {
   ) async {
     await _pumpDetails(tester, _order(status: 'Accepted'));
 
-    expect(find.text(LocaleKeys.orderDetailsArrivedAtPickup.tr()), findsOneWidget);
+    expect(
+      find.text(LocaleKeys.orderDetailsArrivedAtPickup.tr()),
+      findsOneWidget,
+    );
     expect(
       tester.widget<OrderProgressBar>(find.byType(OrderProgressBar)).completed,
       1,
@@ -59,7 +65,10 @@ void main() {
   ) async {
     await _pumpDetails(tester, _order(status: 'out_for_delivery'));
 
-    expect(find.text(LocaleKeys.orderDetailsArrivedToUser.tr()), findsOneWidget);
+    expect(
+      find.text(LocaleKeys.orderDetailsArrivedToUser.tr()),
+      findsOneWidget,
+    );
     expect(
       tester.widget<OrderProgressBar>(find.byType(OrderProgressBar)).completed,
       3,

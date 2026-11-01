@@ -84,7 +84,9 @@ class SuccessApplyPage extends StatelessWidget {
                   const Spacer(flex: 3),
 
                   Padding(
-                    padding: EdgeInsets.only(bottom: 50.h),
+                    padding: EdgeInsets.only(
+                      bottom: MediaQuery.of(context).padding.bottom + 24.h,
+                    ),
                     child: AppButton(
                       text: buttonKey.tr(),
                       onPressed:

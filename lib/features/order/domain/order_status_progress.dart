@@ -54,6 +54,7 @@ String? getNextOrderStatus(String currentStatus) {
       return null;
   }
 }
+
 String? getOrderActionLabelKey(String currentStatus) {
   switch (normalizeOrderStatus(currentStatus)) {
     case 'placed':

@@ -60,13 +60,9 @@ class OrderViewModel extends Cubit<OrderState> {
     if (raw is OrderDetailsEntity) {
       emit(state.copyWith(order: raw));
     } else if (raw is AvailableOrderEntity) {
-      emit(
-        state.copyWith(order: OrderDetailsEntity.fromAvailableOrder(raw)),
-      );
+      emit(state.copyWith(order: OrderDetailsEntity.fromAvailableOrder(raw)));
     } else if (raw is ClaimedOrderEntity) {
-      emit(
-        state.copyWith(order: OrderDetailsEntity.fromClaimedOrder(raw)),
-      );
+      emit(state.copyWith(order: OrderDetailsEntity.fromClaimedOrder(raw)));
     }
   }
 

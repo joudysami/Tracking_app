@@ -44,7 +44,7 @@ class AppRouter {
         _successApplyRoute(),
         _forgetPasswordRoute(),
         _homeRoute(),
-      //  _profileRoute(),
+        //  _profileRoute(),
         _orderRoute(),
         _orderDetailsRoute(),
         _orderSuccessRoute(),
@@ -156,17 +156,26 @@ class AppRouter {
     return GoRoute(
       path: AppRoutes.home,
       builder: (context, state) {
-        return BlocProvider(
-          create: (_) => getIt<HomeCubit>()
-            ..doEvent(const GetAvailableOrdersEvent())
-            ..doEvent(const GetAssignedOrderEvent()),
+        return MultiBlocProvider(
+          providers: [
+            BlocProvider(
+              create: (_) => getIt<HomeCubit>()
+                ..doEvent(const GetAvailableOrdersEvent())
+                ..doEvent(const GetAssignedOrderEvent()),
+            ),
+            BlocProvider(
+              create: (_) =>
+                  getIt<LocationTrackingViewModel>()
+                    ..doEvent(LocationTrackingStarted()),
+            ),
+          ],
           child: const ButtonNavigationBar(),
         );
       },
     );
   }
 
- /* static GoRoute _profileRoute() {
+  /* static GoRoute _profileRoute() {
     return GoRoute(
       path: AppRoutes.profile,
       builder: (context, state) {
@@ -184,20 +193,20 @@ class AppRouter {
     );
   }
 
-static GoRoute _orderDetailsRoute() {
-  return GoRoute(
-    path: AppRoutes.orderDetails,
-    builder: (context, state) {
-      return BlocProvider(
-        create: (_) => getIt<OrderViewModel>()
-          ..doEvent(InitializeOrderEvent(state.extra)),
-        child: OrderDetailsScreen(
-          order: state.extra,
-        ),
-      );
-    },
-  );
-}
+  static GoRoute _orderDetailsRoute() {
+    return GoRoute(
+      path: AppRoutes.orderDetails,
+      builder: (context, state) {
+        return BlocProvider(
+          create: (_) =>
+              getIt<OrderViewModel>()
+                ..doEvent(InitializeOrderEvent(state.extra)),
+          child: OrderDetailsScreen(order: state.extra),
+        );
+      },
+    );
+  }
+
   /// The driver's job is finished: the order waits with the customer now.
   static GoRoute _orderSuccessRoute() {
     return GoRoute(

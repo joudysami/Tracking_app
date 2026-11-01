@@ -8,4 +8,6 @@ abstract class AppConstants {
       'Welcome to\nFlowery rider app';
   //static const String welcometoFloweryRiderApp = 'Welcome to\nFlowery rider app';
   static const String packageName = 'com.example.tracking_app';
+  static const String appVersion = '1.0.0';
+  static const String appBuild = '1';
 }

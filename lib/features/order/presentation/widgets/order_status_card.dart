@@ -20,10 +20,10 @@ class OrderStatusCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveStatus =
-        status.isNotEmpty ? status : (order?.status ?? '');
-    final effectiveOrderId =
-        orderId.isNotEmpty ? orderId : (order?.orderId ?? '');
+    final effectiveStatus = status.isNotEmpty ? status : (order?.status ?? '');
+    final effectiveOrderId = orderId.isNotEmpty
+        ? orderId
+        : (order?.orderId ?? '');
     final effectiveDate = createdAt ?? order?.createdAt ?? DateTime.now();
 
     return Container(
@@ -37,8 +37,7 @@ class OrderStatusCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          if (effectiveStatus.trim().isNotEmpty)
-            _statusLine(effectiveStatus),
+          if (effectiveStatus.trim().isNotEmpty) _statusLine(effectiveStatus),
           const SizedBox(height: 6),
           _orderIdLine(effectiveOrderId),
           const SizedBox(height: 6),

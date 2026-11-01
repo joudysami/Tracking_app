@@ -3,10 +3,7 @@ import 'package:flutter/material.dart';
 class OrderSectionTitle extends StatelessWidget {
   final String title;
 
-  const OrderSectionTitle({
-    super.key,
-    required this.title,
-  });
+  const OrderSectionTitle({super.key, required this.title});
 
   @override
   Widget build(BuildContext context) {

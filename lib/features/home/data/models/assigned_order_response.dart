@@ -78,6 +78,7 @@ class AssignedOrderData {
           DateTime.tryParse(assignedAt ?? placedAt ?? '') ?? DateTime.now(),
       storeName: pickup?.name ?? '',
       storeAddress: pickup?.fullAddress ?? '',
+      storeImageUrl: pickup?.imageUrl,
       customerName: recipient?.displayName ?? '',
       customerAddress: recipient?.fullAddress ?? '',
       totalAmount: total ?? 0,
@@ -102,6 +103,7 @@ class AssignedOrderParty {
   final String? recipientName;
   final String? phone;
   final String? phoneNumber;
+  final String? imageUrl;
   final String? addressLine;
   final String? city;
   final String? area;
@@ -115,6 +117,7 @@ class AssignedOrderParty {
     this.recipientName,
     this.phone,
     this.phoneNumber,
+    this.imageUrl,
     this.addressLine,
     this.city,
     this.area,

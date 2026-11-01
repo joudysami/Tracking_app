@@ -52,8 +52,9 @@ class OrderScreen extends StatelessWidget {
                   Navigator.of(context).push(
                     MaterialPageRoute(
                       builder: (_) => BlocProvider(
-                        create: (_) => getIt<OrderViewModel>()
-                          ..doEvent(InitializeOrderEvent(order)),
+                        create: (_) =>
+                            getIt<OrderViewModel>()
+                              ..doEvent(InitializeOrderEvent(order)),
                         child: OrderDetailsScreen(order: order),
                       ),
                     ),

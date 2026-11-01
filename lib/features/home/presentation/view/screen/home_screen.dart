@@ -9,6 +9,10 @@ import 'package:tracking_app/features/home/presentation/view/widgets/order_card.
 import 'package:tracking_app/features/home/presentation/view_model/home_event.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_state.dart';
 import 'package:tracking_app/features/home/presentation/view_model/home_view_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_state.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_view_model.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/widgets/ocation_tracking_dialogs.dart';
+import 'package:tracking_app/features/location_tracking/presentation/view/location_tracking_view_model/location_tracking_event.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,7 +21,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late final ScrollController _scrollController;
 
   @override
@@ -25,6 +29,16 @@ class _HomeScreenState extends State<HomeScreen> {
     super.initState();
 
     _scrollController = ScrollController()..addListener(_onScroll);
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      context.read<LocationTrackingViewModel>().doEvent(
+        LocationTrackingStarted(),
+      );
+    }
   }
 
   void _onScroll() {
@@ -40,221 +54,246 @@ class _HomeScreenState extends State<HomeScreen> {
     _scrollController
       ..removeListener(_onScroll)
       ..dispose();
+    WidgetsBinding.instance.removeObserver(this);
 
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocListener<HomeCubit, HomeState>(
-      listenWhen: (previous, current) {
-        final claimError = current.claimOrderState.errorMessage;
-        final claimSuccess = current.claimOrderState.data;
-        final ordersError = current.ordersState.errorMessage;
-        final newClaimError =
-            claimError.isNotEmpty &&
-            claimError != previous.claimOrderState.errorMessage;
-        final newClaimSuccess =
-            claimSuccess != null &&
-            previous.claimOrderState.isLoading &&
-            claimSuccess.orderId != previous.claimOrderState.data?.orderId;
-        final newOrdersError =
-            ordersError.isNotEmpty &&
-            ordersError != previous.ordersState.errorMessage;
-        return newClaimError || newClaimSuccess || newOrdersError;
-      },
+    return BlocListener<LocationTrackingViewModel, LocationTrackingState>(
+      listenWhen: (previous, current) =>
+          previous.shouldShowPermissionDialog !=
+              current.shouldShowPermissionDialog ||
+          previous.shouldShowLocationSettingsDialog !=
+              current.shouldShowLocationSettingsDialog ||
+          previous.error != current.error,
       listener: (context, state) {
-        final messenger = ScaffoldMessenger.of(context);
-        final claimError = state.claimOrderState.errorMessage;
-        final ordersError = state.ordersState.errorMessage;
-
-        if (claimError.isNotEmpty) {
-          messenger
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(claimError)));
-        }
-
-        if (ordersError.isNotEmpty) {
-          messenger
-            ..hideCurrentSnackBar()
-            ..showSnackBar(SnackBar(content: Text(ordersError)));
-        }
-
-        if (claimError.isEmpty &&
-            ordersError.isEmpty &&
-            state.claimOrderState.data != null) {
-          messenger
+        final viewModel = context.read<LocationTrackingViewModel>();
+        LocationTrackingDialogs.handleState(context, state, viewModel);
+        if (state.error != null) {
+          ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(
-                content: Text(
-                  LocaleKeys.homeOrderAccepted.tr(
-                    namedArgs: {'id': state.claimOrderState.data!.orderId},
-                  ),
-                ),
+                content: Text(LocaleKeys.locationPermissionCheckFailed.tr()),
               ),
             );
         }
       },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              LocaleKeys.homeTitle.tr(),
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: context.colors.pink,
+      child: BlocListener<HomeCubit, HomeState>(
+        listenWhen: (previous, current) {
+          final claimError = current.claimOrderState.errorMessage;
+          final claimSuccess = current.claimOrderState.data;
+          final ordersError = current.ordersState.errorMessage;
+          final newClaimError =
+              claimError.isNotEmpty &&
+              claimError != previous.claimOrderState.errorMessage;
+          final newClaimSuccess =
+              claimSuccess != null &&
+              previous.claimOrderState.isLoading &&
+              claimSuccess.orderId != previous.claimOrderState.data?.orderId;
+          final newOrdersError =
+              ordersError.isNotEmpty &&
+              ordersError != previous.ordersState.errorMessage;
+          return newClaimError || newClaimSuccess || newOrdersError;
+        },
+        listener: (context, state) {
+          final messenger = ScaffoldMessenger.of(context);
+          final claimError = state.claimOrderState.errorMessage;
+          final ordersError = state.ordersState.errorMessage;
+
+          if (claimError.isNotEmpty) {
+            messenger
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(claimError)));
+          }
+
+          if (ordersError.isNotEmpty) {
+            messenger
+              ..hideCurrentSnackBar()
+              ..showSnackBar(SnackBar(content: Text(ordersError)));
+          }
+
+          if (claimError.isEmpty &&
+              ordersError.isEmpty &&
+              state.claimOrderState.data != null) {
+            messenger
+              ..hideCurrentSnackBar()
+              ..showSnackBar(
+                SnackBar(
+                  content: Text(
+                    LocaleKeys.homeOrderAccepted.tr(
+                      namedArgs: {'id': state.claimOrderState.data!.orderId},
+                    ),
+                  ),
+                ),
+              );
+          }
+        },
+        child: Scaffold(
+          appBar: AppBar(
+            title: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Text(
+                LocaleKeys.homeTitle.tr(),
+                style: TextStyle(
+                  fontSize: 18,
+                  fontWeight: FontWeight.w600,
+                  color: context.colors.pink,
+                ),
               ),
             ),
           ),
-        ),
-        body: SafeArea(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Expanded(
-                child: BlocBuilder<HomeCubit, HomeState>(
-                  builder: (context, state) {
-                    final ordersState = state.ordersState;
+          body: SafeArea(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: BlocBuilder<HomeCubit, HomeState>(
+                    builder: (context, state) {
+                      final ordersState = state.ordersState;
 
-                    if (ordersState.isLoading && ordersState.data == null) {
-                      return Center(
-                        child: CircularProgressIndicator(
-                          color: context.colors.pink,
-                        ),
-                      );
-                    }
-
-                    if (ordersState.errorMessage.isNotEmpty &&
-                        ordersState.data == null) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(ordersState.errorMessage),
-                            const SizedBox(height: 12),
-                            ElevatedButton(
-                              onPressed: () {
-                                context.read<HomeCubit>().doEvent(
-                                  const GetAvailableOrdersEvent(),
-                                );
-                              },
-                              child: Text(LocaleKeys.commonRetry.tr()),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    final orders = ordersState.data ?? [];
-
-                    if (orders.isEmpty) {
-                      return Center(
-                        child: Text(LocaleKeys.homeNoPendingOrders.tr()),
-                      );
-                    }
-                    return RefreshIndicator(
-                      color: context.colors.pink,
-                      onRefresh: () async {
-                        context.read<HomeCubit>().doEvent(
-                          const GetAvailableOrdersEvent(),
+                      if (ordersState.isLoading && ordersState.data == null) {
+                        return Center(
+                          child: CircularProgressIndicator(
+                            color: context.colors.pink,
+                          ),
                         );
-                      },
-                      child: ListView.separated(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 16,
-                          vertical: 2,
-                        ),
-                        controller: _scrollController,
-                        itemCount:
-                            orders.length +
-                            (state.pagination?.hasNextPage == true ? 1 : 0),
-                        separatorBuilder: (_, __) => const SizedBox(height: 14),
-                        itemBuilder: (context, index) {
-                          if (index >= orders.length) {
-                            return const Padding(
-                              padding: EdgeInsets.all(16),
-                              child: Center(child: CircularProgressIndicator()),
-                            );
-                          }
-                          final order = orders[index];
+                      }
 
-                          return BlocSelector<
-                            HomeCubit,
-                            HomeState,
-                            ({bool isClaiming, bool isDisabled})
-                          >(
-                            selector: (state) {
-                              return (
-                                isClaiming:
-                                    state.claimingOrderId == order.orderId,
-                                isDisabled: state.claimOrderState.isLoading,
-                              );
-                            },
-                            builder: (context, claimStatus) {
-                              return OrderCard(
-                                orderId: order.orderId,
-                                storeName: order.storeName,
-                                storeAddress: order.storeAddress,
-                                customerName: order.customerName,
-                                customerAddress: order.customerAddress,
-                                price: order.totalAmount.toStringAsFixed(2),
-                                isClaiming: claimStatus.isClaiming,
-                                isAcceptDisabled: claimStatus.isDisabled,
-                                onAccept: () {
-                                  if (claimStatus.isDisabled) return;
-
-                                  final hasActiveOrder = context
-                                      .read<HomeCubit>()
-                                      .hasActiveOrder;
-
-                                  if (hasActiveOrder) {
-                                    ScaffoldMessenger.of(context)
-                                      ..hideCurrentSnackBar()
-                                      ..showSnackBar(
-                                        SnackBar(
-                                          content: Text(
-                                            LocaleKeys
-                                                .orderDetailsFinishOrderFirst
-                                                .tr(),
-                                          ),
-                                        ),
-                                      );
-                                    return;
-                                  }
-
-                                  context.read<HomeCubit>().doEvent(
-                                    ClaimOrderEvent(orderId: order.orderId),
-                                  );
+                      if (ordersState.errorMessage.isNotEmpty &&
+                          ordersState.data == null) {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(ordersState.errorMessage),
+                              const SizedBox(height: 12),
+                              ElevatedButton(
+                                onPressed: () {
                                   context.read<HomeCubit>().doEvent(
                                     const GetAvailableOrdersEvent(),
                                   );
-                                  context
-                                      .push<bool>(
-                                        AppRoutes.orderDetails,
-                                        extra: order,
-                                      )
-                                      .then((finished) {
-                                        if (finished == true &&
-                                            context.mounted) {
-                                          context.read<HomeCubit>().doEvent(
-                                            const ActiveOrderDelivered(),
-                                          );
-                                        }
-                                      });
                                 },
-                              );
-                            },
+                                child: Text(LocaleKeys.commonRetry.tr()),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+
+                      final orders = ordersState.data ?? [];
+
+                      if (orders.isEmpty) {
+                        return Center(
+                          child: Text(LocaleKeys.homeNoPendingOrders.tr()),
+                        );
+                      }
+                      return RefreshIndicator(
+                        color: context.colors.pink,
+                        onRefresh: () async {
+                          context.read<HomeCubit>().doEvent(
+                            const GetAvailableOrdersEvent(),
                           );
                         },
-                      ),
-                    );
-                  },
+                        child: ListView.separated(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 2,
+                          ),
+                          controller: _scrollController,
+                          itemCount:
+                              orders.length +
+                              (state.pagination?.hasNextPage == true ? 1 : 0),
+                          separatorBuilder: (_, __) =>
+                              const SizedBox(height: 14),
+                          itemBuilder: (context, index) {
+                            if (index >= orders.length) {
+                              return const Padding(
+                                padding: EdgeInsets.all(16),
+                                child: Center(
+                                  child: CircularProgressIndicator(),
+                                ),
+                              );
+                            }
+                            final order = orders[index];
+
+                            return BlocSelector<
+                              HomeCubit,
+                              HomeState,
+                              ({bool isClaiming, bool isDisabled})
+                            >(
+                              selector: (state) {
+                                return (
+                                  isClaiming:
+                                      state.claimingOrderId == order.orderId,
+                                  isDisabled: state.claimOrderState.isLoading,
+                                );
+                              },
+                              builder: (context, claimStatus) {
+                                return OrderCard(
+                                  orderId: order.orderId,
+                                  storeName: order.storeName,
+                                  storeAddress: order.storeAddress,
+                                  customerName: order.customerName,
+                                  customerAddress: order.customerAddress,
+                                  price: order.totalAmount.toStringAsFixed(2),
+                                  isClaiming: claimStatus.isClaiming,
+                                  isAcceptDisabled: claimStatus.isDisabled,
+                                  onAccept: () {
+                                    if (claimStatus.isDisabled) return;
+
+                                    final hasActiveOrder = context
+                                        .read<HomeCubit>()
+                                        .hasActiveOrder;
+
+                                    if (hasActiveOrder) {
+                                      ScaffoldMessenger.of(context)
+                                        ..hideCurrentSnackBar()
+                                        ..showSnackBar(
+                                          SnackBar(
+                                            content: Text(
+                                              LocaleKeys
+                                                  .orderDetailsFinishOrderFirst
+                                                  .tr(),
+                                            ),
+                                          ),
+                                        );
+                                      return;
+                                    }
+
+                                    context.read<HomeCubit>().doEvent(
+                                      ClaimOrderEvent(orderId: order.orderId),
+                                    );
+                                    context.read<HomeCubit>().doEvent(
+                                      const GetAvailableOrdersEvent(),
+                                    );
+                                    context
+                                        .push<bool>(
+                                          AppRoutes.orderDetails,
+                                          extra: order,
+                                        )
+                                        .then((finished) {
+                                          if (finished == true &&
+                                              context.mounted) {
+                                            context.read<HomeCubit>().doEvent(
+                                              const ActiveOrderDelivered(),
+                                            );
+                                          }
+                                        });
+                                  },
+                                );
+                              },
+                            );
+                          },
+                        ),
+                      );
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

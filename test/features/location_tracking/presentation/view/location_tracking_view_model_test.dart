@@ -39,7 +39,8 @@ void main() {
 
   late MockLocationTrackingUseCase mockLocationTrackingUseCase;
   late MockLocationReportingUseCase mockLocationReportingUseCase;
-  late MockCheckAndRequestLocationPermissionUseCase mockCheckAndRequestPermissionUseCase;
+  late MockCheckAndRequestLocationPermissionUseCase
+  mockCheckAndRequestPermissionUseCase;
   late MockIsLocationServiceEnabledUseCase mockIsLocationServiceEnabledUseCase;
   late MockOpenAppSettingsUseCase mockOpenAppSettingsUseCase;
   late MockOpenLocationSettingsUseCase mockOpenLocationSettingsUseCase;
@@ -57,8 +58,7 @@ void main() {
     mockLocationReportingUseCase = MockLocationReportingUseCase();
     mockCheckAndRequestPermissionUseCase =
         MockCheckAndRequestLocationPermissionUseCase();
-    mockIsLocationServiceEnabledUseCase =
-        MockIsLocationServiceEnabledUseCase();
+    mockIsLocationServiceEnabledUseCase = MockIsLocationServiceEnabledUseCase();
     mockOpenAppSettingsUseCase = MockOpenAppSettingsUseCase();
     mockOpenLocationSettingsUseCase = MockOpenLocationSettingsUseCase();
     locationStreamController = StreamController<LocationEntity>.broadcast();
@@ -93,7 +93,8 @@ void main() {
       'emits serviceCheckFailed error when isLocationServiceEnabledUseCase returns ErrorResponse',
       build: () {
         when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => ErrorResponse(appError: BadResponseError('Service check failed')),
+          (_) async =>
+              ErrorResponse(appError: BadResponseError('Service check failed')),
         );
         return viewModel;
       },
@@ -101,8 +102,16 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>().having(
           (s) => s.error,
           'error',
@@ -119,17 +128,25 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits shouldShowLocationSettingsDialog when location service is disabled',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(false),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(false));
         return viewModel;
       },
       act: (vm) => vm.doEvent(LocationTrackingStarted()),
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>().having(
           (s) => s.shouldShowLocationSettingsDialog,
           'shouldShowLocationSettingsDialog',
@@ -146,11 +163,13 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits permissionCheckFailed error when checkAndRequestPermissionUseCase returns ErrorResponse',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
-          (_) async => ErrorResponse(appError: BadResponseError('Permission query failed')),
+          (_) async => ErrorResponse(
+            appError: BadResponseError('Permission query failed'),
+          ),
         );
         return viewModel;
       },
@@ -158,8 +177,16 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>().having(
           (s) => s.error,
           'error',
@@ -176,9 +203,9 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits permissionCheckFailed error when permission data is null',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
           (_) async => const SuccessResponse<LocationPermission>(null),
         );
@@ -188,8 +215,16 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>().having(
           (s) => s.error,
           'error',
@@ -206,9 +241,9 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits shouldShowPermissionDialog when permission is deniedForever',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
           (_) async => const SuccessResponse(LocationPermission.deniedForever),
         );
@@ -218,8 +253,16 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>().having(
           (s) => s.shouldShowPermissionDialog,
           'shouldShowPermissionDialog',
@@ -236,9 +279,9 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits permissionDenied error when permission is denied',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
           (_) async => const SuccessResponse(LocationPermission.denied),
         );
@@ -248,8 +291,16 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>().having(
           (s) => s.error,
           'error',
@@ -266,18 +317,18 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'starts tracking and emits updated location when prerequisites are met',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
           (_) async => const SuccessResponse(LocationPermission.whileInUse),
         );
-        when(mockLocationTrackingUseCase()).thenAnswer(
-          (_) => locationStreamController.stream,
-        );
-        when(mockLocationReportingUseCase(any)).thenAnswer(
-          (_) async => const SuccessResponse(null),
-        );
+        when(
+          mockLocationTrackingUseCase(),
+        ).thenAnswer((_) => locationStreamController.stream);
+        when(
+          mockLocationReportingUseCase(any),
+        ).thenAnswer((_) async => const SuccessResponse(null));
         return viewModel;
       },
       act: (vm) async {
@@ -287,8 +338,16 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>()
             .having((s) => s.isTracking, 'isTracking', true)
             .having((s) => s.currentLocation, 'currentLocation', tLocation)
@@ -305,17 +364,18 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits reportFailed error when reporting location fails',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
           (_) async => const SuccessResponse(LocationPermission.whileInUse),
         );
-        when(mockLocationTrackingUseCase()).thenAnswer(
-          (_) => locationStreamController.stream,
-        );
+        when(
+          mockLocationTrackingUseCase(),
+        ).thenAnswer((_) => locationStreamController.stream);
         when(mockLocationReportingUseCase(any)).thenAnswer(
-          (_) async => ErrorResponse(appError: BadResponseError('Report failed')),
+          (_) async =>
+              ErrorResponse(appError: BadResponseError('Report failed')),
         );
         return viewModel;
       },
@@ -326,15 +386,27 @@ void main() {
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>()
             .having((s) => s.isTracking, 'isTracking', true)
             .having((s) => s.currentLocation, 'currentLocation', tLocation),
         isA<LocationTrackingState>()
             .having((s) => s.isTracking, 'isTracking', true)
             .having((s) => s.currentLocation, 'currentLocation', tLocation)
-            .having((s) => s.error, 'error', LocationTrackingError.reportFailed),
+            .having(
+              (s) => s.error,
+              'error',
+              LocationTrackingError.reportFailed,
+            ),
       ],
       verify: (_) {
         verify(mockLocationReportingUseCase(tLocation)).called(1);
@@ -344,26 +416,38 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'emits locationStreamFailed error when tracking stream encounters error',
       build: () {
-        when(mockIsLocationServiceEnabledUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockIsLocationServiceEnabledUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         when(mockCheckAndRequestPermissionUseCase()).thenAnswer(
           (_) async => const SuccessResponse(LocationPermission.whileInUse),
         );
-        when(mockLocationTrackingUseCase()).thenAnswer(
-          (_) => Stream.error(Exception('Stream error')),
-        );
+        when(
+          mockLocationTrackingUseCase(),
+        ).thenAnswer((_) => Stream.error(Exception('Stream error')));
         return viewModel;
       },
       act: (vm) => vm.doEvent(LocationTrackingStarted()),
       expect: () => [
         isA<LocationTrackingState>()
             .having((s) => s.error, 'error', isNull)
-            .having((s) => s.shouldShowPermissionDialog, 'shouldShowPermissionDialog', false)
-            .having((s) => s.shouldShowLocationSettingsDialog, 'shouldShowLocationSettingsDialog', false),
+            .having(
+              (s) => s.shouldShowPermissionDialog,
+              'shouldShowPermissionDialog',
+              false,
+            )
+            .having(
+              (s) => s.shouldShowLocationSettingsDialog,
+              'shouldShowLocationSettingsDialog',
+              false,
+            ),
         isA<LocationTrackingState>()
             .having((s) => s.isTracking, 'isTracking', false)
-            .having((s) => s.error, 'error', LocationTrackingError.locationStreamFailed),
+            .having(
+              (s) => s.error,
+              'error',
+              LocationTrackingError.locationStreamFailed,
+            ),
       ],
       verify: (_) {
         verify(mockLocationTrackingUseCase()).called(1);
@@ -379,7 +463,11 @@ void main() {
       build: () => viewModel,
       act: (vm) => vm.doEvent(LocationTrackingStopped()),
       expect: () => [
-        isA<LocationTrackingState>().having((s) => s.isTracking, 'isTracking', false),
+        isA<LocationTrackingState>().having(
+          (s) => s.isTracking,
+          'isTracking',
+          false,
+        ),
       ],
     );
   });
@@ -402,9 +490,9 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'closes permission dialog and calls openAppSettingsUseCase on OpenAppSettingsRequested',
       build: () {
-        when(mockOpenAppSettingsUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockOpenAppSettingsUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         return viewModel;
       },
       seed: () => const LocationTrackingState(shouldShowPermissionDialog: true),
@@ -425,7 +513,9 @@ void main() {
       'emits openSettingsFailed error when openAppSettingsUseCase returns ErrorResponse',
       build: () {
         when(mockOpenAppSettingsUseCase()).thenAnswer(
-          (_) async => ErrorResponse(appError: BadResponseError('Failed to open settings')),
+          (_) async => ErrorResponse(
+            appError: BadResponseError('Failed to open settings'),
+          ),
         );
         return viewModel;
       },
@@ -452,7 +542,8 @@ void main() {
   group('LocationTrackingViewModel - Location Settings Dialog Actions', () {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'resets shouldShowLocationSettingsDialog when LocationSettingsDialogDismissed is received',
-      seed: () => const LocationTrackingState(shouldShowLocationSettingsDialog: true),
+      seed: () =>
+          const LocationTrackingState(shouldShowLocationSettingsDialog: true),
       build: () => viewModel,
       act: (vm) => vm.doEvent(LocationSettingsDialogDismissed()),
       expect: () => [
@@ -467,12 +558,13 @@ void main() {
     blocTest<LocationTrackingViewModel, LocationTrackingState>(
       'closes location settings dialog and calls openLocationSettingsUseCase on OpenLocationSettingsRequested',
       build: () {
-        when(mockOpenLocationSettingsUseCase()).thenAnswer(
-          (_) async => const SuccessResponse(true),
-        );
+        when(
+          mockOpenLocationSettingsUseCase(),
+        ).thenAnswer((_) async => const SuccessResponse(true));
         return viewModel;
       },
-      seed: () => const LocationTrackingState(shouldShowLocationSettingsDialog: true),
+      seed: () =>
+          const LocationTrackingState(shouldShowLocationSettingsDialog: true),
       act: (vm) => vm.doEvent(OpenLocationSettingsRequested()),
       expect: () => [
         isA<LocationTrackingState>().having(
@@ -490,11 +582,14 @@ void main() {
       'emits openSettingsFailed error when openLocationSettingsUseCase returns ErrorResponse',
       build: () {
         when(mockOpenLocationSettingsUseCase()).thenAnswer(
-          (_) async => ErrorResponse(appError: BadResponseError('Failed to open location settings')),
+          (_) async => ErrorResponse(
+            appError: BadResponseError('Failed to open location settings'),
+          ),
         );
         return viewModel;
       },
-      seed: () => const LocationTrackingState(shouldShowLocationSettingsDialog: true),
+      seed: () =>
+          const LocationTrackingState(shouldShowLocationSettingsDialog: true),
       act: (vm) => vm.doEvent(OpenLocationSettingsRequested()),
       expect: () => [
         isA<LocationTrackingState>().having(

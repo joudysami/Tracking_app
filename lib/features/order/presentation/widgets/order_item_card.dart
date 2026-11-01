@@ -11,7 +11,7 @@ class OrderItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding:  EdgeInsets.symmetric(horizontal: 14.h, vertical: 12.w),
+      padding: EdgeInsets.symmetric(horizontal: 14.h, vertical: 12.w),
       decoration: BoxDecoration(
         color: context.colors.white,
         borderRadius: BorderRadius.circular(12.r),
@@ -41,7 +41,7 @@ class OrderItemCard extends StatelessWidget {
                   )
                 : _placeholderIcon(),
           ),
-         SizedBox(width: 12.w),
+          SizedBox(width: 12.w),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -50,7 +50,7 @@ class OrderItemCard extends StatelessWidget {
                   item.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w500,
                     color: context.colors.black.shade50,
@@ -59,10 +59,10 @@ class OrderItemCard extends StatelessWidget {
                 const SizedBox(height: 6),
                 Text(
                   'EGP ${formatOrderAmount(item.price)}',
-                  style:  TextStyle(
+                  style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
-                    color: context.colors.black.shade100
+                    color: context.colors.black.shade100,
                   ),
                 ),
               ],
